@@ -68,3 +68,6 @@ atlassian*
 /generated/*
 !/generated/.htaccess
 .DS_Store
+
+/n98-magerun2.phar
+
