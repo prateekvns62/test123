@@ -16,7 +16,6 @@ class Tabs extends Template
     private $category = null;
 
     /**
-     * Tabs constructor.
      * @param Template\Context $context
      * @param Category $categoryHelper
      * @param array $data

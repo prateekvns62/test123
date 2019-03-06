@@ -32,7 +32,7 @@ class Config extends AbstractHelper
     }
 
     /**
-     * @param $groupKey
+     * @param string $groupKey
      * @return mixed
      */
     private function getConfig($groupKey)
