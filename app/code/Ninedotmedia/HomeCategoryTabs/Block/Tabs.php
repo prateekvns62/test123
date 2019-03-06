@@ -4,18 +4,18 @@ namespace Ninedotmedia\HomeCategoryTabs\Block;
 use Magento\Framework\View\Element\Template;
 use Ninedotmedia\HomeCategoryTabs\Helper\Category;
 
-class Tabs extends \Magento\Framework\View\Element\Template
+class Tabs extends Template
 {
-    /*****
+    /**
      * @var Category
      */
     private $categoryHelper;
-    /****
-     * @var
+    /**
+     * @var \Magento\Catalog\Api\Data\CategoryInterface|null
      */
-    private $category;
+    private $category = null;
 
-    /*****
+    /**
      * Tabs constructor.
      * @param Template\Context $context
      * @param Category $categoryHelper
@@ -25,23 +25,23 @@ class Tabs extends \Magento\Framework\View\Element\Template
         Template\Context $context,
         Category $categoryHelper,
         array $data = []
-    ){
+    ) {
         $this->categoryHelper = $categoryHelper;
         parent::__construct($context, $data);
     }
 
-    /*****
-     *@return \Magento\Catalog\Api\Data\CategoryInterface|null
+    /**
+     * @return \Magento\Catalog\Api\Data\CategoryInterface|null
      */
     private function getCategory()
     {
-        if (is_null($this->category)){
+        if (!$this->category) {
             $this->category = $this->categoryHelper->getCategoryOfTabs();
         }
         return $this->category;
     }
 
-    /*****
+    /**
      * @return \Magento\Catalog\Model\ResourceModel\Category\Collection|null
      */
     public function getCategoryTabs()
@@ -50,11 +50,11 @@ class Tabs extends \Magento\Framework\View\Element\Template
         return ($categoryObj) ? $categoryObj->getChildrenCategories() : null;
     }
 
-    /*****
+    /**
      * @return string
      */
     public function getActionUrl()
     {
-        return $this->getUrl('categorytab/index/index',['_secure' => true]);
+        return $this->getUrl('categorytab/index/index', ['_secure' => true]);
     }
 }

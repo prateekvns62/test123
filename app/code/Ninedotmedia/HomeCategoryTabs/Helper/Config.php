@@ -2,10 +2,12 @@
 namespace Ninedotmedia\HomeCategoryTabs\Helper;
 
 use Magento\Framework\App\Helper\Context;
+use \Magento\Framework\App\Helper\AbstractHelper;
+use \Magento\Store\Model\ScopeInterface;
 
-class Config extends \Magento\Framework\App\Helper\AbstractHelper
+class Config extends AbstractHelper
 {
-    /*****
+    /**
      * Config constructor.
      * @param Context $context
      */
@@ -14,7 +16,7 @@ class Config extends \Magento\Framework\App\Helper\AbstractHelper
         parent::__construct($context);
     }
 
-    /*****
+    /**
      * @return mixed
      */
     public function getHomepageCategoryTab()
@@ -22,7 +24,7 @@ class Config extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->getConfig('homepage/category');
     }
 
-    /****
+    /**
      * @return mixed
      */
     public function getPerProduct()
@@ -30,7 +32,7 @@ class Config extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->getConfig('homepage/limit');
     }
 
-    /*****
+    /**
      * @param $groupKey
      * @return mixed
      */
@@ -38,7 +40,7 @@ class Config extends \Magento\Framework\App\Helper\AbstractHelper
     {
         return $this->scopeConfig->getValue(
             'theme_settings/'.$groupKey,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_STORE
         );
     }
 }

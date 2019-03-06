@@ -7,16 +7,16 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class Category extends Config
 {
-    /****
+    /**
      * @var CategoryRepositoryInterface
      */
     private $categoryRepository;
-    /*****
+    /**
      * @var StoreManagerInterface
      */
     private $storeManager;
 
-    /******
+    /**
      * Category constructor.
      * @param Context $context
      * @param CategoryRepositoryInterface $categoryRepository
@@ -26,13 +26,13 @@ class Category extends Config
         Context $context,
         CategoryRepositoryInterface $categoryRepository,
         StoreManagerInterface $storeManager
-    ){
+    ) {
         $this->categoryRepository = $categoryRepository;
         $this->storeManager = $storeManager;
         parent::__construct($context);
     }
 
-    /*****
+    /**
      * @return \Magento\Catalog\Api\Data\CategoryInterface|null
      */
     public function getCategoryOfTabs()
@@ -42,7 +42,7 @@ class Category extends Config
             null;
     }
 
-    /*****
+    /**
      * @param $categoryId
      * @return null
      */
@@ -50,7 +50,7 @@ class Category extends Config
     {
         $result = null;
         $category = $this->categoryRepository->get($categoryId);
-        if ($category && $category->getId()){
+        if ($category && $category->getId()) {
             $result = $category->getProductCollection()
                 ->addAttributeToSelect('*')
                 ->addAttributeToSort('position', 'ASC')
@@ -59,15 +59,15 @@ class Category extends Config
         return $result;
     }
 
-    /*****
+    /**
      * @param $categoryId
      * @return \Magento\Catalog\Api\Data\CategoryInterface|null
      */
     private function getCategoryById($categoryId)
     {
-        try{
+        try {
             return  $this->categoryRepository->get($categoryId, $this->storeManager->getStore()->getId());
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return null;
         }
     }
