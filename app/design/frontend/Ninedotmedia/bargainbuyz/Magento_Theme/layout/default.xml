@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="3columns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="default_head_blocks"/>
+    <body>
+
+        <referenceBlock name="header.panel">
+            <container name="in.header.links" htmlClass="in-header-links" htmlTag="div" after="header-links-visit">
+                <container name="in.header.links.list" htmlClass="in-header-links-list" htmlTag="ul">
+
+                    <block class="Magento\Customer\Block\Account\Link" name="my-account-link" before="-">
+                        <arguments>
+                            <argument name="label" xsi:type="string" translate="true">My Account</argument>
+                            <argument name="css_class" xsi:type="string">header-links-account</argument>
+                        </arguments>
+                    </block>
+
+                    <block class="Magento\Customer\Block\Account\SortLinkInterface" ifconfig="wishlist/general/active"
+                           name="customer-account-navigation-wish-list-link" after="my-account-link">
+                        <arguments>
+                            <argument name="path" xsi:type="string">wishlist</argument>
+                            <argument name="label" xsi:type="string" translate="true">My Wish List</argument>
+                            <argument name="css_class" xsi:type="string">header-links-wishlist</argument>
+                        </arguments>
+                    </block>
+
+
+
+                </container>
+            </container>
+        </referenceBlock>
+
+        <referenceBlock name="header.links">
+
+            <block class="Magento\Cms\Block\Block" name="header-links-phone" after="header">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">header-links-phone</argument>
+                </arguments>
+            </block>
+
+            <block class="Magento\Cms\Block\Block" name="header-links-visit" after="header-links-phone">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">header-links-visit</argument>
+                </arguments>
+            </block>
+
+        </referenceBlock>
+
+        <referenceBlock name="logo">
+            <arguments>
+                <argument name="logo_img_width" xsi:type="number">272</argument>
+                <argument name="logo_img_height" xsi:type="number">55</argument>
+            </arguments>
+        </referenceBlock>
+
+        <referenceContainer name="header-wrapper">
+            <block class="Magento\Cms\Block\Block" name="header-content-info" after="logo">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">header-content-info</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+
+
+        <move element="authorization-link" destination="in.header.links.list" after="customer-account-navigation-wish-list-link"/>
+        <move element="register-link" destination="in.header.links.list" after="authorization-link"/>
+
+    </body>
+</page>
