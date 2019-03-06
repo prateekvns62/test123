@@ -9,7 +9,6 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="default_head_blocks"/>
     <body>
-
         <referenceBlock name="header.panel">
             <container name="in.header.links" htmlClass="in-header-links" htmlTag="div" after="header-links-visit">
                 <container name="in.header.links.list" htmlClass="in-header-links-list" htmlTag="ul">
@@ -29,8 +28,6 @@
                             <argument name="css_class" xsi:type="string">header-links-wishlist</argument>
                         </arguments>
                     </block>
-
-
 
                 </container>
             </container>
@@ -66,6 +63,7 @@
                 </arguments>
             </block>
         </referenceContainer>
+
 
 
         <move element="authorization-link" destination="in.header.links.list" after="customer-account-navigation-wish-list-link"/>
