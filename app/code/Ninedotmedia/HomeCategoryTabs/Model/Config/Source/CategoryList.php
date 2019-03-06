@@ -21,7 +21,6 @@ class CategoryList implements ArrayInterface
     protected $categoryList;
 
     /**
-     * CategoryList constructor.
      * @param Category $catalogCategory
      * @param CategoryRepository $categoryRepository
      */
@@ -73,12 +72,12 @@ class CategoryList implements ArrayInterface
     }
 
     /**
-     * @param $_categories
+     * @param $categories
      * @return mixed
      */
-    public function renderCategories($_categories)
+    public function renderCategories($categories)
     {
-        foreach ($_categories as $category) {
+        foreach ($categories as $category) {
             $i = 0;
             $this->categoryList[$category->getEntityId()] = __($category->getName());
             $this->renderSubCat($category, $i);
@@ -87,8 +86,8 @@ class CategoryList implements ArrayInterface
     }
 
     /**
-     * @param $cat
-     * @param $j
+     * @param \Magento\Framework\Data\Tree\Node $cat
+     * @param int $j
      * @return mixed
      */
     public function renderSubCat($cat, $j)

@@ -8,7 +8,6 @@ use \Magento\Store\Model\ScopeInterface;
 class Config extends AbstractHelper
 {
     /**
-     * Config constructor.
      * @param Context $context
      */
     public function __construct(Context $context)

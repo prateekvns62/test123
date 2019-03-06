@@ -17,7 +17,6 @@ class Category extends Config
     private $storeManager;
 
     /**
-     * Category constructor.
      * @param Context $context
      * @param CategoryRepositoryInterface $categoryRepository
      * @param StoreManagerInterface $storeManager
@@ -43,7 +42,7 @@ class Category extends Config
     }
 
     /**
-     * @param $categoryId
+     * @param int|string $categoryId
      * @return null
      */
     public function getProductsByCategory($categoryId)
@@ -60,7 +59,7 @@ class Category extends Config
     }
 
     /**
-     * @param $categoryId
+     * @param int|string $categoryId
      * @return \Magento\Catalog\Api\Data\CategoryInterface|null
      */
     private function getCategoryById($categoryId)
