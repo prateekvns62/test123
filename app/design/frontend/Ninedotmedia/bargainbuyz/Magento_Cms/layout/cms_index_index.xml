@@ -9,9 +9,9 @@
     <body>
         <referenceContainer name="content">
 
-            <container name="homepage.content" htmlClass="holder-content" htmlTag="section">
+            <container name="homepage.content" htmlClass="holder-content" htmlTag="section" after="-">
 
-                <container name="homepage.content.list.block" htmlClass="holder-content-list-block" htmlTag="ul" before="-">
+                <container name="homepage.content.list.block" htmlClass="holder-content-list-block" htmlTag="ul">
 
                     <block class="Magento\Cms\Block\Block" name="homepage-block-reviews">
                         <arguments>
@@ -44,6 +44,7 @@
             </container>
 
         </referenceContainer>
-
+        <move element="footer.grey.block.info" destination="content" before="homepage.content"/>
+        <referenceBlock name="page.main.title" remove="true"/>
     </body>
 </page>

@@ -127,7 +127,8 @@
             width: 33%;
             .lib-vendor-prefix-display(flex);
             justify-content: flex-end;
-            .clearfix();
+            .lib-clearfix;
+
         }
         .in-header-links-list {
             .lib-list-inline();
@@ -146,6 +147,21 @@
                         @_link-color-active: @header-panel__text-color,
                         @_link-text-decoration-active: none
                     );
+                }
+                &.nav.item{
+                    margin-left: 32px;
+                    & > a{
+                        position: relative;
+                        .icon-heart1;
+                        &:before{
+                            .custom-icon-fonts();
+                            .lib-css(color, @color-white);
+                            position: absolute;
+                            left: -16px;
+                            top: 3px;
+                            font-size: 13px;
+                        }
+                    }
                 }
             }
         }
@@ -629,7 +645,8 @@
                                 .lib-css(color, @color-white);
                                 position: absolute;
                                 left: -15px;
-                                top: 0;
+                                top: 3px;
+                                font-size: 13px;
                             }
                         }
                     }
@@ -640,7 +657,8 @@
                 }
             }
             .in-header-links-list{
-                .clearfix();
+                .lib-clearfix;
+
                 & > .authorization-link {
                     &:after {
                         content: attr(data-label);

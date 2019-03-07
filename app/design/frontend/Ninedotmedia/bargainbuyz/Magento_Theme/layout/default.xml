@@ -24,7 +24,7 @@
                            name="customer-account-navigation-wish-list-link" after="my-account-link">
                         <arguments>
                             <argument name="path" xsi:type="string">wishlist</argument>
-                            <argument name="label" xsi:type="string" translate="true">My Wish List</argument>
+                            <argument name="label" xsi:type="string" translate="true">My Wishlist</argument>
                             <argument name="css_class" xsi:type="string">header-links-wishlist</argument>
                         </arguments>
                     </block>
@@ -65,6 +65,47 @@
         </referenceContainer>
 
 
+        <referenceContainer name="footer-container">
+            <referenceContainer name="footer">
+                <container name="footer.grey.block.info" htmlClass="grey-block-info" htmlTag="section" before="-">
+
+                    <block class="Magento\Cms\Block\Block" name="grey-block-info">
+                        <arguments>
+                            <argument name="block_id" xsi:type="string">grey-block-info</argument>
+                        </arguments>
+                    </block>
+
+                </container>
+                <container name="footer.wrap.contact" htmlClass="footer-wrap-contact" htmlTag="section" after="footer.grey.block.info">
+
+                    <block class="Magento\Cms\Block\Block" name="footer-contact">
+                        <arguments>
+                            <argument name="block_id" xsi:type="string">footer-contact</argument>
+                        </arguments>
+                    </block>
+
+                    <block class="Magento\Cms\Block\Block" name="footer-map">
+                        <arguments>
+                            <argument name="block_id" xsi:type="string">footer-map</argument>
+                        </arguments>
+                    </block>
+
+                </container>
+                <container name="footer.wrap.links" htmlClass="footer-wrap-links" htmlTag="section" after="footer.wrap.contact">
+
+                    <block class="Magento\Cms\Block\Block" name="footer-links">
+                        <arguments>
+                            <argument name="block_id" xsi:type="string">footer-links</argument>
+                        </arguments>
+                    </block>
+
+                </container>
+            </referenceContainer>
+        </referenceContainer>
+
+        <referenceBlock name="store_switcher" remove="true"/>
+        <referenceBlock name="footer_links" remove="true"/>
+        <referenceBlock name="form.subscribe" remove="true"/>
 
         <move element="authorization-link" destination="in.header.links.list" after="customer-account-navigation-wish-list-link"/>
         <move element="register-link" destination="in.header.links.list" after="authorization-link"/>

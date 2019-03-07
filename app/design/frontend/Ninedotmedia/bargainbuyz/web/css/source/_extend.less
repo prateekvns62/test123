@@ -2,14 +2,211 @@
 
 @import "_variables_extend";
 
-
-
-
-
-
-
-
-
 & when (@media-common = true) {
 
+  .page-header {
+    .panel.wrapper{
+      display: none;
+    }
+    .header.content{
+      .lib-vendor-prefix-display(flex);
+      justify-content: space-between;
+      align-items: center;
+
+      .header-content-info{
+        color: rgba(0, 0, 0, 0.85);
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 15px;
+        padding-left: 25px;
+        position: relative;
+        order: 2;
+        margin: 0 39px 0 0;
+        max-width: 290px;
+        .icon-comment-alt-smile;
+        &:before{
+          .custom-icon-fonts();
+          position: absolute;
+          left: 0;
+          top: 50%;
+          color: #4ec300;
+          font-size: 20px;
+          line-height: 24px;
+          -webkit-transform: translateY(-50%);
+          -moz-transform: translateY(-50%);
+          -ms-transform: translateY(-50%);
+          -o-transform: translateY(-50%);
+          transform: translateY(-50%);
+        }
+      }
+
+      .minicart-wrapper{
+        min-width: 104px;
+        .lib-vendor-prefix-display(flex);
+        justify-content: flex-end;
+      }
+      .block-search{
+        order: 3;
+      }
+    }
+  }
+  .nav-toggle{
+    &:before{
+      color: #148b12;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 20px;
+    }
+  }
+
+  @media screen and (max-width: 1230px){
+    .page-header {
+      .header.panel{
+        .lib-vendor-prefix-display(flex);
+
+        .in-header-links{
+          order: 2;
+          width: 70%;
+          .transition(width, .5s);
+        }
+        & > .header.links{
+          order: 1;
+          width: 100%;
+          .transition(width, .5s);
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 980px){
+    .page-header {
+      .header.panel{
+        flex-wrap: wrap;
+        .in-header-links{
+          width: 100%;
+          padding-top: 5px;
+          .transition(width, .5s);
+        }
+      }
+    }
+  }
+
+}
+
+//
+//  Mobile
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+  .page-header {
+    .header.content {
+      padding: 10px 20px 0;
+      flex-wrap: wrap;
+      .header-content-info{
+        display: none;
+      }
+      .logo {
+        order: 1;
+        margin: auto auto auto 60px;
+        max-width: 150px;
+      }
+      .minicart-wrapper{
+        flex-basis: 50%;
+        width: 50%;
+        margin: auto 0;
+        float: none;
+        order: 2;
+        .action.showcart{
+          &:before{
+            font-size: 20px;
+          }
+          &.active{
+            &:before{
+              font-size: 20px;
+            }
+          }
+          .counter.qty{
+            font-size: 14px;
+            line-height: 20px;
+            margin: 5px 0 0;
+          }
+        }
+      }
+      .block-search {
+        flex-basis: 100%;
+        width: 100%;
+        background: #ff0000;
+        position: relative;
+        padding: 10px 20px;
+        margin: 10px -20px 0;
+        .label{
+          display: none;
+        }
+        .control{
+          border: 0;
+          margin: 0;
+          padding: 0;
+        }
+        .nested{
+          display: none;
+        }
+        .action.search{
+          right: 20px;
+          top: 10px;
+        }
+      }
+    }
+  }
+}
+
+//
+//  Desktop
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+  .page-header {
+
+    .panel.wrapper{
+      display: block;
+    }
+
+    .header.content {
+      padding: 19px 18px 21px;
+      .logo{
+        order: 1;
+        margin: auto 57px auto 0;
+      }
+      .minicart-wrapper{
+        order: 4;
+        margin: auto 0 auto 43px;
+        min-width: 104px;
+        .lib-vendor-prefix-display(flex);
+        justify-content: flex-end;
+        .action.showcart{
+          &:before{
+            font-size: 30px;
+          }
+          &.active{
+            &:before{
+              font-size: 30px;
+            }
+          }
+          .counter.qty{
+            font-size: 16px;
+            line-height: 24px;
+          }
+        }
+      }
+      .block-search{
+        margin: auto 76px auto 0;
+        padding: 0;
+      }
+
+
+      .header-content-info{
+        .inline-block();
+      }
+    }
+
+  }
 }
