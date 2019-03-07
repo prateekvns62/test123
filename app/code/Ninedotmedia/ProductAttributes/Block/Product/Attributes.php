@@ -45,7 +45,7 @@ class Attributes extends ProductAttributes
      */
     public function getProduct()
     {
-        return $this->product;
+        return ($this->product) ? $this->product : parent::getProduct();
     }
 
     /**
