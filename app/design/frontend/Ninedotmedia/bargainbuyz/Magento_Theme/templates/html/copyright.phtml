@@ -5,8 +5,10 @@
  */
 ?>
 <div class="copyright">
-    <span><?= /* @escapeNotVerified */ $block->getCopyright() ?></span>
-    <div class="copyright-text">
-        <?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('copyright-text')->toHtml();?>
+    <div class="copyright-content">
+        <span><?= /* @escapeNotVerified */ $block->getCopyright() ?></span>
+        <div class="copyright-text">
+            <?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('copyright-text')->toHtml();?>
+        </div>
     </div>
 </div>
