@@ -8,6 +8,7 @@ use Magento\Framework\Setup\UpgradeDataInterface;
 use \Magento\Catalog\Model\Product;
 use \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 use \Magento\Catalog\Model\Product\Attribute\Source\Boolean;
+use \Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend;
 
 class UpgradeData implements UpgradeDataInterface
 {
@@ -46,6 +47,10 @@ class UpgradeData implements UpgradeDataInterface
         if (version_compare($context->getVersion(), '0.1.1') < 0) {
             $this->createProductAttributeGroup($setup);
             $this->createDemoProductAttributes($setup);
+        }
+
+        if (version_compare($context->getVersion(), '0.1.2') < 0) {
+            $this->createAdvantagesAttribute($setup);
         }
 
         $setup->endSetup();
@@ -116,6 +121,28 @@ class UpgradeData implements UpgradeDataInterface
 
             $this->createAttribute($eavSetup, $key, $options);
         }
+    }
+
+    /**
+     * @param ModuleDataSetupInterface $setup
+     */
+    private function createAdvantagesAttribute(ModuleDataSetupInterface $setup)
+    {
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+        $key = 'advantages';
+        $attr = [
+            $key => [
+                'label'=>'Advantages','type'=>'multiselect','order'=>145, 'visible_in_frontend'=>1,
+                'option'=>['values'=>['Free, Fast delivery', 'Collect in store']]
+            ]
+        ];
+
+        $options = $this->getDropDownOptions($attr[$key]);
+        $options['group'] = 'Additional';
+        $options['backend'] = ArrayBackend::class;
+        $options['input'] = 'multiselect';
+
+        $this->createAttribute($eavSetup, $key, $options);
     }
 
     /**

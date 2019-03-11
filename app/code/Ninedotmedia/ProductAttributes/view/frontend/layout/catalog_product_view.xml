@@ -6,5 +6,9 @@
                    name="category.product.attributes"
                    template="Magento_Catalog::product/view/attributes.phtml" before="product.info.price"/>
         </referenceBlock>
+        <referenceBlock name="product.info.addtocart">
+            <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="additional.advantages"
+                   template="Ninedotmedia_ProductAttributes::product/additional/advantages.phtml" after="-"/>
+        </referenceBlock>
     </body>
 </page>
