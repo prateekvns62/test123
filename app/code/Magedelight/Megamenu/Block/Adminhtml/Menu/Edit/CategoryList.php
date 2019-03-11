@@ -150,7 +150,7 @@ class CategoryList extends \Magento\Catalog\Block\Adminhtml\Category\Tree
             if (!($this->getUseAjax() && $node->getLevel() > 1 && !$isParent)) {
                 foreach ($newarray as $child) {
                     $childCategory = $this->categoryRepository->get($child);
-                    $item['children'][] = $this->_getNodeJson($child, $level + 1);
+                    $item['children'][] = $this->_getNodeJson($childCategory, $level + 1);
                 }
             }
         }
