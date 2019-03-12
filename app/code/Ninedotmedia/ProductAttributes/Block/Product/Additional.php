@@ -72,6 +72,15 @@ class Additional extends Template
     }
 
     /**
+     * @return array|null|string
+     */
+    public function getCondition()
+    {
+        return ($product = $this->getProduct()) ?
+            $product->getAttributeText('ndm_condition') : null;
+    }
+
+    /**
      * @param string $data
      * @return array
      */

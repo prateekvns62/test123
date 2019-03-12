@@ -53,6 +53,10 @@ class UpgradeData implements UpgradeDataInterface
             $this->createAdvantagesAttribute($setup);
         }
 
+        if (version_compare($context->getVersion(), '0.1.3') < 0) {
+            $this->createConditionAttribute($setup);
+        }
+
         $setup->endSetup();
     }
 
@@ -143,6 +147,24 @@ class UpgradeData implements UpgradeDataInterface
         $options['input'] = 'multiselect';
 
         $this->createAttribute($eavSetup, $key, $options);
+    }
+
+    /**
+     * @param ModuleDataSetupInterface $setup
+     */
+    public function createConditionAttribute(ModuleDataSetupInterface $setup)
+    {
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+        $attrs = [
+            'condition' => ['label'=>'Condition','type'=>'dropdown','order'=>150,'visible_in_frontend'=>1,
+                'option'=>['values'=>['Brand new', 'Rated(A)', 'Rated(B)', 'Rated(C)', 'Rated(D)']]]
+        ];
+
+        foreach ($attrs as $key => $attr) {
+            $options = $this->getDropDownOptions($attr);
+            $options['group'] = 'Additional';
+            $this->createAttribute($eavSetup, $key, $options);
+        }
     }
 
     /**
