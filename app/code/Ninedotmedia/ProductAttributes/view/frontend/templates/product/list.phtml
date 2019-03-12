@@ -30,12 +30,14 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
         $image = 'category_page_grid';
         $showDescription = false;
         $showAttributes = true;
+        $showAdvantages = true;
         $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
     } else {
         $viewMode = 'list';
         $image = 'category_page_list';
         $showDescription = true;
         $showAttributes = true;
+        $showAdvantages = true;
         $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
     }
     /**
@@ -76,6 +78,14 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                         <?= $block->getProductDetailsHtml($_product) ?>
 
                         <div class="product-item-inner">
+                            <?php if($showAdvantages): ?>
+                                <div class="product additional product-item-advantages">
+                                    <?php if ($advantagesBlock = $block->getChildBlock('additional.advantages')): ?>
+                                        <?php  $advantagesBlock->setProduct($_product); ?>
+                                        <?= $block->getChildHtml('additional.advantages', false); ?>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
                             <?php if($showAttributes): ?>
                                 <div class="product attributes product-item-attributes">
                                     <?php if ($attrBlock = $block->getChildBlock('category.product.attributes')): ?>
