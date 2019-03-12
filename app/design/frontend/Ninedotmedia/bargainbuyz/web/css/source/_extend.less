@@ -3,6 +3,15 @@
 @import "_variables_extend";
 
 & when (@media-common = true) {
+  a,
+  .alink {
+    color: rgba(0, 0, 0, 0.85);
+    &:visited,
+    &:hover,
+    &:active{
+      color: #148b12;
+    }
+  }
 
   .cms-index-index{
     .page-wrapper{
@@ -474,85 +483,71 @@
               font-size: 14px;
               font-weight: 400;
               line-height: 16px;
-              padding: 0 0 14px 22px;
-              position: relative;
-              .icon-power-off;
-              &:before{
-                .custom-icon-fonts();
-                .lib-css(color, #ce0400);
-                font-size: 14px;
-                font-weight: 300;
-                line-height: 30px;
-                position: absolute;
-                top: -5px;
-                left: 0;
-                -webkit-transition: all .4s ease;
-                -moz-transition: all .4s ease;
-                -ms-transition: all .4s ease;
-                -o-transition: all .4s ease;
-                transition: all .4s ease;
-              }
+              padding: 0 0 14px 0;
 
               &.facebook{
-                .icon-facebook-square;
-                &:before{
-                  color: #017cc7;
-                  font-size: 14px;
-                  font-weight: 400;
-                  line-height: 30px;
-                  position: absolute;
-                  top: -6px;
-                  left: 0;
+                a{
+                  .icon-facebook-square;
+                  &:before{
+                    color: #017cc7;
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 30px;
+                    position: absolute;
+                    top: -6px;
+                    left: 0;
+                  }
                 }
                 &:hover{
-                  color: #017cc7;
-                  &:before{
-                    transform: none;
-                  }
                   a{
                     color: #017cc7;
+                    &:before{
+                      transform: none;
+                    }
                   }
                 }
               }
               &.instagram{
-                .icon-instagram;
-                &:before{
-                  font-size: 14px;
-                  font-weight: 400;
-                  line-height: 30px;
-                  color: #810478;
-                  position: absolute;
-                  top: -6px;
-                  left: 0;
+                a{
+                  .icon-instagram;
+                  &:before{
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 30px;
+                    color: #810478;
+                    position: absolute;
+                    top: -6px;
+                    left: 0;
+                  }
                 }
                 &:hover{
-                  color: #810478;
-                  &:before{
-                    transform: none;
-                  }
                   a{
                     color: #810478;
+                    &:before{
+                      transform: none;
+                    }
                   }
                 }
               }
               &.google-reviews{
-                .icon-google;
-                &:before{
-                  font-size: 14px;
-                  font-weight: 400;
-                  line-height: 30px;
-                  color: #ff0000;
-                  position: absolute;
-                  top: -6px;
-                  left: 0;
+                a{
+                  .icon-google;
+                  &:before{
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 30px;
+                    color: #ff0000;
+                    position: absolute;
+                    top: -6px;
+                    left: 0;
+                  }
                 }
                 &:hover{
-                  color: #ff0000;
-                  &:before{
-                    transform: none;
-                  }
                   a{
                     color: #ff0000;
+                    &:before{
+                      transform: none;
+                    }
                   }
                 }
               }
@@ -560,20 +555,37 @@
                 color: rgba(0, 0, 0, 0.85);
                 text-decoration: none;
                 cursor: pointer;
+                padding-left: 22px;
                 -webkit-transition: all .4s ease;
                 -moz-transition: all .4s ease;
                 -ms-transition: all .4s ease;
                 -o-transition: all .4s ease;
                 transition: all .4s ease;
+                position: relative;
+                .icon-power-off;
+                &:before{
+                  .custom-icon-fonts();
+                  .lib-css(color, #ce0400);
+                  font-size: 14px;
+                  font-weight: 300;
+                  line-height: 30px;
+                  position: absolute;
+                  top: -5px;
+                  left: 0;
+                  -webkit-transition: all .4s ease;
+                  -moz-transition: all .4s ease;
+                  -ms-transition: all .4s ease;
+                  -o-transition: all .4s ease;
+                  transition: all .4s ease;
+                }
               }
               &:hover{
-                color: #148b12;
-                &:before{
-                  transform: rotate(-315deg);
-                  color: #148b12;
-                }
                 a{
                   color: #148b12;
+                  &:before{
+                    transform: rotate(35deg);
+                    color: #148b12;
+                  }
                 }
               }
             }
