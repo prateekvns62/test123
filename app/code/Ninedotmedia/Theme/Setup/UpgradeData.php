@@ -54,6 +54,14 @@ class UpgradeData implements UpgradeDataInterface
      */
     const ATTR_GROUP = 'Characteristics';
 
+    /**
+     * UpgradeData constructor.
+     * @param EavSetupFactory $eavSetupFactory
+     * @param BlockRepositoryInterface $blockRepository
+     * @param BlockInterfaceFactory $blockInterfaceFactory
+     * @param PageRepositoryInterface $pageRepository
+     * @param PageInterfaceFactory $pageInterfaceFactory
+     */
     public function __construct(
         EavSetupFactory $eavSetupFactory,
         BlockRepositoryInterface $blockRepository,
@@ -658,7 +666,6 @@ EOD;
             $this->blockRepository->save($cmsBlock);
         } catch (\Exception $e) {
             echo $e->getMessage();
-            die('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
         }
     }
 
@@ -683,7 +690,6 @@ EOD;
             $this->pageRepository->save($cmsPage);
         } catch (\Exception $e) {
             echo $e->getMessage();
-            die('***********************************');
         }
     }
 }
