@@ -8,6 +8,9 @@
             <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional"
                    name="additional.advantages"
                    template="Ninedotmedia_ProductAttributes::product/additional/advantages.phtml"/>
+            <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional"
+                   name="additional.condition"
+                   template="Ninedotmedia_ProductAttributes::product/additional/condition.phtml"/>
             <block class="Ninedotmedia\ProductAttributes\Block\Product\Attributes"
                    name="category.product.attributes"
                    template="Magento_Catalog::product/view/attributes.phtml"/>
