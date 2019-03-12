@@ -31,6 +31,7 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
         $showDescription = false;
         $showAttributes = true;
         $showAdvantages = true;
+        $showCondition = true;
         $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
     } else {
         $viewMode = 'list';
@@ -38,8 +39,10 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
         $showDescription = true;
         $showAttributes = true;
         $showAdvantages = true;
+        $showCondition = true;
         $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
     }
+    $additionalBlock =
     /**
      * Position for actions regarding image size changing in vde if needed
      */
@@ -73,6 +76,14 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                                 <?= /* @escapeNotVerified */ $_helper->productAttribute($_product, $_product->getName(), 'name') ?>
                             </a>
                         </strong>
+                        <?php if($showCondition): ?>
+                            <div class="product additional product-item-condition">
+                                <?php if ($advantagesBlock = $block->getChildBlock('additional.condition')): ?>
+                                    <?php  $advantagesBlock->setProduct($_product); ?>
+                                    <?= $block->getChildHtml('additional.condition', false); ?>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
                         <?= $block->getReviewsSummaryHtml($_product, $templateType) ?>
                         <?= /* @escapeNotVerified */ $block->getProductPrice($_product) ?>
                         <?= $block->getProductDetailsHtml($_product) ?>
