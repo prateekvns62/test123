@@ -10,7 +10,7 @@
     &:visited,
     &:hover,
     &:active {
-      color: #148b12;
+      color: #ff0000;
     }
   }
 
@@ -1135,6 +1135,29 @@
 //  _____________________________________________
 
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+
+  .nav-sections-item-title{
+    .nav-sections-item-switch{
+      color: #ff0000;
+    }
+  }
+
+  .nav-sections {
+    .header{
+      &.links {
+        a{
+          color: rgba(0, 0, 0, 0.85);
+          &:hover{
+            color: #ff0000;
+          }
+        }
+        .header-links-phone,
+        .header-links-visit {
+          display: none;
+        }
+      }
+    }
+  }
 
   .page-header {
     margin: 0;

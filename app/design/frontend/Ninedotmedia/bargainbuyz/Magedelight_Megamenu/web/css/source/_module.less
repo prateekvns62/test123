@@ -71,8 +71,21 @@
           &.all-department{
             width: 270px;
             padding: 0;
+            background: #dbdbdb;
+            &:hover{
+              background: #dbdbdb;
+              & > a{
+                color: rgba(0, 0, 0, 0.85) !important;
+                &:before{
+                  color: #ff0000 !important;
+                }
+              }
+            }
             & > a{
               padding: .5em .8em;
+            }
+            &.has-active{
+              background: #dbdbdb;
             }
           }
 
@@ -228,10 +241,13 @@
           }
 
           &.has-active {
-            background: #f47727;
+            background: #ff0000;
 
             > a {
-              color: #fff;
+              color: #fff!important;
+              &:before{
+                color: #fff!important;
+              }
             }
 
             .megaitemicons {
@@ -285,11 +301,11 @@
                 }
 
                 &:hover {
-                  color: #1979c3;
+                  color: #ff0000;
                   padding: 0 0 0 6px;
 
                   &:before {
-                    color: #1979c3;
+                    color: #ff0000;
                   }
                 }
               }
@@ -1470,7 +1486,7 @@
       float: left;
       border: 0;
       border-bottom: #ddd solid 2px;
-
+      padding: 0;
       .menu {
         background: #fff;
         float: left;
@@ -1482,7 +1498,23 @@
             display: block;
             position: relative;
             border-top: #ddd solid 1px;
+            padding: 0;
+            &.all-department{
+              width: 100%;
+              background: none;
 
+              &:hover{
+                background: #ff0000;
+                color: #fff;
+                & > a{
+                  color: #fff!important;
+                }
+              }
+              &.has-active{
+                background: #ff0000;
+                color: #fff;
+              }
+            }
             &.single-links-block {
               ul {
                 &.column1 {
@@ -1497,8 +1529,14 @@
               }
 
               &.active {
-                background: #f47727;
+                background: #ff0000;
                 color: #fff;
+
+                .plus.active{
+                  &:before{
+                    color: #fff;
+                  }
+                }
               }
             }
 
@@ -1667,14 +1705,17 @@
             }
 
             &:hover {
-              background: #fff;
+              background: #ff0000;
               color: #333;
-
-              > a {
-                color: #000;
-
-                &.active {
+              span.plus{
+                &:before{
                   color: #fff;
+                }
+              }
+              > a {
+                color: #fff!important;
+                &.active {
+                  color: #000;
 
                   .megaitemicons {
                     &:before {
@@ -1691,10 +1732,23 @@
               }
             }
 
+            &.has-active,
+            &.active{
+              background: #ff0000;
+              & > a{
+                color: #fff!important;
+              }
+              span.plus{
+                &:before{
+                  color: #fff!important;
+                }
+              }
+            }
+
             &.open {
               > a {
                 color: #fff;
-                background: #f47727;
+                background: #ff0000;
 
                 &:before {
                   color: #fff;
@@ -1728,7 +1782,7 @@
 
               &.active {
                 &:before {
-                  color: #fff;
+                  color: #fff!important;
                 }
               }
             }
@@ -1736,6 +1790,12 @@
             &:hover {
               > ul {
                 display: none;
+              }
+
+              span.plus {
+                &:before{
+                  color: #fff;
+                }
               }
             }
 
@@ -1824,19 +1884,19 @@
             > li {
               span.plus {
                 &:before {
-                  color: #fff;
+                  color: #ff0000;
                 }
               }
 
               &:hover {
                 span.plus {
                   &:before {
-                    color: #333;
+                    color: #fff;
                   }
 
                   &.active {
                     &:before {
-                      color: #fff;
+                      color: #fff!important;
                     }
                   }
                 }
