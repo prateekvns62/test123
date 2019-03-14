@@ -7,7 +7,8 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\Phrase;
 use Magento\Catalog\Block\Product\View\Attributes as ProductAttributes;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
-use Ninedotmedia\ProductAttributes\Helper\Config as ConfigHelper;
+use Ninedotmedia\ThemeConfiguration\Helper\Configuration as ConfigHelper;
+use Magento\Catalog\Model\Config;
 
 class Attributes extends ProductAttributes
 {
@@ -17,18 +18,30 @@ class Attributes extends ProductAttributes
     private $product = null;
 
     /**
+     * @var Config
+     */
+    private $configModel;
+
+    /**
      * @var ConfigHelper
      */
     private $configHelper;
+
+    /**
+     * Group name
+     */
+    const CHARACTERISTIC_GROUP = 'Characteristics';
 
     public function __construct(
         Context $context,
         Registry $registry,
         PriceCurrencyInterface $priceCurrency,
         ConfigHelper $configHelper,
+        Config $configModel,
         array $data = []
     ) {
         $this->configHelper = $configHelper;
+        $this->configModel = $configModel;
         parent::__construct($context, $registry, $priceCurrency, $data);
     }
 
@@ -56,18 +69,24 @@ class Attributes extends ProductAttributes
     {
         $data = [];
         $product = $this->getProduct();
+        $attributeSetId = $product->getAttributeSetId();
+        $characteristicGroup =  ($attributeSetId) ? $this->getCharacteristicsGroup($attributeSetId) : null;
 
-        if (!$product) {
+        if (!$product || !$attributeSetId || !$characteristicGroup) {
             return $data;
         }
 
         $counter = 0;
         $attributes = $product->getAttributes();
+        $productQtyConfig = $this->configHelper->getAttributesQty();
         foreach ($attributes as $attribute) {
-            if ($counter == $this->configHelper->getAttributesQty()) {
+            if ($counter == $productQtyConfig) {
                 break;
             }
-            if ($attribute->getIsVisibleOnFront() && !in_array($attribute->getAttributeCode(), $excludeAttr)) {
+            if ($attribute->getIsVisibleOnFront() &&
+                !in_array($attribute->getAttributeCode(), $excludeAttr) &&
+                $attribute->isInGroup($attributeSetId, $characteristicGroup)
+            ) {
                 $value = $attribute->getFrontend()->getValue($product);
 
                 if ($value instanceof Phrase) {
@@ -87,5 +106,22 @@ class Attributes extends ProductAttributes
             }
         }
         return $data;
+    }
+
+    /**
+     * @param int|string $attributeSetId
+     * @return bool|float|int|string
+     */
+    private function getCharacteristicsGroup($attributeSetId)
+    {
+        return $this->configModel->getAttributeGroupId($attributeSetId, self::CHARACTERISTIC_GROUP);
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getAttributesQty()
+    {
+        return ;
     }
 }

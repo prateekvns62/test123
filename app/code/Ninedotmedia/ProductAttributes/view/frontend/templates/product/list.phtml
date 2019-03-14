@@ -18,6 +18,7 @@ use Magento\Framework\App\Action\Action;
 <?php
 $_productCollection = $block->getLoadedProductCollection();
 $_helper = $this->helper('Magento\Catalog\Helper\Output');
+$additionalHelper = $this->helper('Ninedotmedia\ProductAttributes\Helper\Additional');
 ?>
 <?php if (!$_productCollection->count()): ?>
     <div class="message info empty"><div><?= /* @escapeNotVerified */ __('We can\'t find products matching the selection.') ?></div></div>
@@ -30,14 +31,19 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
         $image = 'category_page_grid';
         $showDescription = false;
         $showAttributes = true;
+        $showAdvantages = true;
+        $showCondition = true;
         $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
     } else {
         $viewMode = 'list';
         $image = 'category_page_list';
         $showDescription = true;
         $showAttributes = true;
+        $showAdvantages = true;
+        $showCondition = true;
         $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
     }
+    $additionalBlock =
     /**
      * Position for actions regarding image size changing in vde if needed
      */
@@ -61,6 +67,14 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                     <a href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
                         <?= $productImage->toHtml() ?>
                     </a>
+                    <div class="product-labels">
+                        <?= $additionalHelper->getLabel(
+                            $_product, 'saved_money', [
+                                'label' => __('Save'),
+                                'class' => 'promo-saved-money'
+                            ]); ?>
+                        <?= $additionalHelper->getLabel($_product, 'guarantee',['class' => 'promo-guarantee']); ?>
+                    </div>
                     <div class="product details product-item-details">
                         <?php
                             $_productNameStripped = $block->stripTags($_product->getName(), null, true);
@@ -71,11 +85,27 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                                 <?= /* @escapeNotVerified */ $_helper->productAttribute($_product, $_product->getName(), 'name') ?>
                             </a>
                         </strong>
+                        <?php if($showCondition): ?>
+                            <div class="product additional product-item-condition">
+                                <?php if ($advantagesBlock = $block->getChildBlock('additional.condition')): ?>
+                                    <?php  $advantagesBlock->setProduct($_product); ?>
+                                    <?= $block->getChildHtml('additional.condition', false); ?>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
                         <?= $block->getReviewsSummaryHtml($_product, $templateType) ?>
                         <?= /* @escapeNotVerified */ $block->getProductPrice($_product) ?>
                         <?= $block->getProductDetailsHtml($_product) ?>
 
                         <div class="product-item-inner">
+                            <?php if($showAdvantages): ?>
+                                <div class="product additional product-item-advantages">
+                                    <?php if ($advantagesBlock = $block->getChildBlock('additional.advantages')): ?>
+                                        <?php  $advantagesBlock->setProduct($_product); ?>
+                                        <?= $block->getChildHtml('additional.advantages', false); ?>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
                             <?php if($showAttributes): ?>
                                 <div class="product attributes product-item-attributes">
                                     <?php if ($attrBlock = $block->getChildBlock('category.product.attributes')): ?>
@@ -92,6 +122,11 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                                             <input type="hidden" name="product" value="<?= /* @escapeNotVerified */ $postParams['data']['product'] ?>">
                                             <input type="hidden" name="<?= /* @escapeNotVerified */ Action::PARAM_NAME_URL_ENCODED ?>" value="<?= /* @escapeNotVerified */ $postParams['data'][Action::PARAM_NAME_URL_ENCODED] ?>">
                                             <?= $block->getBlockHtml('formkey') ?>
+                                            <a class="product-item-link" href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>">
+                                                <span>
+                                                    <?= /* @escapeNotVerified */ __('Info') ?>
+                                                </span>
+                                            </a>
                                             <button type="submit"
                                                     title="<?= $block->escapeHtml(__('Add to Cart')) ?>"
                                                     class="action tocart primary">

@@ -5,6 +5,26 @@
             <block class="Ninedotmedia\ProductAttributes\Block\Product\Attributes"
                    name="category.product.attributes"
                    template="Magento_Catalog::product/view/attributes.phtml" before="product.info.price"/>
+            <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional"
+                   name="additional.condition"
+                   template="Ninedotmedia_ProductAttributes::product/additional/condition.phtml" before="category.product.attributes"/>
+            <block class="Ninedotmedia\ProductAttributes\Block\Product\Label" name="product.label.save" before="category.product.attributes">
+                <arguments>
+                    <argument name="type" xsi:type="string">saved_money</argument>
+                    <argument translate="true" name="label" xsi:type="string">Save</argument>
+                    <argument name="class" xsi:type="string">promo-saved-money</argument>
+                </arguments>
+            </block>
+            <block class="Ninedotmedia\ProductAttributes\Block\Product\Label" name="product.label.guarantee" before="category.product.attributes">
+                <arguments>
+                    <argument name="type" xsi:type="string">guarantee</argument>
+                    <argument name="class" xsi:type="string">promo-guarantee</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+        <referenceBlock name="product.info.addtocart">
+            <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="additional.advantages"
+                   template="Ninedotmedia_ProductAttributes::product/additional/advantages.phtml" after="-"/>
         </referenceBlock>
     </body>
 </page>
