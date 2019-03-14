@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <theme_settings>
+            <product>
+                <attr_qty>5</attr_qty>
+            </product>
+            <homepage>
+                <limit>12</limit>
+            </homepage>
+            <header>
+                <visit_label>Visit our showroom</visit_label>
+                <visit_url>#</visit_url>
+                <contact_message><![CDATA[<li class="header-links-phone">Call <strong>0116 271 0320</strong> or <strong>07982 134 105</strong></li>]]></contact_message>
+            </header>
+        </theme_settings>
+    </default>
+</config>
