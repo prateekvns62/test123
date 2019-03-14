@@ -38,5 +38,6 @@
                 </container>
             </referenceContainer>
         </referenceContainer>
+        <move element="category.view.container" destination="main" before="-"/>
     </body>
 </page>

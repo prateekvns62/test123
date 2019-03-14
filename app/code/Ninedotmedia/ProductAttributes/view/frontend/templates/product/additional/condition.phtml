@@ -1,3 +1,5 @@
-<div class="product-condition">
-    <?= $block->getCondition(); ?>
-</div>
+<?php if ($condition = $block->getCondition()): ?>
+    <div class="product-condition">
+        <?= $condition; ?>
+    </div>
+<?php endif; ?>
