@@ -113,6 +113,11 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                                             <input type="hidden" name="product" value="<?= /* @escapeNotVerified */ $postParams['data']['product'] ?>">
                                             <input type="hidden" name="<?= /* @escapeNotVerified */ Action::PARAM_NAME_URL_ENCODED ?>" value="<?= /* @escapeNotVerified */ $postParams['data'][Action::PARAM_NAME_URL_ENCODED] ?>">
                                             <?= $block->getBlockHtml('formkey') ?>
+                                            <a class="product-item-link" href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>">
+                                                <span>
+                                                    <?= /* @escapeNotVerified */ __('Info') ?>
+                                                </span>
+                                            </a>
                                             <button type="submit"
                                                     title="<?= $block->escapeHtml(__('Add to Cart')) ?>"
                                                     class="action tocart primary">
