@@ -4,8 +4,9 @@ namespace Ninedotmedia\HomeCategoryTabs\Helper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Ninedotmedia\ThemeConfiguration\Helper\Configuration;
 
-class Category extends Config
+class Category extends Configuration
 {
     /**
      * @var CategoryRepositoryInterface
@@ -53,7 +54,7 @@ class Category extends Config
             $result = $category->getProductCollection()
                 ->addAttributeToSelect('*')
                 ->addAttributeToSort('position', 'ASC')
-                ->setPageSize($this->getPerProduct());
+                ->setPageSize($this->getProductPerTab());
         }
         return $result;
     }

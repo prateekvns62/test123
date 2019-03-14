@@ -7,7 +7,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\Phrase;
 use Magento\Catalog\Block\Product\View\Attributes as ProductAttributes;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
-use Ninedotmedia\ProductAttributes\Helper\Config as ConfigHelper;
+use Ninedotmedia\ThemeConfiguration\Helper\Configuration as ConfigHelper;
 use Magento\Catalog\Model\Config;
 
 class Attributes extends ProductAttributes
@@ -78,8 +78,9 @@ class Attributes extends ProductAttributes
 
         $counter = 0;
         $attributes = $product->getAttributes();
+        $productQtyConfig = $this->configHelper->getAttributesQty();
         foreach ($attributes as $attribute) {
-            if ($counter == $this->configHelper->getAttributesQty()) {
+            if ($counter == $productQtyConfig) {
                 break;
             }
             if ($attribute->getIsVisibleOnFront() &&
@@ -114,5 +115,13 @@ class Attributes extends ProductAttributes
     private function getCharacteristicsGroup($attributeSetId)
     {
         return $this->configModel->getAttributeGroupId($attributeSetId, self::CHARACTERISTIC_GROUP);
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getAttributesQty()
+    {
+        return ;
     }
 }

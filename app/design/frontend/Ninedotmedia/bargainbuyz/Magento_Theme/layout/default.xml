@@ -33,22 +33,6 @@
             </container>
         </referenceBlock>
 
-        <referenceBlock name="header.links">
-
-            <block class="Magento\Cms\Block\Block" name="header-links-phone" after="header">
-                <arguments>
-                    <argument name="block_id" xsi:type="string">header-links-phone</argument>
-                </arguments>
-            </block>
-
-            <block class="Magento\Cms\Block\Block" name="header-links-visit" after="header-links-phone">
-                <arguments>
-                    <argument name="block_id" xsi:type="string">header-links-visit</argument>
-                </arguments>
-            </block>
-
-        </referenceBlock>
-
         <referenceBlock name="logo">
             <arguments>
                 <argument name="logo_img_width" xsi:type="number">272</argument>

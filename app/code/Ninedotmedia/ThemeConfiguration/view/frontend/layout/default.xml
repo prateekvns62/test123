@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="3columns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="default_head_blocks"/>
+    <body>
+        <referenceBlock name="header.links">
+            <block class="Ninedotmedia\ThemeConfiguration\Block\HeaderLink" name="header.link.contact">
+                <arguments>
+                    <argument name="type" xsi:type="string">contact</argument>
+                </arguments>
+            </block>
+
+            <block class="Ninedotmedia\ThemeConfiguration\Block\HeaderLink" name="header.link.visit">
+                <arguments>
+                    <argument name="type" xsi:type="string">visit</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

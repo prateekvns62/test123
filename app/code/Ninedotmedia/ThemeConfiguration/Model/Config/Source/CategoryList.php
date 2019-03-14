@@ -1,9 +1,9 @@
 <?php
-namespace Ninedotmedia\HomeCategoryTabs\Model\Config\Source;
+namespace Ninedotmedia\ThemeConfiguration\Model\Config\Source;
 
 use Magento\Framework\Option\ArrayInterface;
-use \Magento\Catalog\Helper\Category;
-use \Magento\Catalog\Model\CategoryRepository;
+use Magento\Catalog\Helper\Category;
+use Magento\Catalog\Model\CategoryRepository;
 
 class CategoryList implements ArrayInterface
 {
