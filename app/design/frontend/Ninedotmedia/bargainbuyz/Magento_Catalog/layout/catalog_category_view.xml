@@ -39,6 +39,6 @@
             </referenceContainer>
         </referenceContainer>
         <move element="category.view.container" destination="main" before="-"/>
-        <move element="category.cms" destination="main" after="-"/>
+        <move element="category.description" destination="main" after="-"/>
     </body>
 </page>
