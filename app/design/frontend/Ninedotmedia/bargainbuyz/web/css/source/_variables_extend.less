@@ -334,3 +334,36 @@ select:not([disabled]) {
     .lib-css(box-shadow, 0 0 0 2px rgba(0, 123, 255, 0.25));
   }
 }
+
+input[type="checkbox"] {
+  vertical-align: top;
+  width: 13px;
+  height: 13px;
+  border: 1px solid rgba(0, 0, 0, 0.85);
+  margin: 0 3px 0 0;
+  cursor: pointer;
+  position: relative;
+  color: rgba(0, 0, 0, 0.85);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+}
+
+input[type="checkbox"]:checked:before {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 10px;
+  line-height: 10px;
+  color: #148b12;
+  content: '\e610';
+  font-family: 'luma-icons';
+  display: inline-block;
+  vertical-align: middle;
+  font-weight: normal;
+  overflow: hidden;
+  speak: none;
+  width: 12px;
+  height: 12px;
+  text-align: center;
+}

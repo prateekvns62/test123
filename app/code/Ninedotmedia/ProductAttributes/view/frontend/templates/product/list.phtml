@@ -64,17 +64,20 @@ $additionalHelper = $this->helper('Ninedotmedia\ProductAttributes\Helper\Additio
                     }
                     ?>
                     <?php // Product Image ?>
-                    <a href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
-                        <?= $productImage->toHtml() ?>
-                    </a>
-                    <div class="product-labels">
-                        <?= $additionalHelper->getLabel(
-                            $_product, 'saved_money', [
+                    <div class="wrap-item-photo">
+                        <a href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                            <?= $productImage->toHtml() ?>
+                        </a>
+                        <div class="product-labels grid-mode">
+                            <?= $additionalHelper->getLabel(
+                                $_product, 'saved_money', [
                                 'label' => __('Save'),
                                 'class' => 'promo-saved-money'
                             ]); ?>
-                        <?= $additionalHelper->getLabel($_product, 'guarantee',['class' => 'promo-guarantee']); ?>
+                            <?= $additionalHelper->getLabel($_product, 'guarantee',['class' => 'promo-guarantee']); ?>
+                        </div>
                     </div>
+
                     <div class="product details product-item-details">
                         <?php
                             $_productNameStripped = $block->stripTags($_product->getName(), null, true);
@@ -85,6 +88,14 @@ $additionalHelper = $this->helper('Ninedotmedia\ProductAttributes\Helper\Additio
                                 <?= /* @escapeNotVerified */ $_helper->productAttribute($_product, $_product->getName(), 'name') ?>
                             </a>
                         </strong>
+                        <div class="product-labels grid-mode mobile list">
+                            <?= $additionalHelper->getLabel(
+                                $_product, 'saved_money', [
+                                'label' => __('Save'),
+                                'class' => 'promo-saved-money'
+                            ]); ?>
+                            <?= $additionalHelper->getLabel($_product, 'guarantee',['class' => 'promo-guarantee']); ?>
+                        </div>
                         <?php if($showCondition): ?>
                             <div class="product additional product-item-condition">
                                 <?php if ($advantagesBlock = $block->getChildBlock('additional.condition')): ?>
