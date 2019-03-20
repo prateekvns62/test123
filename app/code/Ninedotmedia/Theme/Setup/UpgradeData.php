@@ -23,7 +23,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Widget\Model\Widget\InstanceFactory as WidgetInstance;
 use Magento\Catalog\Block\Widget\RecentlyViewed;
 use Magento\Backend\App\Area\FrontNameResolver;
-use \Magento\Framework\App\State;
+use Magento\Framework\App\State;
+use Magento\Cms\Block\Widget\Block as CMSBlock;
 
 class UpgradeData implements UpgradeDataInterface
 {
@@ -140,6 +141,10 @@ class UpgradeData implements UpgradeDataInterface
 
         if (version_compare($context->getVersion(), '0.1.5') < 0) {
             $this->createProductLinkBlockRecentlyWidget();
+        }
+
+        if (version_compare($context->getVersion(), '0.1.6') < 0) {
+            $this->createContactPageBlockAndWidgets();
         }
 
         $setup->endSetup();
@@ -704,44 +709,113 @@ EOT;
         $this->checkAndCreateBlock('product-links', ['title' => 'Product Links', 'content' => $content]);
         $this->writerInterface->save('design/head/includes', $themeSettingHead, ScopeInterface::SCOPE_STORES, 1);
 
-        $themeId = $this->scopeConfig->getValue('design/theme/theme_id', ScopeInterface::SCOPE_WEBSITES);
-        if (is_numeric($themeId)) {
-            $widgetParams = [
-                'uiComponent'       => 'widget_recently_viewed',
-                'page_size'         => '5',
-                'show_attributes'   => ['name','image','price','learn_more'],
-                'show_buttons'      => ['add_to_cart','add_to_wishlist']
-            ];
+        $widgetParams = [
+            'uiComponent'       => 'widget_recently_viewed',
+            'page_size'         => '5',
+            'show_attributes'   => ['name','image','price','learn_more'],
+            'show_buttons'      => ['add_to_cart','add_to_wishlist']
+        ];
 
-            $recentlyViewWidget = [
-                'instance_type' => RecentlyViewed::class,
-                'theme_id' => 4,
-                'title' => 'Recently viewed products',
-                'store_ids' => '0',
-                'widget_parameters' => json_encode($widgetParams),
+        $recentlyViewWidget = [
+            'instance_type' => RecentlyViewed::class,
+            'title' => 'Recently viewed products',
+            'store_ids' => '0',
+            'widget_parameters' => json_encode($widgetParams),
+            'sort_order' => 0,
+            'page_groups' => [[
+                'page_group' => 'all_products',
+                'all_products' => [
+                    'page_id' => null,
+                    'layout_handle' => 'catalog_product_view',
+                    'block' => 'content',
+                    'for' => 'all',
+                    'template' => 'product/widget/viewed/grid.phtml'
+                ]
+            ]]
+        ];
+
+        $this->createWidget($recentlyViewWidget);
+    }
+
+    public function createContactPageBlockAndWidgets()
+    {
+        $contactUsInfo = <<<EOT
+<div class="wrap-list">
+<strong class="title">Help and support links</strong>
+<ul>
+<li class="delivery"><a href="#">Delivery Information</a></li>
+<li class="returns"><a href="#">Returns</a></li>
+<li class="terms"><a href="#">Terms & Conditions</a></li>
+</ul>
+</div>
+<div class="wrap-list">
+<strong class="title">Get In touch</strong>
+<ul>
+<li class="fax"><a href="tel:0116 271 0320">0116 271 0320</a></li>
+<li class="tel"><a href="tel:0798 213 4105">0798 213 4105</a></li>
+<li class="email"><a href="mailto:sales@bargainbuyz.co.uk">sales@bargainbuyz.co.uk</a></li>
+</ul>
+</div>
+EOT;
+        $contactPageMap = <<<EOT
+<div class="wrap-map-block">
+<div class="wrap-list">
+<strong class="title">Visit our showroom</strong>
+<ul>
+<li class="address">47 London Road Oadby Leicester LE2 5DN</li>
+</ul>
+</div>
+<div class="map-block"><img src="media url="wysiwyg/map-contact-page.png"" alt="" /></div>
+<ul class="text">
+<li>Ikstar Limited T/a Bargain Buyz. Company Number: 9820690.</li>
+<li>Regisitered Office Address: 47 London Road, Oadby, Leicester LE2 5DN.</li>
+</ul>
+</div>
+EOT;
+
+        $blocks = [
+            'contact-us-info' => ['title' => 'Contact us info', 'content' => $contactUsInfo],
+            'contact-page-map' => ['title' => 'Contact Page Map', 'content' => $contactPageMap]
+        ];
+
+        foreach ($blocks as $key => $block) {
+            $this->checkAndCreateBlock($key, $block);
+        }
+
+        $pageGroups = [[
+            'page_group' => 'pages',
+            'pages' => [
+                'page_id' => null,
+                'layout_handle' => 'contact_index_index',
+                'block' => 'content',
+                'for' => 'all',
+                'template' => 'widget/static_block/default.phtml'
+            ]
+        ]];
+
+        $instanceTypeCms = CMSBlock::class;
+        $storesIds = '0';
+        $widgets = [
+            'contactUsInfo' => [
+                'instance_type' => $instanceTypeCms,
+                'title' => 'Contact Us Info',
+                'store_ids' => $storesIds,
+                'widget_parameters' => json_encode(['block_id'=>'14']),
                 'sort_order' => 0,
-                'page_groups' => [[
-                    'page_group' => 'all_products',
-                    'all_products' => [
-                        'page_id' => null,
-                        'layout_handle' => 'catalog_product_view',
-                        'block' => 'content',
-                        'for' => 'all',
-                        'template' => 'product/widget/viewed/grid.phtml'
-                    ]
-                ]]
-            ];
+                'page_groups' => $pageGroups
+            ],
+            'contactUsInfoMap' => [
+                'instance_type' => $instanceTypeCms,
+                'title' => 'Contact Page Map',
+                'store_ids' => $storesIds,
+                'widget_parameters' => json_encode(['block_id'=>'15']),
+                'sort_order' => 1,
+                'page_groups' => $pageGroups
+            ]
+        ];
 
-            try {
-                $this->appState->emulateAreaCode(
-                    FrontNameResolver::AREA_CODE,
-                    function () use ($recentlyViewWidget) {
-                        $this->widgetFactory->create()->setData($recentlyViewWidget)->save();
-                    }
-                );
-            } catch (\Exception $e) {
-                echo $e->getMessage();
-            }
+        foreach ($widgets as $widget) {
+            $this->createWidget($widget);
         }
     }
 
@@ -765,6 +839,31 @@ EOT;
             $this->blockRepository->save($cmsBlock);
         } catch (\Exception $e) {
             echo $e->getMessage();
+        }
+    }
+
+    /**
+     * @param array $params
+     */
+    private function createWidget(array $params)
+    {
+        $themeId = $this->scopeConfig->getValue(
+            'design/theme/theme_id',
+            ScopeInterface::SCOPE_WEBSITES
+        );
+
+        if (is_numeric($themeId)) {
+            $params['theme_id'] = $themeId;
+            try {
+                $this->appState->emulateAreaCode(
+                    FrontNameResolver::AREA_CODE,
+                    function () use ($params) {
+                        $this->widgetFactory->create()->setData($params)->save();
+                    }
+                );
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
         }
     }
 
