@@ -17,6 +17,13 @@ use Magento\Cms\Api\Data\PageInterfaceFactory;
 use Magento\Cms\Api\PageRepositoryInterface;
 use Magento\Store\Model\Store;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\App\Config\Storage\WriterInterface;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Widget\Model\Widget\InstanceFactory as WidgetInstance;
+use Magento\Catalog\Block\Widget\RecentlyViewed;
+use Magento\Backend\App\Area\FrontNameResolver;
+use \Magento\Framework\App\State;
 
 class UpgradeData implements UpgradeDataInterface
 {
@@ -45,6 +52,23 @@ class UpgradeData implements UpgradeDataInterface
     private $pageInterfaceFactory;
 
     /**
+     * @var WriterInterface
+     */
+    private $writerInterface;
+
+    /**
+     * @var WidgetInstance
+     */
+    private $widgetFactory;
+
+    /**
+     * @var State
+     */
+    private $appState;
+
+    private $scopeConfig;
+
+    /**
      * Attribute prefix
      */
     const ATTR_PREFIX = 'ndm_';
@@ -61,19 +85,31 @@ class UpgradeData implements UpgradeDataInterface
      * @param BlockInterfaceFactory $blockInterfaceFactory
      * @param PageRepositoryInterface $pageRepository
      * @param PageInterfaceFactory $pageInterfaceFactory
+     * @param WriterInterface $writerInterface
+     * @param WidgetInstance $widgetFactory
+     * @param State $appState
+     * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         EavSetupFactory $eavSetupFactory,
         BlockRepositoryInterface $blockRepository,
         BlockInterfaceFactory $blockInterfaceFactory,
         PageRepositoryInterface $pageRepository,
-        PageInterfaceFactory $pageInterfaceFactory
+        PageInterfaceFactory $pageInterfaceFactory,
+        WriterInterface $writerInterface,
+        WidgetInstance $widgetFactory,
+        State $appState,
+        ScopeConfigInterface $scopeConfig
     ) {
         $this->eavSetupFactory = $eavSetupFactory;
         $this->blockRepository = $blockRepository;
         $this->blockInterfaceFactory = $blockInterfaceFactory;
         $this->pageRepository = $pageRepository;
         $this->pageInterfaceFactory = $pageInterfaceFactory;
+        $this->writerInterface = $writerInterface;
+        $this->widgetFactory = $widgetFactory;
+        $this->appState = $appState;
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -100,6 +136,10 @@ class UpgradeData implements UpgradeDataInterface
         if (version_compare($context->getVersion(), '0.1.4') < 0) {
             $this->createCmsBlocks();
             $this->createCmsPages();
+        }
+
+        if (version_compare($context->getVersion(), '0.1.5') < 0) {
+            $this->createProductLinkBlockRecentlyWidget();
         }
 
         $setup->endSetup();
@@ -643,6 +683,65 @@ EOD;
 
         foreach ($pages as $key => $page) {
             $this->checkAndCreatePage($key, $page);
+        }
+    }
+
+    /**
+     * Product Links - CMS Block
+     * Recently viewed products - Widget
+     */
+    public function createProductLinkBlockRecentlyWidget()
+    {
+        $content = <<<EOD
+<a href="#">This item is graded and may have cosmetic marks. Please see all pictures before purchasing. 
+For further information please call us on 0116 2710320 or 07982 134105.</a>
+EOD;
+        $themeSettingHead = <<<EOT
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5c910d0328c024a8" async="async">
+</script>
+EOT;
+
+        $this->checkAndCreateBlock('product-links', ['title' => 'Product Links', 'content' => $content]);
+        $this->writerInterface->save('design/head/includes', $themeSettingHead, ScopeInterface::SCOPE_STORES, 1);
+
+        $themeId = $this->scopeConfig->getValue('design/theme/theme_id', ScopeInterface::SCOPE_WEBSITES);
+        if (is_numeric($themeId)) {
+            $widgetParams = [
+                'uiComponent'       => 'widget_recently_viewed',
+                'page_size'         => '5',
+                'show_attributes'   => ['name','image','price','learn_more'],
+                'show_buttons'      => ['add_to_cart','add_to_wishlist']
+            ];
+
+            $recentlyViewWidget = [
+                'instance_type' => RecentlyViewed::class,
+                'theme_id' => 4,
+                'title' => 'Recently viewed products',
+                'store_ids' => '0',
+                'widget_parameters' => json_encode($widgetParams),
+                'sort_order' => 0,
+                'page_groups' => [[
+                    'page_group' => 'all_products',
+                    'all_products' => [
+                        'page_id' => null,
+                        'layout_handle' => 'catalog_product_view',
+                        'block' => 'content',
+                        'for' => 'all',
+                        'template' => 'product/widget/viewed/grid.phtml'
+                    ]
+                ]]
+            ];
+
+            try {
+                $this->appState->emulateAreaCode(
+                    FrontNameResolver::AREA_CODE,
+                    function () use ($recentlyViewWidget) {
+                        $this->widgetFactory->create()->setData($recentlyViewWidget)->save();
+                    }
+                );
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
         }
     }
 

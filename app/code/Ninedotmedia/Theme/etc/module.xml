@@ -1,4 +1,8 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Ninedotmedia_Theme" setup_version="0.1.4"/>
+    <module name="Ninedotmedia_Theme" setup_version="0.1.5">
+        <sequence>
+            <module name="Magento_Widget"/>
+        </sequence>
+    </module>
 </config>
