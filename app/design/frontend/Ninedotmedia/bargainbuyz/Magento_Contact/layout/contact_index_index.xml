@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Get help and support</title>
+    </head>
+    <body>
+        <referenceBlock name="breadcrumbs">
+            <action method="addCrumb">
+                <argument name="crumbName" xsi:type="string" translate="true">Home</argument>
+                <argument name="crumbInfo" xsi:type="array">
+                    <item name="title" xsi:type="string" translate="true">Home</item>
+                    <item name="label" xsi:type="string" translate="true">Home</item>
+                    <item name="link" xsi:type="string">{{baseUrl}}</item>
+                </argument>
+            </action>
+            <action method="addCrumb">
+                <argument name="crumbName" xsi:type="string" translate="true">Contact Us</argument>
+                <argument name="crumbInfo" xsi:type="array">
+                    <item name="title" xsi:type="string" translate="true">Contact Us</item>
+                    <item name="label" xsi:type="string" translate="true">Contact Us</item>
+                </argument>
+            </action>
+        </referenceBlock>
+
+        <container name="homepage.content.list.block" htmlClass="holder-content-list-block" htmlTag="div">
+
+            <block class="Magento\Cms\Block\Block" name="homepage-block-reviews">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-block-reviews</argument>
+                </arguments>
+            </block>
+
+            <block class="Magento\Cms\Block\Block" name="homepage-block-interest">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-block-interest</argument>
+                </arguments>
+            </block>
+
+            <block class="Magento\Cms\Block\Block" name="homepage-block-delivery">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-block-delivery</argument>
+                </arguments>
+            </block>
+
+            <block class="Magento\Cms\Block\Block" name="homepage-block-leading">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-block-leading</argument>
+                </arguments>
+            </block>
+
+        </container>
+
+        <move element="homepage.content.list.block" destination="main" after="-"/>
+
+        <referenceBlock name="footer.wrap.contact" remove="true"/>
+        <referenceBlock name="footer.grey.block.info" remove="true"/>
+    </body>
+</page>

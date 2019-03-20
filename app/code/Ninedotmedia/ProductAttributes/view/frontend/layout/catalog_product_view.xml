@@ -10,14 +10,14 @@
                    template="Ninedotmedia_ProductAttributes::product/additional/condition.phtml" before="category.product.attributes"/>
 
             <container name="holder.product.label" htmlClass="holder-products-label" htmlTag="div">
-                <block class="Ninedotmedia\ProductAttributes\Block\Product\Label" name="product.label.save" before="category.product.attributes">
+                <block class="Ninedotmedia\ProductAttributes\Block\Product\Label" name="product.label.save" before="-">
                     <arguments>
                         <argument name="type" xsi:type="string">saved_money</argument>
                         <argument translate="true" name="label" xsi:type="string">Save</argument>
                         <argument name="class" xsi:type="string">promo-saved-money</argument>
                     </arguments>
                 </block>
-                <block class="Ninedotmedia\ProductAttributes\Block\Product\Label" name="product.label.guarantee" before="category.product.attributes">
+                <block class="Ninedotmedia\ProductAttributes\Block\Product\Label" name="product.label.guarantee" after="product.label.save">
                     <arguments>
                         <argument name="type" xsi:type="string">guarantee</argument>
                         <argument name="class" xsi:type="string">promo-guarantee</argument>
@@ -41,5 +41,7 @@
 
         </referenceBlock>
         <move element="holder.additional.advantages" destination="product.info.main" after="category.product.attributes"/>
+        <move element="holder.product.label" destination="product.info.main" before="category.product.attributes"/>
+        <move element="product.info.social" destination="product.info.addtocart" before="-"/>
     </body>
 </page>
