@@ -147,6 +147,10 @@ class UpgradeData implements UpgradeDataInterface
             $this->createContactPageBlockAndWidgets();
         }
 
+        if (version_compare($context->getVersion(), '0.1.7') < 0) {
+            $this->repairContactPageMapBlock();
+        }
+
         $setup->endSetup();
     }
 
@@ -737,6 +741,10 @@ EOT;
         $this->createWidget($recentlyViewWidget);
     }
 
+    /**
+     * Contact us info - Block
+     * Contact Page Map - Block
+     */
     public function createContactPageBlockAndWidgets()
     {
         $contactUsInfo = <<<EOT
@@ -817,6 +825,29 @@ EOT;
         foreach ($widgets as $widget) {
             $this->createWidget($widget);
         }
+    }
+
+    /**
+     * Repair
+     */
+    private function repairContactPageMapBlock()
+    {
+        $content = <<<EOT
+<div class="wrap-map-block">
+<div class="wrap-list">
+<strong class="title">Visit our showroom</strong>
+<ul>
+<li class="address">47 London Road Oadby Leicester LE2 5DN</li>
+</ul>
+</div>
+<div class="map-block"><img src="{{media url="wysiwyg/map-contact-page.png"}}" alt="" /></div>
+<ul class="text">
+<li>Ikstar Limited T/a Bargain Buyz. Company Number: 9820690.</li>
+<li>Regisitered Office Address: 47 London Road, Oadby, Leicester LE2 5DN.</li>
+</ul>
+</div>
+EOT;
+        $this->checkAndCreateBlock('contact-page-map', ['content' => $content]);
     }
 
     /**
