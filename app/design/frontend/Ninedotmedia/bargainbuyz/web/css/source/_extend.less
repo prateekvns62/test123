@@ -29,9 +29,17 @@
     &.primary{
       color: rgba(0, 0, 0, 0.85);
       &:hover,
-      &:focus,
       &:active{
         color: #fff!important;
+      }
+      &:focus{
+        color: rgba(0, 0, 0, 0.85);
+        background: #ffd500;
+        border-color: #ffd500;
+        &:hover{
+          background: #0ead0b;
+          border-color: #0ead0b;
+        }
       }
     }
   }
@@ -40,10 +48,18 @@
     box-shadow: none;
     color: rgba(0, 0, 0, 0.85);
     &:hover,
-    &:focus,
     &:active{
       border-color: #0ead0b;
       color: #fff;
+    }
+    &:focus{
+      color: rgba(0, 0, 0, 0.85);
+      background: #ffd500;
+      border-color: #ffd500;
+      &:hover{
+        background: #0ead0b;
+        border-color: #0ead0b;
+      }
     }
   }
 
