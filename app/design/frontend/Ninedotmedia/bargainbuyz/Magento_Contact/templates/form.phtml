@@ -47,6 +47,7 @@
                             <?= $block->escapeHtml(__('Please enter your order number if you have one')) ?>
                         </div>
                     </div>
+                    <?= $block->getChildHtml('form.additional.info') ?>
                 </div>
                 <div class="wrap-control">
                     <div class="field comment required">
@@ -55,7 +56,6 @@
                             <textarea placeholder="<?= $block->escapeHtmlAttr(__('Write your message here.')) ?>" name="comment" id="comment" title="<?= $block->escapeHtmlAttr(__('Write your message here.')) ?>" class="input-text" cols="5" rows="3" data-validate="{required:true}"><?= $block->escapeHtml($this->helper('Magento\Contact\Helper\Data')->getPostValue('comment')) ?></textarea>
                         </div>
                     </div>
-                    <?= $block->getChildHtml('form.additional.info') ?>
                     <div class="actions-toolbar">
                         <div class="primary">
                             <input type="hidden" name="hideit" id="hideit" value="" />
