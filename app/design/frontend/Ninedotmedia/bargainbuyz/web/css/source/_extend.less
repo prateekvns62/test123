@@ -2026,6 +2026,17 @@
       .holder-wrap-control{
         .lib-vendor-prefix-display(flex);
         justify-content: space-between;
+        & + .holder-wrap-control{
+          justify-content: flex-end;
+          align-items: center;
+          .field-recaptcha{
+            margin-top: 25px;
+          }
+          .actions-toolbar{
+            margin-top: 25px;
+            margin-left: 20px;
+          }
+        }
       }
       .wrap-control{
         flex-basis: 30%;
