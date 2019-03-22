@@ -28,6 +28,7 @@
   .action{
     &.primary{
       color: rgba(0, 0, 0, 0.85);
+      box-shadow: none!important;
       &:hover,
       &:active{
         color: #fff!important;
@@ -45,7 +46,7 @@
   }
 
   button:not(.primary){
-    box-shadow: none;
+    box-shadow: none!important;
     color: rgba(0, 0, 0, 0.85);
     &:hover,
     &:active{
@@ -2333,6 +2334,21 @@
             &:hover{
               color: #ff0000;
             }
+          }
+        }
+      }
+      .control{
+        input[type="text"]{
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+      }
+      .actions-toolbar {
+        .action.primary{
+          padding: 11px 7px;
+          height: 38px;
+          &:hover{
+            border-color: #0ead0b;
           }
         }
       }
