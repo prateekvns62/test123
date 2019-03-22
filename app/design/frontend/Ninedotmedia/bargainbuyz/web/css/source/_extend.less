@@ -33,6 +33,7 @@
       }
     }
   }
+
   button:not(.primary){
     box-shadow: none;
     color: rgba(0, 0, 0, 0.85);
@@ -1047,7 +1048,7 @@
             color: rgba(0, 0, 0, 0.85);
             font-size: 16px;
             font-weight: 700;
-            max-width: 60%;
+            max-width: 50%;
             padding: 0;
             margin: 0;
             border: 0;
@@ -1550,6 +1551,21 @@
       margin-bottom: 50px;
     }
 
+    .fotorama__dot{
+      width: 8px;
+      height: 8px;
+      background: #666666;
+      border: 0;
+    }
+    .fotorama__active {
+      .fotorama__dot {
+        width: 8px;
+        height: 8px;
+        background: #ff0000;
+        border: 0;
+      }
+    }
+
     .product-info-main{
       position: relative;
       margin-top: -20px;
@@ -1723,13 +1739,15 @@
         margin: 0;
         padding: 10px 0 0;
         border: 0;
-        max-width: 260px;
+        max-width: 180px;
         display: block;
         .price-box{
           margin: 0;
           padding: 0;
           border: 0;
           width: 100%;
+
+          & > .price-container.price-final_price,
           .special-price{
             display: block;
             margin-bottom: -10px;
@@ -2621,6 +2639,8 @@
           max-width: 100%;
           text-align: right;
           padding: 30px 0;
+          .lib-vendor-prefix-display(flex);
+          align-items: flex-end;
           .price-box{
             width: 100%;
             max-width: 100%;
@@ -2685,6 +2705,16 @@
       .admin__data-grid-outer-wrap{
         order: 4;
         display: none;
+      }
+      .product.data.items {
+        & > .item.title {
+          & > .switch{
+            background: #666666;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 16px;
+            font-weight: 400;
+          }
+        }
       }
     }
 
