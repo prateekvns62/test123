@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <columns name="widget_columns">
-        <column name="labels" component="Ninedotmedia_RecentlyViewedExt/js/product/attributes" sortOrder="1" displayArea="details-area">
+        <column name="image" component="Ninedotmedia_RecentlyViewedExt/js/product/list/columns/image-ext">
             <settings>
-                <label translate="true">Labels</label>
-                <bodyTmpl>Ninedotmedia_RecentlyViewedExt/product/labels</bodyTmpl>
+                <bodyTmpl>Ninedotmedia_RecentlyViewedExt/product/list/columns/image_with_borders</bodyTmpl>
             </settings>
         </column>
         <column name="condition" component="Ninedotmedia_RecentlyViewedExt/js/product/attributes" sortOrder="4" displayArea="details-area">
