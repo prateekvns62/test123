@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <columns name="widget_columns">
+        <column name="image" component="Ninedotmedia_RecentlyViewedExt/js/product/list/columns/image-ext">
+            <settings>
+                <bodyTmpl>Ninedotmedia_RecentlyViewedExt/product/list/columns/image_with_borders</bodyTmpl>
+            </settings>
+        </column>
+        <column name="condition" component="Ninedotmedia_RecentlyViewedExt/js/product/attributes" sortOrder="4" displayArea="details-area">
+            <settings>
+                <label translate="true">Condition</label>
+                <bodyTmpl>Ninedotmedia_RecentlyViewedExt/product/condition</bodyTmpl>
+            </settings>
+        </column>
+        <column name="advantages" component="Ninedotmedia_RecentlyViewedExt/js/product/attributes" sortOrder="9" displayArea="details-area">
+            <settings>
+                <label translate="true">Advantages</label>
+                <bodyTmpl>Ninedotmedia_RecentlyViewedExt/product/advantages</bodyTmpl>
+            </settings>
+        </column>
+        <column name="top_attributes" component="Ninedotmedia_RecentlyViewedExt/js/product/attributes" sortOrder="10" displayArea="details-area">
+            <settings>
+                <label translate="true">Top Attributes</label>
+                <bodyTmpl>Ninedotmedia_RecentlyViewedExt/product/top</bodyTmpl>
+            </settings>
+        </column>
+        <column name="price">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="renders" xsi:type="array">
+                        <item name="prices" xsi:type="array">
+                            <item name="default" xsi:type="array">
+                                <item name="children" xsi:type="array">
+                                    <item name="regular_price" xsi:type="array">
+                                        <item name="label" xsi:type="string" translate="true">Was</item>
+                                    </item>
+                                    <item name="minimal_regular_price" xsi:type="array">
+                                        <item name="label" xsi:type="string" translate="true">Was</item>
+                                    </item>
+                                    <item name="max_regular_price" xsi:type="array">
+                                        <item name="label" xsi:type="string" translate="true">Was</item>
+                                    </item>
+                                    <item name="save_price" xsi:type="array">
+                                        <item name="label" xsi:type="string" translate="true">Save Price</item>
+                                        <item name="component" xsi:type="string">Ninedotmedia_RecentlyViewedExt/js/product/attributes</item>
+                                        <item name="bodyTmpl" xsi:type="string">Ninedotmedia_RecentlyViewedExt/product/price/save_price</item>
+                                        <item name="sortOrder" xsi:type="number">7</item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </column>
+    </columns>
+</listing>
