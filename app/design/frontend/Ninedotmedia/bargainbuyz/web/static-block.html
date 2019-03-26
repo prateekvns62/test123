@@ -63,7 +63,7 @@
                     </div>
                 </div>
             </div>
-            <script type="text/javascript" xml="space">// <![CDATA[
+            <script type="text/javascript">
             (function  () {
                 require([
                     'jquery',
@@ -72,10 +72,14 @@
                     $(document).ready(function() {
                         $('.owl-carousel').owlCarousel({
                             items: 1,
-                            loop: false,
+                            loop: true,
                             center: true,
                             margin: 0,
+                            autoplay:true,
+                            autoplayTimeout:7000,
+                            autoplayHoverPause:true,
                             callbacks: true,
+                            dotsContainer:".owl-carousel-navigation",
                             URLhashListener: true,
                             checkVisible: false,
                             animateOut: 'fadeOut',
@@ -84,7 +88,7 @@
                     })
                 });
             })();
-            // ]]></script>
+            </script>
         </div>
     </div>
 </section>
