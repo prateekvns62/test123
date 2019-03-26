@@ -155,6 +155,10 @@ class UpgradeData implements UpgradeDataInterface
             $this->updateHomepageAndCopy();
         }
 
+        if (version_compare($context->getVersion(), '0.1.9') < 0) {
+            $this->recreateWidgetsIfNotExists();
+        }
+
         $setup->endSetup();
     }
 
@@ -1015,6 +1019,79 @@ EOT;
     }
 
     /**
+     * Recreate Widget if not exists by title
+     */
+    private function recreateWidgetsIfNotExists()
+    {
+        $widgetsTitles = [];
+        $collection = $this->widgetFactory->create()->getCollection();
+        if ($collection && $collection->getSize()) {
+            foreach ($collection as $item) {
+                $widgetsTitles[] = trim($item->getTitle());
+            }
+        }
+
+        $pageGroups = [[
+            'page_group' => 'pages',
+            'pages' => [
+                'page_id' => null,
+                'layout_handle' => 'contact_index_index',
+                'block' => 'content',
+                'for' => 'all',
+                'template' => 'widget/static_block/default.phtml'
+            ]
+        ]];
+        $storesIds = '0';
+        $instanceTypeCms = CMSBlock::class;
+        $widgets = [
+            'contactUsInfo' => [
+                'instance_type' => $instanceTypeCms,
+                'title' => 'Contact Us Info',
+                'store_ids' => $storesIds,
+                'widget_parameters' => json_encode(['block_id'=>'14']),
+                'sort_order' => 0,
+                'page_groups' => $pageGroups
+            ],
+            'contactUsInfoMap' => [
+                'instance_type' => $instanceTypeCms,
+                'title' => 'Contact Page Map',
+                'store_ids' => $storesIds,
+                'widget_parameters' => json_encode(['block_id'=>'15']),
+                'sort_order' => 1,
+                'page_groups' => $pageGroups
+            ],
+            'recentlyViewWidget' => [
+                'instance_type' => RecentlyViewed::class,
+                'title' => 'Recently viewed products',
+                'store_ids' => $storesIds,
+                'widget_parameters' => json_encode([
+                    'uiComponent'       => 'widget_recently_viewed',
+                    'page_size'         => '5',
+                    'show_attributes'   => ['name','image','price','learn_more'],
+                    'show_buttons'      => ['add_to_cart','add_to_wishlist']
+                ]),
+                'sort_order' => 0,
+                'page_groups' => [[
+                    'page_group' => 'all_products',
+                    'all_products' => [
+                        'page_id' => null,
+                        'layout_handle' => 'catalog_product_view',
+                        'block' => 'content',
+                        'for' => 'all',
+                        'template' => 'product/widget/viewed/grid.phtml'
+                    ]
+                ]]
+            ]
+        ];
+
+        foreach ($widgets as $widget) {
+            if (!in_array(trim($widget['title']), $widgetsTitles)) {
+                $this->createWidget($widget);
+            }
+        }
+    }
+
+    /**
      * @param string $identifier
      * @param array $data
      */
@@ -1044,7 +1121,7 @@ EOT;
     {
         $themeId = $this->scopeConfig->getValue(
             'design/theme/theme_id',
-            ScopeInterface::SCOPE_WEBSITES
+            ScopeInterface::SCOPE_STORES
         );
 
         if (is_numeric($themeId)) {
