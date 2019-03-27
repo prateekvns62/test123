@@ -2614,17 +2614,25 @@
       .page-header {
         .header.content {
           .header-content-info{
-            margin: 0 25px 0 0;
+            display: none;
           }
           .minicart-wrapper{
             margin: auto 0 auto 15px;
           }
           .block-search{
             margin: auto 0;
+            width: 100%;
             .nested{
               display: none;
             }
           }
+        }
+      }
+    }
+    .header.panel {
+      .in-header-links-list {
+        & > li.nav.item{
+          display: none;
         }
       }
     }
@@ -2742,9 +2750,12 @@
     .page-header {
       .header.panel{
         flex-wrap: wrap;
+        & > .header.links{
+          width: 75%;
+        }
         .in-header-links{
-          width: 100%;
-          padding-top: 5px;
+          width: 25%;
+          padding-top: 0;
           .transition(width, .5s);
         }
       }
