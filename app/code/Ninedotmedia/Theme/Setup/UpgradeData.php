@@ -5,10 +5,12 @@ use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
-use \Magento\Catalog\Model\Product;
-use \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
-use \Magento\Catalog\Model\Product\Attribute\Source\Boolean;
-use \Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend;
+use Magento\Catalog\Model\Product;
+use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory as ThemeCollectionFactory;
+use Magento\Theme\Model\Config as ThemeConfig;
+use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
+use Magento\Catalog\Model\Product\Attribute\Source\Boolean;
+use Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend;
 use Magento\Cms\Api\BlockRepositoryInterface;
 use Magento\Cms\Api\Data\BlockInterface;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
@@ -25,6 +27,9 @@ use Magento\Catalog\Block\Widget\RecentlyViewed;
 use Magento\Backend\App\Area\FrontNameResolver;
 use Magento\Framework\App\State;
 use Magento\Cms\Block\Widget\Block as CMSBlock;
+use Magento\Framework\App\Config\ReinitableConfigInterface;
+use Magento\Framework\Indexer\IndexerRegistry;
+use Magento\Theme\Model\Data\Design\Config as DesignConfig;
 
 class UpgradeData implements UpgradeDataInterface
 {
@@ -67,7 +72,26 @@ class UpgradeData implements UpgradeDataInterface
      */
     private $appState;
 
+    /**
+     * @var ScopeConfigInterface
+     */
     private $scopeConfig;
+
+    /**
+     * @var ThemeCollectionFactory
+     */
+    private $themeList;
+
+    /**
+     * @var ThemeConfig
+     */
+    private $themeConfig;
+
+    private $indexerRegistry;
+    /**
+     * @var ReinitableConfigInterface
+     */
+    private $reinitableConfig;
 
     /**
      * Attribute prefix
@@ -80,6 +104,11 @@ class UpgradeData implements UpgradeDataInterface
     const ATTR_GROUP = 'Characteristics';
 
     /**
+     * Theme Code
+     */
+    const NDM_THEME = 'Ninedotmedia/bargainbuyz';
+
+    /**
      * UpgradeData constructor.
      * @param EavSetupFactory $eavSetupFactory
      * @param BlockRepositoryInterface $blockRepository
@@ -90,6 +119,10 @@ class UpgradeData implements UpgradeDataInterface
      * @param WidgetInstance $widgetFactory
      * @param State $appState
      * @param ScopeConfigInterface $scopeConfig
+     * @param ThemeCollectionFactory $themeList
+     * @param ThemeConfig $themeConfig
+     * @param IndexerRegistry $indexerRegistry
+     * @param ReinitableConfigInterface $reinitableConfig
      */
     public function __construct(
         EavSetupFactory $eavSetupFactory,
@@ -100,7 +133,11 @@ class UpgradeData implements UpgradeDataInterface
         WriterInterface $writerInterface,
         WidgetInstance $widgetFactory,
         State $appState,
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        ThemeCollectionFactory $themeList,
+        ThemeConfig $themeConfig,
+        IndexerRegistry $indexerRegistry,
+        ReinitableConfigInterface $reinitableConfig
     ) {
         $this->eavSetupFactory = $eavSetupFactory;
         $this->blockRepository = $blockRepository;
@@ -111,6 +148,10 @@ class UpgradeData implements UpgradeDataInterface
         $this->widgetFactory = $widgetFactory;
         $this->appState = $appState;
         $this->scopeConfig = $scopeConfig;
+        $this->themeList = $themeList;
+        $this->themeConfig = $themeConfig;
+        $this->indexerRegistry = $indexerRegistry;
+        $this->reinitableConfig = $reinitableConfig;
     }
 
     /**
@@ -122,6 +163,7 @@ class UpgradeData implements UpgradeDataInterface
         $setup->startSetup();
 
         if (version_compare($context->getVersion(), '0.1.1') < 0) {
+            $this->assignNinedotmediaTheme();
             $this->createProductAttributeGroup($setup);
             $this->createDemoProductAttributes($setup);
         }
@@ -151,7 +193,37 @@ class UpgradeData implements UpgradeDataInterface
             $this->repairContactPageMapBlock();
         }
 
+        if (version_compare($context->getVersion(), '0.1.8') < 0) {
+            $this->updateHomepageAndCopy();
+        }
+
+        if (version_compare($context->getVersion(), '0.1.9') < 0) {
+            $this->recreateWidgetsIfNotExists();
+        }
+
         $setup->endSetup();
+    }
+
+    /**
+     * Set Ninedotmedia Theme
+     */
+    public function assignNinedotmediaTheme()
+    {
+        $themes = $this->themeList ->create()->loadRegisteredThemes();
+        foreach ($themes as $theme) {
+            if ($theme->getCode() == self::NDM_THEME) {
+                $this->themeConfig->assignToStore(
+                    $theme,
+                    ['1'],
+                    ScopeInterface::SCOPE_STORES
+                );
+
+                $this->reinitableConfig->reinit();
+                $this->indexerRegistry
+                    ->get(DesignConfig::DESIGN_CONFIG_GRID_INDEXER_ID)
+                    ->reindexAll();
+            }
+        }
     }
 
     /**
@@ -851,6 +923,239 @@ EOT;
     }
 
     /**
+     * Update Homepage
+     * Update Copyright
+     */
+    private function updateHomepageAndCopy()
+    {
+        $home = <<<EOT
+<section class="homepage-slider">
+    <div class="homepage-holder-slider">
+        <div class="holder-nav">
+            <ul class="owl-carousel-navigation">
+<li><a class="button url" href="#1"> <strong>Tab Heading</strong> <span>Tab content / call to action</span> </a></li>
+<li><a class="button url" href="#2"> <strong>Tab Heading</strong> <span>Tab content / call to action</span> </a></li>
+<li><a class="button url" href="#3"> <strong>Tab Heading</strong> <span>Tab content / call to action</span> </a></li>
+<li><a class="button url" href="#4"> <strong>Tab Heading</strong> <span>Tab content / call to action</span> </a></li>
+<li><a class="button url" href="#5"> <strong>Tab Heading</strong> <span>Tab content / call to action</span> </a></li>
+<li><a class="button url" href="#6"> <strong>Tab Heading</strong> <span>Tab content / call to action</span> </a></li>
+            </ul>
+        </div>
+        <div class="holder-slider">
+            <div class="owl-carousel owl-theme">
+                <div class="item" data-hash="1">
+                    <div class="wrap-img"><img src="{{media url="wysiwyg/slider_image.png"}}" alt="" />
+                        <div class="holder-text">
+                            <h1>Slide heading</h1>
+                            <h3>Slide call to action text</h3>
+                            <a class="action primary" href="#">Button</a></div>
+                    </div>
+                </div>
+                <div class="item" data-hash="2">
+                    <div class="wrap-img"><img src="{{media url="wysiwyg/slider_image.png"}}" alt="" />
+                        <div class="holder-text">
+                            <h1>Slide heading</h1>
+                            <h3>Slide call to action text</h3>
+                            <a class="action primary" href="#">Button</a></div>
+                    </div>
+                </div>
+                <div class="item" data-hash="3">
+                    <div class="wrap-img"><img src="{{media url="wysiwyg/slider_image.png"}}" alt="" />
+                        <div class="holder-text">
+                            <h1>Slide heading</h1>
+                            <h3>Slide call to action text</h3>
+                            <a class="action primary" href="#">Button</a></div>
+                    </div>
+                </div>
+                <div class="item" data-hash="4">
+                    <div class="wrap-img"><img src="{{media url="wysiwyg/slider_image.png"}}" alt="" />
+                        <div class="holder-text">
+                            <h1>Slide heading</h1>
+                            <h3>Slide call to action text</h3>
+                            <a class="action primary" href="#">Button</a></div>
+                    </div>
+                </div>
+                <div class="item" data-hash="5">
+                    <div class="wrap-img"><img src="{{media url="wysiwyg/slider_image.png"}}" alt="" />
+                        <div class="holder-text">
+                            <h1>Slide heading</h1>
+                            <h3>Slide call to action text</h3>
+                            <a class="action primary" href="#">Button</a></div>
+                    </div>
+                </div>
+                <div class="item" data-hash="6">
+                    <div class="wrap-img"><img src="{{media url="wysiwyg/slider_image.png"}}" alt="" />
+                        <div class="holder-text">
+                            <h1>Slide heading</h1>
+                            <h3>Slide call to action text</h3>
+                            <a class="action primary" href="#">Button</a></div>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+            (function  () {
+                require([
+                    'jquery',
+                    'owlcarousel'
+                ], function ($) {
+                    $(document).ready(function() {
+                        $('.owl-carousel').owlCarousel({
+                            items: 1,
+                            loop: true,
+                            center: true,
+                            margin: 0,
+                            autoplay:true,
+                            autoplayTimeout:7000,
+                            autoplayHoverPause:true,
+                            callbacks: true,
+                            dotsContainer:".owl-carousel-navigation",
+                            URLhashListener: true,
+                            checkVisible: false,
+                            animateOut: 'fadeOut',
+                            animateIn: 'fadeIn'
+                        });
+                    })
+                });
+            })();
+            </script>
+        </div>
+    </div>
+</section>
+
+<section class="homepage-our-bargains">
+    <strong class="title">View our bargains</strong>
+    <ul>
+        <li>
+            <a href="#">
+                <div>Laundry</div>
+                <div class="wrap-img">
+                    <img src="{{media url="wysiwyg/laundry.png"}}" alt="" />
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <div>Dishwashers</div>
+                <div class="wrap-img">
+                    <img src="{{media url="wysiwyg/dishwashers.png"}}" alt="" />
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <div>Cooking</div>
+                <div class="wrap-img">
+                    <img src="{{media url="wysiwyg/cooking.png"}}" alt="" />
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <div>Refridgeration</div>
+                <div class="wrap-img">
+                    <img src="{{media url="wysiwyg/refridgeration.png"}}" alt="" />
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <div>Built-in</div>
+                <div class="wrap-img">
+                    <img src="{{media url="wysiwyg/built-in.png"}}" alt="" />
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <div>Small Appliances</div>
+                <div class="wrap-img">
+                    <img src="{{media url="wysiwyg/small-appliances.png"}}" alt="" />
+                </div>
+            </a>
+        </li>
+    </ul>
+</section>
+EOT;
+        $copy = '© 2019 Ikstar Limited t/a Bargain Buyz';
+
+        $this->checkAndCreatePage('home', ['title' => '', 'content' => $home]);
+        $this->writerInterface->save('design/footer/copyright', $copy, ScopeInterface::SCOPE_STORES, 1);
+    }
+
+    /**
+     * Recreate Widget if not exists by title
+     */
+    private function recreateWidgetsIfNotExists()
+    {
+        $widgetsTitles = [];
+        $collection = $this->widgetFactory->create()->getCollection();
+        if ($collection && $collection->getSize()) {
+            foreach ($collection as $item) {
+                $widgetsTitles[] = trim($item->getTitle());
+            }
+        }
+
+        $pageGroups = [[
+            'page_group' => 'pages',
+            'pages' => [
+                'page_id' => null,
+                'layout_handle' => 'contact_index_index',
+                'block' => 'content',
+                'for' => 'all',
+                'template' => 'widget/static_block/default.phtml'
+            ]
+        ]];
+        $storesIds = '0';
+        $instanceTypeCms = CMSBlock::class;
+        $widgets = [
+            'contactUsInfo' => [
+                'instance_type' => $instanceTypeCms,
+                'title' => 'Contact Us Info',
+                'store_ids' => $storesIds,
+                'widget_parameters' => json_encode(['block_id'=>'14']),
+                'sort_order' => 0,
+                'page_groups' => $pageGroups
+            ],
+            'contactUsInfoMap' => [
+                'instance_type' => $instanceTypeCms,
+                'title' => 'Contact Page Map',
+                'store_ids' => $storesIds,
+                'widget_parameters' => json_encode(['block_id'=>'15']),
+                'sort_order' => 1,
+                'page_groups' => $pageGroups
+            ],
+            'recentlyViewWidget' => [
+                'instance_type' => RecentlyViewed::class,
+                'title' => 'Recently viewed products',
+                'store_ids' => $storesIds,
+                'widget_parameters' => json_encode([
+                    'uiComponent'       => 'widget_recently_viewed',
+                    'page_size'         => '5',
+                    'show_attributes'   => ['name','image','price','learn_more'],
+                    'show_buttons'      => ['add_to_cart','add_to_wishlist']
+                ]),
+                'sort_order' => 0,
+                'page_groups' => [[
+                    'page_group' => 'all_products',
+                    'all_products' => [
+                        'page_id' => null,
+                        'layout_handle' => 'catalog_product_view',
+                        'block' => 'content',
+                        'for' => 'all',
+                        'template' => 'product/widget/viewed/grid.phtml'
+                    ]
+                ]]
+            ]
+        ];
+
+        foreach ($widgets as $widget) {
+            if (!in_array(trim($widget['title']), $widgetsTitles)) {
+                $this->createWidget($widget);
+            }
+        }
+    }
+
+    /**
      * @param string $identifier
      * @param array $data
      */
@@ -880,7 +1185,7 @@ EOT;
     {
         $themeId = $this->scopeConfig->getValue(
             'design/theme/theme_id',
-            ScopeInterface::SCOPE_WEBSITES
+            ScopeInterface::SCOPE_STORES
         );
 
         if (is_numeric($themeId)) {

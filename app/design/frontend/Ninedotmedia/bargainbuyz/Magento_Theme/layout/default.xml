@@ -90,9 +90,9 @@
         <referenceBlock name="store_switcher" remove="true"/>
         <referenceBlock name="footer_links" remove="true"/>
         <referenceBlock name="form.subscribe" remove="true"/>
+        <referenceBlock name="register-link" remove="true"/>
 
         <move element="authorization-link" destination="in.header.links.list" after="customer-account-navigation-wish-list-link"/>
-        <move element="register-link" destination="in.header.links.list" after="authorization-link"/>
 
     </body>
 </page>

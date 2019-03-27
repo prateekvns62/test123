@@ -362,6 +362,7 @@
               }
 
               h4 {
+                margin: 0;
                 a:before {
                   display: none;
                 }
@@ -810,21 +811,21 @@
 
           > ul {
             > li.menu-vertical-items {
-              padding: 18px 0 18px 30px;
+              padding: 4px 0 4px 30px;
               box-sizing: border-box;
               cursor: pointer;
 
               a {
-                font-size: 15px;
-                text-transform: uppercase;
-                font-weight: 600;
+                color: rgba(0,0,0,0.85);
+                font-weight: 400;
+                line-height: 1.1;
+                font-size: 1.3rem;
               }
 
-              &.active {
-                background: #fff;
-
+              &.active,
+              &:hover{
                 a {
-                  color: #006bb4;
+                  color: #ff0000;
                 }
               }
             }
@@ -839,11 +840,14 @@
             > ul {
               > li {
                 h4.level-3-cat {
+                  margin: 0;
                   a {
-                    font-size: 15px;
-                    color: #006bb4;
-                    text-transform: uppercase;
-                    font-weight: 600;
+                    font-size: 13px;
+                    color: rgba(0,0,0,0.85);
+                    font-weight: 400;
+                    &:hover{
+                      color: #ff0000;
+                    }
                   }
                 }
 
@@ -852,7 +856,7 @@
                     padding: 7px 0;
 
                     a {
-                      font-size: 14px;
+                      font-size: 13px;
                     }
                   }
                 }
