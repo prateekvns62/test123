@@ -5,10 +5,12 @@ use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
-use \Magento\Catalog\Model\Product;
-use \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
-use \Magento\Catalog\Model\Product\Attribute\Source\Boolean;
-use \Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend;
+use Magento\Catalog\Model\Product;
+use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory as ThemeCollectionFactory;
+use Magento\Theme\Model\Config as ThemeConfig;
+use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
+use Magento\Catalog\Model\Product\Attribute\Source\Boolean;
+use Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend;
 use Magento\Cms\Api\BlockRepositoryInterface;
 use Magento\Cms\Api\Data\BlockInterface;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
@@ -25,6 +27,9 @@ use Magento\Catalog\Block\Widget\RecentlyViewed;
 use Magento\Backend\App\Area\FrontNameResolver;
 use Magento\Framework\App\State;
 use Magento\Cms\Block\Widget\Block as CMSBlock;
+use Magento\Framework\App\Config\ReinitableConfigInterface;
+use Magento\Framework\Indexer\IndexerRegistry;
+use Magento\Theme\Model\Data\Design\Config as DesignConfig;
 
 class UpgradeData implements UpgradeDataInterface
 {
@@ -67,7 +72,26 @@ class UpgradeData implements UpgradeDataInterface
      */
     private $appState;
 
+    /**
+     * @var ScopeConfigInterface
+     */
     private $scopeConfig;
+
+    /**
+     * @var ThemeCollectionFactory
+     */
+    private $themeList;
+
+    /**
+     * @var ThemeConfig
+     */
+    private $themeConfig;
+
+    private $indexerRegistry;
+    /**
+     * @var ReinitableConfigInterface
+     */
+    private $reinitableConfig;
 
     /**
      * Attribute prefix
@@ -80,6 +104,11 @@ class UpgradeData implements UpgradeDataInterface
     const ATTR_GROUP = 'Characteristics';
 
     /**
+     * Theme Code
+     */
+    const NDM_THEME = 'Ninedotmedia/bargainbuyz';
+
+    /**
      * UpgradeData constructor.
      * @param EavSetupFactory $eavSetupFactory
      * @param BlockRepositoryInterface $blockRepository
@@ -90,6 +119,10 @@ class UpgradeData implements UpgradeDataInterface
      * @param WidgetInstance $widgetFactory
      * @param State $appState
      * @param ScopeConfigInterface $scopeConfig
+     * @param ThemeCollectionFactory $themeList
+     * @param ThemeConfig $themeConfig
+     * @param IndexerRegistry $indexerRegistry
+     * @param ReinitableConfigInterface $reinitableConfig
      */
     public function __construct(
         EavSetupFactory $eavSetupFactory,
@@ -100,7 +133,11 @@ class UpgradeData implements UpgradeDataInterface
         WriterInterface $writerInterface,
         WidgetInstance $widgetFactory,
         State $appState,
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        ThemeCollectionFactory $themeList,
+        ThemeConfig $themeConfig,
+        IndexerRegistry $indexerRegistry,
+        ReinitableConfigInterface $reinitableConfig
     ) {
         $this->eavSetupFactory = $eavSetupFactory;
         $this->blockRepository = $blockRepository;
@@ -111,6 +148,10 @@ class UpgradeData implements UpgradeDataInterface
         $this->widgetFactory = $widgetFactory;
         $this->appState = $appState;
         $this->scopeConfig = $scopeConfig;
+        $this->themeList = $themeList;
+        $this->themeConfig = $themeConfig;
+        $this->indexerRegistry = $indexerRegistry;
+        $this->reinitableConfig = $reinitableConfig;
     }
 
     /**
@@ -122,6 +163,7 @@ class UpgradeData implements UpgradeDataInterface
         $setup->startSetup();
 
         if (version_compare($context->getVersion(), '0.1.1') < 0) {
+            $this->assignNinedotmediaTheme();
             $this->createProductAttributeGroup($setup);
             $this->createDemoProductAttributes($setup);
         }
@@ -160,6 +202,28 @@ class UpgradeData implements UpgradeDataInterface
         }
 
         $setup->endSetup();
+    }
+
+    /**
+     * Set Ninedotmedia Theme
+     */
+    public function assignNinedotmediaTheme()
+    {
+        $themes = $this->themeList ->create()->loadRegisteredThemes();
+        foreach ($themes as $theme) {
+            if ($theme->getCode() == self::NDM_THEME) {
+                $this->themeConfig->assignToStore(
+                    $theme,
+                    ['1'],
+                    ScopeInterface::SCOPE_STORES
+                );
+
+                $this->reinitableConfig->reinit();
+                $this->indexerRegistry
+                    ->get(DesignConfig::DESIGN_CONFIG_GRID_INDEXER_ID)
+                    ->reindexAll();
+            }
+        }
     }
 
     /**
