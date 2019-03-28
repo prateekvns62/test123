@@ -264,11 +264,11 @@
       font-weight: 300;
       .lib-vendor-prefix-display(flex);
       align-items: center;
-      justify-content: space-between;
+      justify-content: space-around;
 
       li {
         margin: 0;
-        padding: 0 40px;
+        padding: 0 5px;
         position: relative;
         text-align: center;
 
@@ -2563,8 +2563,7 @@
           & > ul{
             & > li{
               padding: 0!important;
-              &.all-department,
-              &:first-child{
+              &.all-department{
                 width: 180px;
                 & > a{
                   padding: .5em .2em!important;
@@ -3849,7 +3848,6 @@
 
   .page-wrapper {
     & > .breadcrumbs{
-      margin-top: 20px;
       margin-bottom: 20px;
       .item{
         &:not(:last-child){
@@ -3939,9 +3937,14 @@
     }
   }
 
-  .nav-sections {
-    margin-bottom: 0;
+  .cms-index-index,
+  .checkout-cart-index{
+    .nav-sections {
+      margin-bottom: 0;
+    }
   }
+
+
 
   .homepage-slider {
     height: 330px;
