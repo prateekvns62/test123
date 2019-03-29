@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bd00318eb1e96215a3a8db2cfc2a5e69",
-    "content-hash": "f41af20b21185c591bb18b296f63a5ed",
+    "hash": "b018b179358ecabc7f5b65bd7cdd0e80",
+    "content-hash": "347d154053ee903e748f3609f47e23f5",
     "packages": [
         {
             "name": "amasty/base",
@@ -1461,6 +1461,39 @@
                 }
             ],
             "description": "Klarna Order Management Magento 2 Extension"
+        },
+        {
+            "name": "m2e/ebay-amazon-magento2",
+            "version": "1.3.5",
+            "dist": {
+                "type": "zip",
+                "url": "https://repo.magento.com/archives/m2e/ebay-amazon-magento2/m2e-ebay-amazon-magento2-1.3.5.0.zip",
+                "reference": null,
+                "shasum": "a8a17f71f28bfab7eecd923eae093e66ea63af40"
+            },
+            "require": {
+                "php": "~5.5.0|~5.6.0|~7.0.0|~7.1.0|~7.2.0"
+            },
+            "type": "magento2-module",
+            "autoload": {
+                "files": [
+                    "registration.php"
+                ],
+                "psr-4": {
+                    "Ess\\M2ePro\\": ""
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "M2E Pro is a Magento trusted (TM), award-winning extension, which allows merchants of all sizes to fully integrate Magento based system(s) into eBay/Amazon/Rakuten.com platforms.",
+            "homepage": "http://www.m2epro.com/",
+            "keywords": [
+                "amazon",
+                "ebay",
+                "magento",
+                "rakuten"
+            ]
         },
         {
             "name": "magento/composer",

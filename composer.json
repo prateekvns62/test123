@@ -12,7 +12,8 @@
         "composer/composer": "@alpha",
         "amasty/shopby": "^2.11",
         "msp/recaptcha": "^2.0",
-        "amasty/delivery-date": "^1.6"
+        "amasty/delivery-date": "^1.6",
+        "m2e/ebay-amazon-magento2": "^1.3"
     },
     "require-dev": {
         "phpunit/phpunit": "~6.2.0",
