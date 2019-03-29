@@ -2537,6 +2537,109 @@
     }
   }
 
+  .homepage-our-bargains{
+    display: none;
+    .title{
+      color: #ff0000;
+      font-size: 30px;
+      font-weight: 700;
+      display: block;
+      padding: 0 20px 14px;
+    }
+    ul{
+      .lib-list-reset-styles();
+      .lib-vendor-prefix-display(flex);
+      flex-wrap: wrap;
+      li{
+        margin: 0 0 20px;
+        padding: 0 20px;
+        flex-basis: 50%;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        a{
+          display: block;
+          cursor: pointer;
+          text-decoration: none;
+          color: rgba(0, 0, 0, 0.85);
+          font-size: 14px;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+
+  .holder-content-list-block{
+    float: left;
+    width: 21%;
+    margin-right: 2%;
+    .homepage-block {
+      .title{
+        color: rgba(0, 0, 0, 0.85);
+        font-weight: 700;
+        font-size: 26px;
+        line-height: 36px;
+        letter-spacing: -2px;
+        margin-bottom: 90px;
+      }
+      .holder-text{
+        padding: 20px;
+      }
+      &.reviews{
+        .title{
+          max-width: 175px;
+        }
+        .holder-text{
+          padding: 20px;
+        }
+      }
+      &.interest{
+        .title{
+          max-width: 175px;
+          margin-bottom: 68px;
+        }
+        .text{
+          color: rgba(0, 0, 0, 0.85);
+          font-size: 20px;
+          font-weight: 400;
+          line-height: 24px;
+        }
+      }
+      &.delivery{
+        .title{
+          max-width: 185px;
+          margin-bottom: 66px;
+        }
+        .text{
+          color: rgba(0, 0, 0, 0.85);
+          font-size: 20px;
+          font-weight: 400;
+          line-height: 24px;
+        }
+      }
+      &.leading{
+        .title{
+          max-width: 185px;
+          margin-bottom: 56px;
+        }
+        .text{
+          color: rgba(0, 0, 0, 0.85);
+          font-size: 20px;
+          font-weight: 400;
+          line-height: 24px;
+          max-width: 160px;
+          strong{
+            color: #ff0000;
+            font-weight: 700;
+          }
+        }
+      }
+      & > a{
+        display: block;
+      }
+    }
+  }
+
 
   @media screen and (max-width: 1300px){
     .nav-sections{
@@ -2636,6 +2739,7 @@
       }
     }
     .holder-content {
+      padding: 20px;
       .homepage-block{
         &.interest {
           .holder-img{
@@ -2667,6 +2771,9 @@
             }
           }
         }
+      }
+      .tabs-wrapper{
+        display: none;
       }
     }
     .homepage-slider {
@@ -2706,10 +2813,149 @@
         }
       }
     }
+    .section-item-content {
+      .menu-container {
+        .menu{
+          & > ul{
+            & > li{
+              &.all-department{
+                display: none !important;
+              }
+            }
+          }
+        }
+      }
+    }
+    .catalog-product-view {
+      .product-info-main {
+        .holder-additional-advantages {
+          .holder-product-links{
+            display: none;
+          }
+        }
+      }
+    }
+    .homepage-our-bargains{
+      display: block;
+    }
+    .holder-content-list-block{
+      float: none;
+      width: 100%;
+      margin: 0;
+      .homepage-block {
+        .title{
+          color: rgba(0, 0, 0, 0.85);
+          font-size: 14px;
+          font-weight: 700;
+          line-height: 18px;
+          margin-bottom: 0;
+          letter-spacing: normal;
+        }
+        .holder-text{
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          flex-basis: 100%;
+          .text{
+            color: rgba(0, 0, 0, 0.85);
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 16px;
+            strong{
+              color: #ff0000;
+              font-weight: 700;
+            }
+          }
+        }
+        &.reviews {
+          .title{
+            max-width: none;
+          }
+          .holder-text{
+            padding: 10px;
+          }
+        }
+        &.interest,
+        &.delivery{
+          .title {
+            max-width: none;
+          }
+          .holder-img{
+            &.bottom{
+              bottom: 7px;
+              right: 7px;
+            }
+          }
+        }
+        &.leading{
+          .title {
+            max-width: none;
+          }
+          .holder-img{
+            &.bottom {
+              bottom: 7px;
+              right: 7px;
+            }
+          }
+          &.homepage-block {
+            .holder-text {
+              .text{
+                max-width: 100px;
+              }
+            }
+          }
+        }
+        & > a{
+          display: flex;
+          flex-direction: row;
+        }
+      }
+    }
+    .contact-index-index{
+      .column.main{
+        padding: 0;
+        .lib-vendor-prefix-display(flex);
+        flex-direction: column;
+        justify-content: space-between;
+        .wrap-contact-form{
+          order: 2;
+          float: none;
+          width: 100%;
+          margin: 40px 0 0;
+          & + .block-static-block{
+            order: 1;
+            .lib-vendor-prefix-display(flex);
+            flex-direction: row;
+            justify-content: space-between;
+            flex-wrap: nowrap;
+            float: none;
+            width: 100%;
+            margin: 0;
+            .wrap-list{
+              flex-basis: 50%;
+              margin: 0;
+            }
+          }
+        }
+        .block-static-block{
+          order: 3;
+          margin: 0;
+          .wrap-map-block{
+            padding-bottom: 0;
+            border: 0;
+          }
+        }
+        .holder-content-list-block{
+          display: none;
+        }
+      }
+    }
   }
 
   @media only screen and (min-device-width : 768px) and (max-device-width : 1024px) {
     .holder-content {
+      padding: 20px 0;
       .homepage-block{
         &.interest {
           .holder-img{
@@ -2822,46 +3068,6 @@
           .advantages{
             padding: 0;
           }
-        }
-      }
-    }
-
-    .contact-index-index{
-      .column.main{
-        padding: 0;
-        .lib-vendor-prefix-display(flex);
-        flex-direction: column;
-        justify-content: space-between;
-        .wrap-contact-form{
-          order: 2;
-          float: none;
-          width: 100%;
-          margin: 40px 0 0;
-          & + .block-static-block{
-            order: 1;
-            .lib-vendor-prefix-display(flex);
-            flex-direction: row;
-            justify-content: space-between;
-            flex-wrap: nowrap;
-            float: none;
-            width: 100%;
-            margin: 0;
-            .wrap-list{
-              flex-basis: 50%;
-              margin: 0;
-            }
-          }
-        }
-        .block-static-block{
-          order: 3;
-          margin: 0;
-          .wrap-map-block{
-            padding-bottom: 0;
-            border: 0;
-          }
-        }
-        .holder-content-list-block{
-          display: none;
         }
       }
     }
@@ -3397,119 +3603,6 @@
     }
   }
 
-  .holder-content {
-    padding: 20px;
-    .tabs-wrapper{
-      display: none;
-    }
-  }
-
-  .holder-content-list-block{
-    float: none;
-    width: 100%;
-    margin: 0;
-    .homepage-block {
-      .title{
-        color: rgba(0, 0, 0, 0.85);
-        font-size: 14px;
-        font-weight: 700;
-        line-height: 18px;
-        margin-bottom: 0;
-      }
-      .holder-text{
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        flex-basis: 100%;
-        .text{
-          color: rgba(0, 0, 0, 0.85);
-          font-size: 13px;
-          font-weight: 400;
-          line-height: 16px;
-          strong{
-            color: #ff0000;
-            font-weight: 700;
-          }
-        }
-      }
-      &.reviews {
-        .title{
-          max-width: none;
-        }
-        .holder-text{
-          padding: 10px;
-        }
-      }
-      &.interest,
-      &.delivery{
-        .title {
-          max-width: none;
-        }
-        .holder-img{
-          &.bottom{
-            bottom: 7px;
-            right: 7px;
-          }
-        }
-      }
-      &.leading{
-        .title {
-          max-width: none;
-        }
-        .holder-img{
-          &.bottom {
-            bottom: 7px;
-            right: 7px;
-          }
-        }
-        &.homepage-block {
-          .holder-text {
-            .text{
-              max-width: 100px;
-            }
-          }
-        }
-      }
-      & > a{
-        display: flex;
-        flex-direction: row;
-      }
-    }
-  }
-
-  .homepage-our-bargains{
-    display: block;
-    .title{
-      color: #ff0000;
-      font-size: 30px;
-      font-weight: 700;
-      display: block;
-      padding: 0 20px 14px;
-    }
-    ul{
-      .lib-list-reset-styles();
-      .lib-vendor-prefix-display(flex);
-      flex-wrap: wrap;
-      li{
-        margin: 0 0 20px;
-        padding: 0 20px;
-        flex-basis: 50%;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-        a{
-          display: block;
-          cursor: pointer;
-          text-decoration: none;
-          color: rgba(0, 0, 0, 0.85);
-          font-size: 14px;
-          font-weight: 700;
-        }
-      }
-    }
-  }
-
   .page-footer {
     .footer.content{
       border: 0;
@@ -3944,8 +4037,6 @@
     }
   }
 
-
-
   .homepage-slider {
     height: 330px;
     margin: 0 -9999px;
@@ -3971,81 +4062,6 @@
         }
       }
     }
-  }
-
-  .holder-content-list-block{
-    float: left;
-    width: 21%;
-    margin-right: 2%;
-    .homepage-block {
-      .title{
-        color: rgba(0, 0, 0, 0.85);
-        font-weight: 700;
-        font-size: 26px;
-        line-height: 36px;
-        letter-spacing: -2px;
-        margin-bottom: 90px;
-      }
-      .holder-text{
-        padding: 20px;
-      }
-      &.reviews{
-        .title{
-          max-width: 175px;
-        }
-        .holder-text{
-          padding: 20px;
-        }
-      }
-      &.interest{
-        .title{
-          max-width: 175px;
-          margin-bottom: 68px;
-        }
-        .text{
-          color: rgba(0, 0, 0, 0.85);
-          font-size: 20px;
-          font-weight: 400;
-          line-height: 24px;
-        }
-      }
-      &.delivery{
-        .title{
-          max-width: 185px;
-          margin-bottom: 66px;
-        }
-        .text{
-          color: rgba(0, 0, 0, 0.85);
-          font-size: 20px;
-          font-weight: 400;
-          line-height: 24px;
-        }
-      }
-      &.leading{
-        .title{
-          max-width: 185px;
-          margin-bottom: 56px;
-        }
-        .text{
-          color: rgba(0, 0, 0, 0.85);
-          font-size: 20px;
-          font-weight: 400;
-          line-height: 24px;
-          max-width: 160px;
-          strong{
-            color: #ff0000;
-            font-weight: 700;
-          }
-        }
-      }
-      & > a{
-        display: block;
-      }
-    }
-  }
-
-  .homepage-our-bargains{
-    display: none;
   }
 
   .page-layout-2columns-left {
