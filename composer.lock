@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bac189c852d42571d369929a83b6d96e",
-    "content-hash": "89952f9ab57867550aaa3559a0c8ff6b",
+    "hash": "bd00318eb1e96215a3a8db2cfc2a5e69",
+    "content-hash": "f41af20b21185c591bb18b296f63a5ed",
     "packages": [
         {
             "name": "amasty/base",
@@ -32,6 +32,33 @@
                 "Commercial"
             ],
             "description": "Amasty Base"
+        },
+        {
+            "name": "amasty/delivery-date",
+            "version": "1.6.8",
+            "dist": {
+                "type": "zip",
+                "url": "https://composer.amasty.com/community/packages/delivery-date-1.6.8.zip",
+                "reference": null,
+                "shasum": null
+            },
+            "require": {
+                "amasty/base": ">=1.4.10",
+                "php": "~5.6.5|7.0.2|7.0.4|~7.0.6|^7.1.0"
+            },
+            "type": "magento2-module",
+            "autoload": {
+                "files": [
+                    "registration.php"
+                ],
+                "psr-4": {
+                    "Amasty\\Deliverydate\\": ""
+                }
+            },
+            "license": [
+                "Commercial"
+            ],
+            "description": "Amasty Delivery Date"
         },
         {
             "name": "amasty/module-improved-layered-navigation-page",
@@ -1440,8 +1467,8 @@
             "version": "1.2.0",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/composer/zipball/130753af2b755f1967e253deb661225942bb302c",
-                "reference": "130753af2b755f1967e253deb661225942bb302c",
+                "url": "https://api.github.com/repos/magento/composer/zipball/",
+                "reference": null,
                 "shasum": ""
             },
             "require": {
