@@ -1,0 +1,30 @@
+{
+    "name": "wyomind/pickupatstore",
+    "version": "4.0.2",
+    "version_normalized": "4.0.2.0",
+    "dist": {
+        "type": "zip",
+        "url": "https://www.wyomind.com/wyomind-pickupatstore-4.0.2.zip",
+        "reference": null
+    },
+    "require": {
+        "magento/framework": ">=100.0.0",
+        "php": "~5.5.0|~5.6.0|>=7.0.0",
+        "wyomind/core": ">=3.0.0",
+        "wyomind/pointofsale": ">=7.0.0,<=7.0.0.4"
+    },
+    "type": "magento2-module",
+    "extra": [],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Wyomind\\PickupAtStore\\": ""
+        }
+    },
+    "license": [
+        "Commercial License - Copyright 2016  - WYOMIND Sarl - Purchasing any product (Software) from the Wyomind.com web-site means buyer agree to the following statements (see LICENSE.TXT)"
+    ],
+    "description": "Give your customers the ability to pick up their orders from any of your sales outlets or warehouses when checking out.  Locations to pickup can be displayed on a Google Map and can be managed by store-views and/or customer groups."
+}

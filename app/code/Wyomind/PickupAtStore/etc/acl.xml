@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Wyomind_PickupAtSTore::global" title="Pickup At Store" sortOrder="10">
+                    <!-- module configuration -->
+                    <resource id="Wyomind_PickupAtStore::pickupatstore_config" title="Module configuration" sortOrder="10"/>
+                    <!-- WEB API -->
+                    <resource id="Wyomind_PickupAtStore::webapi" title="WebAPI" sortOrder="20">
+                        <!-- Run a job -->
+                        <resource id="Wyomind_PickupAtStore::webapi_getsalesorderdata" title="Get order data and POS selected for pickup" sortOrder="10"/>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>
