@@ -2708,6 +2708,7 @@
       }
     }
     .homepage-slider {
+      height: auto!important;
       .homepage-holder-slider{
         padding: 0!important;
       }
@@ -2881,6 +2882,42 @@
         }
         .holder-content-list-block{
           display: none;
+        }
+      }
+    }
+    .sidebar-main {
+      .holder-content-list-block{
+        .homepage-block{
+          &.interest {
+            .holder-img{
+              &.bottom{
+                max-width: 17px;
+                position: absolute;
+                bottom: 20px;
+                right: 4px;
+              }
+            }
+          }
+          &.delivery {
+            .holder-img{
+              &.bottom {
+                max-width: 25px;
+                position: absolute;
+                bottom: 23px;
+                right: 7px;
+              }
+            }
+          }
+          &.leading {
+            .holder-img{
+              &.bottom{
+                max-width: 17px;
+                position: absolute;
+                bottom: 23px;
+                right: 7px;
+              }
+            }
+          }
         }
       }
     }
