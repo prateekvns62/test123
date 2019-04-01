@@ -11,6 +11,19 @@
         <move element="product.info.price" destination="wrap.product.left" after="category.product.attributes"/>
         <move element="product.info" destination="wrap.product.left" after="product.info.price"/>
 
+        <referenceBlock name="product.info.details">
+            <block class="Magento\Framework\View\Element\Template" name="delivery.tab" template="Magento_Catalog::product/view/delivery_tab.phtml" group="detailed_info">
+                <arguments>
+                    <argument translate="true" name="title" xsi:type="string">Delivery</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Framework\View\Element\Template" name="grading.tab" template="Magento_Catalog::product/view/grading_tab.phtml" group="detailed_info">
+                <arguments>
+                    <argument translate="true" name="title" xsi:type="string">Grading Ratings</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+
         <referenceBlock name="reviews.tab" remove="true"/>
         <referenceBlock name="product.review.form" remove="true"/>
         <referenceBlock name="product.info.review" remove="true" />
