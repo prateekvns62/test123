@@ -1,0 +1,11 @@
+<?php if ($condition = $block->getCondition()): ?>
+    <?php if (strpos($condition, 'Graded') !== false): ?>
+        <?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('product-condition-description-graded')->toHtml(); ?>
+    <?php endif; ?>
+    <?php if (strpos($condition, 'Refurbished') !== false): ?>
+        <?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('product-condition-description-refurbished')->toHtml(); ?>
+    <?php endif; ?>
+    <?php if (strpos($condition, 'New') !== false): ?>
+        <?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('product-condition-description-new')->toHtml(); ?>
+    <?php endif; ?>
+<?php endif; ?>

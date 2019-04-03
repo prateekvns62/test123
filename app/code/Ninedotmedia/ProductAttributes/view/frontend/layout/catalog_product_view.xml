@@ -35,11 +35,12 @@
                     <container name="holder.additional.advantages" htmlClass="holder-additional-advantages" htmlTag="div">
 
                         <container name="holder.product.links" htmlClass="holder-product-links" htmlTag="div">
-                            <block class="Magento\Cms\Block\Block" name="product-links" before="-">
-                                <arguments>
-                                    <argument name="block_id" xsi:type="string">product-links</argument>
-                                </arguments>
-                            </block>
+<!--                            <block class="Magento\Cms\Block\Block" name="product-links" before="-">-->
+<!--                                <arguments>-->
+<!--                                    <argument name="block_id" xsi:type="string">product-links</argument>-->
+<!--                                </arguments>-->
+<!--                            </block>-->
+                            <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="product-links" template="Ninedotmedia_ProductAttributes::product/additional/condition_description.phtml" />
                         </container>
 
                         <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="additional.advantages"
