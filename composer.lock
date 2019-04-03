@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4f8ddc4a5c3bc58a92bc924daa608844",
-    "content-hash": "31fe88024d71f1009cc47843a365e382",
+    "hash": "26086aff84418dd79b2b5003bc0a3e5c",
+    "content-hash": "623c6d5ac517e595657ed9368c8deabe",
     "packages": [
         {
             "name": "amasty/base",
@@ -197,6 +197,34 @@
                 "Commercial"
             ],
             "description": "Improved Layered Navigation by Amasty - Brand sub-module"
+        },
+        {
+            "name": "amasty/shippingtablerates",
+            "version": "1.4.13",
+            "dist": {
+                "type": "zip",
+                "url": "https://composer.amasty.com/community/packages/shippingtablerates-1.4.13.zip",
+                "reference": null,
+                "shasum": null
+            },
+            "require": {
+                "amasty/base": ">=1.5.4",
+                "magento/module-checkout": ">=100.1.0",
+                "php": "~5.6.5|7.0.2|7.0.4|~7.0.6|^7.1.0"
+            },
+            "type": "magento2-module",
+            "autoload": {
+                "files": [
+                    "registration.php"
+                ],
+                "psr-4": {
+                    "Amasty\\ShippingTableRates\\": ""
+                }
+            },
+            "license": [
+                "Commercial"
+            ],
+            "description": "Shipping Table Rates by Amasty"
         },
         {
             "name": "amasty/shopby",
