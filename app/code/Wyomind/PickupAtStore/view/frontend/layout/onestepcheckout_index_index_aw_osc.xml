@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="checkout" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="checkout"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
         <link src="Wyomind_PickupAtStore::js/checkStep.js"/>
         <css src="Wyomind_PointOfSale::css/pointofsale.css"/>
@@ -9,7 +10,10 @@
     </head>
     <body>
         <referenceContainer name="content.top">
-            <block class="Wyomind\PickupAtStore\Block\PickupAtStore" name="pickupatstore_aheadworks" before="-" template="Wyomind_PickupAtStore::pickupatstore_aw_osc.js.phtml"/>
+            <block class="Wyomind\PickupAtStore\Block\PickupAtStore" name="pickupatstore_aheadworks" before="-"
+                   template="Wyomind_PickupAtStore::pickupatstore_aw_osc.js.phtml"/>
         </referenceContainer>
+
     </body>
 </page>
+

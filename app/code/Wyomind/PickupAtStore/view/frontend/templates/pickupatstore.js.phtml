@@ -267,7 +267,7 @@ echo $helper->getGoogleMapsApiScript();
                             }).appendTo('#pas-pos-selector');
                         }
                     }
-                    if (PickupAtStore.config.display_gmap === "1" && PickupAtStore.ignoreGmap === false) {
+                    if ((PickupAtStore.config.display_gmap === "1" || PickupAtStore.config.display_list === "1") && PickupAtStore.ignoreGmap === false) {
                         $("#pas-gmap").css({"display": "block"});
                         $("#pas-gmap").load("<?php echo $block->getUrl("pickupatstore/section/gmap"); ?>",
                             function (responseTxt, statusTxt, xhr) {
@@ -275,6 +275,8 @@ echo $helper->getGoogleMapsApiScript();
                                 $(document).trigger("pas_gmap_loaded");
                             }
                         );
+                    } else {
+                        $("#pas-gmap").removeClass("pas-loader");
                     }
                 }
 

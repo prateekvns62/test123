@@ -151,11 +151,11 @@ define(
 
                         // WYOMIND - PICKUP AT STORE
 
-                        // setShippingInformationAction().done(
-                        //     function () {
-                        //         stepNavigator.next();
-                        //     }
-                        // );
+                        setShippingInformationAction().done(
+                            function () {
+                                stepNavigator.next();
+                            }
+                        );
 
                         return;
 
@@ -190,13 +190,13 @@ define(
                     }
                 }
 
-                // if (this.validateShippingInformation()) {
-                //     setShippingInformationAction().done(
-                //         function () {
-                //             stepNavigator.next();
-                //         }
-                //     );
-                // }
+                if (this.validateShippingInformation()) {
+                    setShippingInformationAction().done(
+                        function () {
+                            stepNavigator.next();
+                        }
+                    );
+                }
             }
         };
 

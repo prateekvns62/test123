@@ -356,7 +356,8 @@ class Config extends \Magento\Framework\App\Helper\AbstractHelper
             self::SHIPTO_TITLE => $this->getShiptoTitle($storeId),
             self::STORE_PICKUP_ACTIVATED_DEFAULT => $this->getStorePickupActivatedDefault($storeId),
             self::NB_STORES_TO_DISPLAY => $this->getNbStoresToDisplay($storeId),
-            self::DISPLAY_GMAP => $this->getDisplayGmap($storeId)
+            self::DISPLAY_GMAP => $this->getDisplayGmap($storeId),
+            self::DISPLAY_LIST => $this->getDisplayList($storeId)
         ];
     }
 }

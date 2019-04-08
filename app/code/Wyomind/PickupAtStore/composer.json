@@ -1,10 +1,10 @@
 {
     "name": "wyomind/pickupatstore",
-    "version": "4.0.2",
-    "version_normalized": "4.0.2.0",
+    "version": "4.0.2.2",
+    "version_normalized": "4.0.2.2",
     "dist": {
         "type": "zip",
-        "url": "https://www.wyomind.com/wyomind-pickupatstore-4.0.2.zip",
+        "url": "https://www.wyomind.com/wyomind-pickupatstore-4.0.2.2.zip",
         "reference": null
     },
     "require": {

@@ -5,7 +5,7 @@
             <license>
                 <!-- required for License Manager -->
                 <extension_label>Pickup At Store</extension_label>
-                <extension_version>4.0.2</extension_version>
+                <extension_version>4.0.2.2</extension_version>
                 <extension_code>pas</extension_code>
                 <get_online_license>1</get_online_license>
             <activation_key>ZXVBHLQ4A8D7RLVCX</activation_key></license>

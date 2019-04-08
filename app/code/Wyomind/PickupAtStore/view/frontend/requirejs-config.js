@@ -27,6 +27,9 @@ var config = {
             'Aheadworks_OneStepCheckout/js/view/place-order/aggregate-validator': {
                 'Wyomind_PickupAtStore/js/view/place-order/aw-osc-aggregate-validator' : true
             },
+            'Aheadworks_OneStepCheckout/js/view/shipping-method': {
+                'Wyomind_PickupAtStore/js/view/aw-osc-shipping-method' : true
+            },
 
 
             // Mageplaza One Step Checkout
