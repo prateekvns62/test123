@@ -3,6 +3,7 @@
     <module name="Ninedotmedia_ProductAttributes" setup_version="0.1.0">
         <sequence>
             <module name="Magento_Catalog"/>
+            <module name="Magento_CatalogSearch"/>
             <module name="Ninedotmedia_ThemeConfiguration"/>
         </sequence>
     </module>
