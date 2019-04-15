@@ -63,7 +63,7 @@ class HeaderLink extends Template
         $config = $this->configuration->getVisitOption();
         if ($config['url'] && $config['label']) {
             $html .= '<li class="header-links-visit">';
-            $html .= '<li class="header-links-visit"><a href="'.$config['url'].'">'.$config['label'].'</a></li>';
+            $html .= '<li class="header-links-visit"><a target="_blank" href="'.$config['url'].'">'.$config['label'].'</a></li>';
             $html .= '</li>';
         }
         return $html;

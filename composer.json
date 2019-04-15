@@ -15,7 +15,8 @@
         "amasty/delivery-date": "^1.6",
         "m2e/ebay-amazon-magento2": "^1.3",
         "amasty/module-extra-fee": "^1.4",
-        "amasty/shippingtablerates": "^1.4"
+        "amasty/shippingtablerates": "^1.4",
+        "mageplaza/module-smtp": "^1.2"
     },
     "require-dev": {
         "phpunit/phpunit": "~6.2.0",
