@@ -36,7 +36,7 @@
 ############################################
 ## adjust memory limit
 
-    php_value memory_limit 812M
+    php_value memory_limit 756M
     php_value max_execution_time 18000
 
 ############################################
@@ -141,7 +141,8 @@
 ############################################
 ## you can put here your magento root folder
 ## path relative to web root
-
+    RewriteCond %{REQUEST_URI} !pub/
+    RewriteRule (.*) /pub/$1 [L]
     #RewriteBase /magento/
 
 ############################################
@@ -409,10 +410,3 @@ ErrorDocument 403 /pub/errors/404.php
     </FilesMatch>
 
 </IfModule>
-
-# php -- BEGIN cPanel-generated handler, do not edit
-# Set the “ea-php70” package as the default “PHP” programming language.
-<IfModule mime_module>
-  AddType application/x-httpd-ea-php70 .php .php7 .phtml
-</IfModule>
-# php -- END cPanel-generated handler, do not edit

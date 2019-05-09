@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "37ec88b910b348818103fbf86ae8c36e",
-    "content-hash": "30ff31f62bf2264f43c8a04fffbb6859",
+    "hash": "0bd3d11ae3816991eefd0d8443905408",
+    "content-hash": "0b623b3b406d6200b221424677776864",
     "packages": [
         {
             "name": "amasty/base",
@@ -6958,13 +6958,56 @@
             "time": "2017-06-21 14:56:23"
         },
         {
-            "name": "mageplaza/module-core",
-            "version": "1.4.2",
+            "name": "mageplaza/magento-2-blog-extension",
+            "version": "3.0.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mageplaza/module-core.git",
-                "reference": "19fcf838306acb4632972b2c31d5a2d283ddead8"
+                "url": "https://github.com/mageplaza/magento-2-blog.git",
+                "reference": "070ac5a682d2839744172534107e8bec2ac191c8"
             },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mageplaza/magento-2-blog/zipball/070ac5a682d2839744172534107e8bec2ac191c8",
+                "reference": "070ac5a682d2839744172534107e8bec2ac191c8",
+                "shasum": ""
+            },
+            "require": {
+                "mageplaza/module-core": "^1.4.0"
+            },
+            "type": "magento2-module",
+            "autoload": {
+                "files": [
+                    "registration.php"
+                ],
+                "psr-4": {
+                    "Mageplaza\\Blog\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Mageplaza",
+                    "email": "support@mageplaza.com",
+                    "homepage": "https://www.mageplaza.com",
+                    "role": "Technical Support"
+                }
+            ],
+            "description": "Magento 2 Blog extension",
+            "keywords": [
+                "blog",
+                "magento 2",
+                "magento 2 blog",
+                "magento2",
+                "mageplaza"
+            ],
+            "time": "2019-02-25 11:34:41"
+        },
+        {
+            "name": "mageplaza/module-core",
+            "version": "1.4.2",
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/mageplaza/module-core/zipball/19fcf838306acb4632972b2c31d5a2d283ddead8",
