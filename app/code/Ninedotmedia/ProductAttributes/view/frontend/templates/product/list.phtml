@@ -19,6 +19,7 @@ use Magento\Framework\App\Action\Action;
 $_productCollection = $block->getLoadedProductCollection();
 $_helper = $this->helper('Magento\Catalog\Helper\Output');
 $additionalHelper = $this->helper('Ninedotmedia\ProductAttributes\Helper\Additional');
+
 ?>
 <?php if (!$_productCollection->count()): ?>
     <div class="message info empty"><div><?= /* @escapeNotVerified */ __('We can\'t find products matching the selection.') ?></div></div>
@@ -26,7 +27,8 @@ $additionalHelper = $this->helper('Ninedotmedia\ProductAttributes\Helper\Additio
     <?= $block->getToolbarHtml() ?>
     <?= $block->getAdditionalHtml() ?>
     <?php
-    if ($block->getMode() == 'grid') {
+    // Force view mode to grid on homepage
+    if ($this->getRequest()->getFullActionName() == 'categorytab_index_index') { //$block->getMode() == 'grid') {
         $viewMode = 'grid';
         $image = 'category_page_grid';
         $showDescription = false;
