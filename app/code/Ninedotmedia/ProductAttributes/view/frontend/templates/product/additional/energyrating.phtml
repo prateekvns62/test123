@@ -1,6 +1,8 @@
 <?php
+if ($block->hasEnergyRating()) {
 $_product = $block->getProduct();
 ?>
 <div class="energyrating-<?= $_product->getData('energyrating'); ?>">
     <?= $block->getEnergyRatingText(); ?>
 </div>
+<?php } ?>

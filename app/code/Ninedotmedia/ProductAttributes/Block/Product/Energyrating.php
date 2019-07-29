@@ -54,4 +54,18 @@ class Energyrating extends Template
         return ($product = $this->getProduct()) ?
             $product->getAttributeText('energyrating') : null;
     }
+
+    /**
+     * @return array|null|string
+     */
+    public function hasEnergyRatingText()
+    {
+	if ($product = $this->getProduct()) {
+	    if ($product->getData('energyrating')) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
 }
