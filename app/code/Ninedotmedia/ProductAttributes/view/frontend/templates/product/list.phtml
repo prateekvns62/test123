@@ -49,7 +49,7 @@ $additionalHelper = $this->helper('Ninedotmedia\ProductAttributes\Helper\Additio
         $showWarranteeImage = true;
         $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
     }
-    $additionalBlock =
+
     /**
      * Position for actions regarding image size changing in vde if needed
      */
@@ -84,7 +84,7 @@ $additionalHelper = $this->helper('Ninedotmedia\ProductAttributes\Helper\Additio
                         </div>
                         <?php if($showEnergyRating): ?>
                             <?php if ($erBlock = $block->getChildBlock('additional.energyrating')): ?>
-                                <?php  $erBlock->setProduct($_product); ?>
+                                <?php $erBlock->setProduct($_product); ?>
                                 <?= $block->getChildHtml('additional.energyrating', false); ?>
                             <?php endif; ?>
                         <?php endif; ?>

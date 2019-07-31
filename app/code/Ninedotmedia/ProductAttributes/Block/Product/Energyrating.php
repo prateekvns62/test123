@@ -49,23 +49,37 @@ class Energyrating extends Template
     /**
      * @return array|null|string
      */
-    public function getEnergyRatingText()
+    public function getEnergyRating()
     {
-        return ($product = $this->getProduct()) ?
-            $product->getAttributeText('energyrating') : null;
+        $product = $this->getProduct();
+	if ($product->getData('ndm_energy_rating')) {
+            return $product->getData('ndm_energy_rating');
+        }	
+       	else {
+            return $product->getData('energyrating');
+       	}
     }
 
     /**
      * @return array|null|string
      */
-    public function hasEnergyRatingText()
+    public function getEnergyRatingText()
     {
-	if ($product = $this->getProduct()) {
-	    if ($product->getData('energyrating')) {
-		return true;
-	    }
+        $product = $this->getProduct();
+	if ($product->getData('ndm_energy_rating')) {
+            return $product->getAttributeText('ndm_energy_rating');
 	}
-	return false;
+	else {
+	    return $product->getAttributeText('energyrating');
+	}
+    }
+
+    /**
+     * @return array|null|string
+     */
+    public function hasEnergyRating()
+    {
+	return true;
     }
 
 }

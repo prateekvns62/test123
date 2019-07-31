@@ -141,20 +141,31 @@
 ############################################
 ## you can put here your magento root folder
 ## path relative to web root
+   
     RewriteCond %{REQUEST_URI} !pub/
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/(?:\ Ballot169)?
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Sectigo\ DCV)?$
     RewriteRule (.*) /pub/$1 [L]
+
     #RewriteBase /magento/
 
 ############################################
 ## workaround for HTTP authorization
 ## in CGI environment
 
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/(?:\ Ballot169)?
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Sectigo\ DCV)?$
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 ############################################
 ## TRACE and TRACK HTTP methods disabled to prevent XSS attacks
 
     RewriteCond %{REQUEST_METHOD} ^TRAC[EK]
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/(?:\ Ballot169)?
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Sectigo\ DCV)?$
     RewriteRule .* - [L,R=405]
 
 ############################################
@@ -174,10 +185,12 @@
 ############################################
 ## rewrite everything else to index.php
 
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/(?:\ Ballot169)?
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Sectigo\ DCV)?$
     RewriteRule .* index.php [L]
 
 </IfModule>
-
 
 ############################################
 ## Prevent character encoding issues from server overrides
