@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <global>
+        <blocks>
+            <catalog>
+                <rewrite>
+                    <product_list_toolbar>Ninedotmedia_Mobilegridmode_Block_Catalog_Product_List_Toolbar</product_list_toolbar>
+                </rewrite>
+            </catalog>
+        </blocks>
+    </global>
+    <default>
+        <catalog>
+            <frontend>
+                <grid_mode_mobile>grid-list</grid_mode_mobile>
+            </frontend>
+        </catalog>
+    </default>
+</config>

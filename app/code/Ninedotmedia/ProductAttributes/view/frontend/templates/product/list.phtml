@@ -28,7 +28,7 @@ $additionalHelper = $this->helper('Ninedotmedia\ProductAttributes\Helper\Additio
     <?= $block->getAdditionalHtml() ?>
     <?php
     // Force view mode to grid on homepage
-    if ($this->getRequest()->getFullActionName() == 'categorytab_index_index') { //$block->getMode() == 'grid') {
+    if ($this->getRequest()->getFullActionName() == 'categorytab_index_index' || $block->getMode() == 'grid') {
         $viewMode = 'grid';
         $image = 'category_page_grid';
         $showDescription = false;
