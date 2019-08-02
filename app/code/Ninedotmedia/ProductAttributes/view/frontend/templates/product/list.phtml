@@ -101,10 +101,12 @@ $additionalHelper = $this->helper('Ninedotmedia\ProductAttributes\Helper\Additio
                             </a>
                         </strong>
                         <?php if($showWarranteeImage): ?>
+                        <div class="warrantee-image">
                             <?php if ($warranteeBlock = $block->getChildBlock('additional.warrantee')): ?>
                                 <?php  $warranteeBlock->setProduct($_product); ?>
                                 <?= $block->getChildHtml('additional.warrantee', false); ?>
                             <?php endif; ?>
+                        </div>
                         <?php endif; ?>
                         <div class="product-labels grid-mode mobile list">
                             <?= $additionalHelper->getLabel(
