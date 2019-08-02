@@ -42,12 +42,23 @@
 .amasty-extrafee-description {
   padding-bottom: 10px;
 }
-
-.products.list.items.product-items {
-  .product-item-info {
-    border: 1px solid #cccccc;
+.products-list {
+  .product-items {
+    .product-item {
+      .product-item-info {
+        border: 1px solid #cccccc;
+      }
+    }
   }
 }
+.products-grid {
+  .product-items {
+    .product-item {
+      //border: 1px solid #cccccc;
+    }
+  }
+}
+
 
 .energyrating-4,
 .energyrating-5,
@@ -161,5 +172,17 @@
     content: "";
     position: absolute;
     right: -20px;
+  }
+}
+
+@media only screen and (min-device-width : 768px) {
+  .products-grid {
+    .product-items {
+      .product-item {
+        .product-item-info {
+          border: 1px solid #cccccc;
+        }
+      }
+    }
   }
 }
