@@ -1086,6 +1086,7 @@
           }
           .warrantee-image {
             min-height: 70px;
+            margin: 10px 0;
           }
           .product-labels{
             &.grid-mode{
@@ -1113,13 +1114,13 @@
             }
             .promo-guarantee {
               background: #148b12;
-              top: 80px;
+              bottom: 90px;
               right: 0;
               font-size: 9px;
             }
             .promo-saved-money{
               background: #ce0400;
-              top: 80px;
+              bottom: 90px;
               right: 70px;
               .price{
                 color: #ffffff;
@@ -1129,16 +1130,18 @@
             }
           }
           .product-condition{
-            display: none;
+            //display: none;
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #666666;
-            color: rgba(255, 255, 255, 0.85);
+            top: 0;
+            right: 0;
+            //background: #666666;
+            border-top: 1px solid #e6e6e6;
+            //color: rgba(255, 255, 255, 0.85);
+            color: #1a1414;
             font-size: 16px;
             font-weight: 400;
-            line-height: 16px;
-            padding: 10px 26px;
+            line-height: 8px;
+            padding: 10px 0;
           }
           .price-box{
             max-width: 20%;
@@ -1146,7 +1149,7 @@
             margin: 0;
             border: 0;
             position: absolute;
-            top: 0;
+            top: 40px;
             right: 0;
             text-align: right;
             .special-price{
@@ -1154,7 +1157,8 @@
             }
           }
           .product-item-inner {
-            position: relative;
+            position: static;
+            min-height: 180px;
           }
           .product-item-attributes {
             width: 42%;
@@ -1185,6 +1189,9 @@
             align-items: flex-end;
             flex-direction: column;
             justify-content: flex-end;
+            position: absolute;
+            bottom: 0;
+            right: 0;
             .actions-primary{
               flex-basis: 100%;
               order: 2;
