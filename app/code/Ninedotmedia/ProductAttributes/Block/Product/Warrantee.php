@@ -65,9 +65,16 @@ class Warrantee extends Template
      */
     public function getWarranteeImage()
     {
-        $optionid = $this->getProduct()->getData('ndm_guarantee');
+        $optionid = $this->getProduct()->getData('ndm_banners');
         $swatchData = $this->_swatchHelper->getSwatchesByOptionsId([$optionid]);
-        return "/pub/media/attribute/swatch". $swatchData[$optionid]['value'];
+        if (!file_exists('pub') && !is_dir('pub'))
+        {
+            return "/media/attribute/swatch". $swatchData[$optionid]['value'];
+        }
+        else {
+            return "/pub/media/attribute/swatch". $swatchData[$optionid]['value'];
+        }
+
     }
 
     /**
@@ -75,7 +82,7 @@ class Warrantee extends Template
      */
     public function hasWarranteeImage()
     {
-        if ($optionid = $this->getProduct()->getData('ndm_guarantee')) {
+        if ($optionid = $this->getProduct()->getData('ndm_banners')) {
             $swatchData = $this->_swatchHelper->getSwatchesByOptionsId([$optionid]);
             if (isset($swatchData[$optionid]) && !empty($swatchData[$optionid]['value'])) {
                 return true;
