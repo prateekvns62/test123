@@ -1,4 +1,6 @@
-/pub/media/amasty/*
+/.well-known
+/*.sql
+/error_log
 /.buildpath
 /.cache
 /.metadata
@@ -63,6 +65,10 @@ atlassian*
 pub/media/mageplaza/*
 /pub/static/*
 !/pub/static/.htaccess
+/pub/media/amasty/amoptimizer_dump/*
+/pub/media/amasty/amoptmobile/*
+/pub/media/amasty/amopttablet/*
+/pub/media/amasty/webp/*
 
 /var/*
 !/var/.htaccess
