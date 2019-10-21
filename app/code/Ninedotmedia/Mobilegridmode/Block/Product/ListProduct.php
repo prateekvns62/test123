@@ -8,6 +8,7 @@ use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework\Data\Helper\PostHelper;
 use Magento\Framework\Url\Helper\Data;
 
+
 class ListProduct extends \Magento\Catalog\Block\Product\ListProduct {
 
     protected $_helper;
@@ -32,6 +33,7 @@ class ListProduct extends \Magento\Catalog\Block\Product\ListProduct {
             $data
         );
     }
+
 
     public function getMode()
     {

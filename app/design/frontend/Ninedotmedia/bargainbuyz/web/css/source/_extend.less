@@ -156,7 +156,7 @@
       left: 0;
       top: 0;
       width: 270px;
-      height: 330px;
+      height: 368px;
       background: #e6e6e6;
 
       ul {
@@ -188,6 +188,16 @@
 
           span {
             display: block;
+          }
+
+          &:first-child {
+            &:hover,
+            &.active {
+              &:before {
+                background: url("../images/ectangle-1.png") 0 0 no-repeat !important;
+                height: 94px;
+              }
+            }
           }
 
           &:hover,
@@ -4054,7 +4064,7 @@
   }
 
   .homepage-slider {
-    height: 330px;
+    height: 368px;
     margin: 0 -9999px;
     padding: 0 9999px;
     background: #000;
