@@ -78,7 +78,9 @@
     img {
       display: block;
       width: 100%;
-      min-height: 368px;
+      @media (min-width: 1025px) {
+        min-height: 368px;
+      }
     }
     .owl-lazy {
       opacity: 0;
