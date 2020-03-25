@@ -1,3 +1,6 @@
+RewriteEngine on
+#AddHandler application/x-httpd-php72 .php .php5 .php4 .php3
+
 ############################################
 ## overrides deployment configuration mode value
 ## use command bin/magento deploy:mode:set to switch modes
@@ -59,6 +62,7 @@
 ############################################
 ## adjust memory limit
 
+    php_value max_input_vars 10000
     php_value memory_limit 756M
     php_value max_execution_time 18000
 
@@ -137,6 +141,12 @@
 
     Options +FollowSymLinks
     RewriteEngine on
+
+
+#RewriteCond %{HTTPS} on
+#RewriteCond %{HTTP_HOST} !^www\.(.*)$ [NC]
+#RewriteCond %{SERVER_PORT} 80
+#RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
 
 ############################################
 ## you can put here your magento root folder
@@ -364,6 +374,15 @@
             Require all denied
         </IfVersion>
     </Files>
+    <Files .user.ini>
+        <IfVersion < 2.4>
+            order allow,deny
+            deny from all
+        </IfVersion>
+        <IfVersion >= 2.4>
+            Require all denied
+        </IfVersion>
+    </Files>
 
 # For 404s and 403s that aren't handled by the application, show plain 404 response
 ErrorDocument 404 /pub/errors/404.php
@@ -413,6 +432,8 @@ ErrorDocument 403 /pub/errors/404.php
 # php -- BEGIN cPanel-generated handler, do not edit
 # Set the “ea-php71” package as the default “PHP” programming language.
 <IfModule mime_module>
-  AddHandler application/x-httpd-ea-php71 .php .php7 .phtml
+  #AddHandler application/x-httpd-ea-php71 .php .php7 .phtml
 </IfModule>
 # php -- END cPanel-generated handler, do not edit
+
+AddHandler application/x-httpd-php71 .php .php5 .php4 .php3
