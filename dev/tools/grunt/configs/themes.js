@@ -50,5 +50,15 @@ module.exports = {
             'css/styles'
         ],
         dsl: 'less'
+    },
+    bargainbuyz: {
+        area: 'frontend',
+        name: 'Ninedotmedia/bargainbuyz',
+        locale: 'en_GB',
+        files: [
+            'css/print.min',
+            'css/styles-l.min'
+        ],
+        dsl: 'less'
     }
 };
