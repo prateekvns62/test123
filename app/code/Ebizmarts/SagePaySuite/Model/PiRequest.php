@@ -29,6 +29,9 @@ class PiRequest
     /** @var bool */
     private $isMoto;
 
+    /** @var \Ebizmarts\SagePaySuite\Api\Data\PiRequest */
+    private $requestInfo;
+
     public function __construct(
         \Ebizmarts\SagePaySuite\Helper\Request $requestHelper,
         \Ebizmarts\SagePaySuite\Model\Config $sagepayConfig
@@ -58,7 +61,6 @@ class PiRequest
             'description'       => $this->requestHelper->getOrderDescription($this->getIsMoto()),
             'customerFirstName' => substr(trim($billingAddress->getFirstname()), 0, 20),
             'customerLastName'  => substr(trim($billingAddress->getLastname()), 0, 20),
-            'apply3DSecure'     => $this->sagepayConfig->get3Dsecure($this->getIsMoto()),
             'applyAvsCvcCheck'  => $this->sagepayConfig->getAvsCvc(),
             'referrerId'        => $this->requestHelper->getReferrerId(),
             'customerEmail'     => $billingAddress->getEmail(),
@@ -69,12 +71,13 @@ class PiRequest
             $data['entryMethod'] = 'TelephoneOrder';
         } else {
             $data['entryMethod'] = 'Ecommerce';
+            $data['apply3DSecure'] = $this->sagepayConfig->get3Dsecure();
         }
 
         $data['billingAddress'] = [
             'address1'      => substr(trim($billingAddress->getStreetLine(1)), 0, 100),
             'city'          => substr(trim($billingAddress->getCity()), 0, 40),
-            'postalCode'    => substr(trim($billingAddress->getPostcode()), 0, 10),
+            'postalCode'    => substr(trim($this->sanitizePostcode($billingAddress->getPostcode())), 0, 10),
             'country'       => substr(trim($billingAddress->getCountryId()), 0, 2)
         ];
         if ($data['billingAddress']['country'] == 'US') {
@@ -96,7 +99,7 @@ class PiRequest
             'recipientLastName'  => substr(trim($shippingAddress->getLastname()), 0, 20),
             'shippingAddress1'   => substr(trim($shippingAddress->getStreetLine(1)), 0, 100),
             'shippingCity'       => substr(trim($shippingAddress->getCity()), 0, 40),
-            'shippingPostalCode' => substr(trim($shippingAddress->getPostcode()), 0, 10),
+            'shippingPostalCode' => substr(trim($this->sanitizePostcode($shippingAddress->getPostcode())), 0, 10),
             'shippingCountry'    => substr(trim($shippingAddress->getCountryId()), 0, 2)
         ];
         if ($data['shippingDetails']['shippingCountry'] == 'US') {
@@ -113,10 +116,27 @@ class PiRequest
             }
         }
 
+
+
         //populate payment amount information
         $data = array_merge($data, $this->requestHelper->populatePaymentAmountAndCurrency($this->getCart(), true));
 
         return $data;
+    }
+
+    /**
+     * @param \Ebizmarts\SagePaySuite\Api\Data\PiRequest $data
+     * @return $this
+     */
+    public function setRequest(\Ebizmarts\SagePaySuite\Api\Data\PiRequest $data)
+    {
+        $this->requestInfo = $data;
+        return $this;
+    }
+
+    public function getRequest()
+    {
+        return $this->requestInfo;
     }
 
     /**
@@ -207,5 +227,14 @@ class PiRequest
     {
         $this->cart = $cart;
         return $this;
+    }
+
+    /**
+     * @param $text
+     * @return string
+     */
+    private function sanitizePostcode($postCode)
+    {
+        return preg_replace("/[^a-zA-Z0-9-\s]/", "", $postCode);
     }
 }

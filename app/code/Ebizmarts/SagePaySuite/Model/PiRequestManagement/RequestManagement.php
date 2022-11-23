@@ -4,6 +4,7 @@ namespace Ebizmarts\SagePaySuite\Model\PiRequestManagement;
 
 use Ebizmarts\SagePaySuite\Model\Config;
 use Magento\Framework\Validator\Exception as ValidatorException;
+use function in_array;
 
 abstract class RequestManagement implements \Ebizmarts\SagePaySuite\Api\PiOrderPlaceInterface
 {
@@ -35,6 +36,12 @@ abstract class RequestManagement implements \Ebizmarts\SagePaySuite\Api\PiOrderP
 
     /** @var \Magento\Quote\Api\Data\CartInterface */
     private $quote;
+
+    private $okStatuses = [
+        Config::SUCCESS_STATUS,
+        Config::AUTH3D_REQUIRED_STATUS,
+        Config::AUTH3D_V2_REQUIRED_STATUS
+    ];
 
     public function __construct(
         \Ebizmarts\SagePaySuite\Helper\Checkout $checkoutHelper,
@@ -89,6 +96,7 @@ abstract class RequestManagement implements \Ebizmarts\SagePaySuite\Api\PiOrderP
             ->setCardIdentifier($this->getRequestData()->getCardIdentifier())
             ->setVendorTxCode($this->getVendorTxCode())
             ->setIsMoto($this->getIsMotoTransaction())
+            ->setRequest($this->getRequestData())
             ->getRequestData();
     }
 
@@ -132,7 +140,7 @@ abstract class RequestManagement implements \Ebizmarts\SagePaySuite\Api\PiOrderP
             }
 
             throw new ValidatorException(
-                __('Invalid Sage Pay response. %1', $statusDetail)
+                __('Invalid Opayo response. %1', $statusDetail)
             );
         }
     }
@@ -145,14 +153,14 @@ abstract class RequestManagement implements \Ebizmarts\SagePaySuite\Api\PiOrderP
         $this->getPayment()->setAdditionalInformation('statusCode', $payResult->getStatusCode());
         $this->getPayment()->setAdditionalInformation('statusDetail', $payResult->getStatusDetail());
         if ($payResult->getThreeDSecure() !== null) {
-            $this->getPayment()->setAdditionalInformation('threeDStatus', $payResult->getThreeDSecure()->getStatus());
+            $this->getPayment()->setAdditionalInformation('3DSecureStatus', $payResult->getThreeDSecure()->getStatus());
         }
         $avsCvcCheck = $payResult->getAvsCvcCheck();
         if ($avsCvcCheck !== null) {
-            $this->getPayment()->setAdditionalInformation('avsCvcCheckStatus', $avsCvcCheck->getStatus());
-            $this->getPayment()->setAdditionalInformation('avsCvcCheckAddress', $avsCvcCheck->getAddress());
-            $this->getPayment()->setAdditionalInformation('avsCvcCheckPostalCode', $avsCvcCheck->getPostalCode());
-            $this->getPayment()->setAdditionalInformation('avsCvcCheckSecurityCode', $avsCvcCheck->getSecurityCode());
+            $this->getPayment()->setAdditionalInformation('AVSCV2', $avsCvcCheck->getStatus());
+            $this->getPayment()->setAdditionalInformation('AddressResult', $avsCvcCheck->getAddress());
+            $this->getPayment()->setAdditionalInformation('PostCodeResult', $avsCvcCheck->getPostalCode());
+            $this->getPayment()->setAdditionalInformation('CV2Result', $avsCvcCheck->getSecurityCode());
         }
         $this->getPayment()->setAdditionalInformation('moto', $this->getIsMotoTransaction());
         $this->getPayment()->setAdditionalInformation('vendorname', $this->getRequestData()->getVendorName());
@@ -252,6 +260,6 @@ abstract class RequestManagement implements \Ebizmarts\SagePaySuite\Api\PiOrderP
      */
     private function isSuccessOrThreedAuth()
     {
-        return $this->getPayResult()->getStatusCode() == Config::SUCCESS_STATUS || $this->getPayResult()->getStatusCode() == Config::AUTH3D_REQUIRED_STATUS;
+        return in_array($this->getPayResult()->getStatusCode(), $this->okStatuses, true);
     }
 }

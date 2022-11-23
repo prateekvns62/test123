@@ -48,6 +48,19 @@ class Tabs extends Template
         $categoryObj = $this->getCategory();
         return ($categoryObj) ? $categoryObj->getChildrenCategories() : null;
     }
+	
+	
+	
+	
+	public function getCategoriesTabs()
+    {
+        
+		$this->category = $this->categoryHelper->getMultiCategories();
+			
+		return $this->category;
+    }
+	
+	
 
     /**
      * @return string

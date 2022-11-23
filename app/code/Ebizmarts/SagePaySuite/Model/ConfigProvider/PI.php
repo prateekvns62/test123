@@ -81,7 +81,9 @@ class PI extends CcGenericConfigProvider
                 'ebizmarts_sagepaysuitepi' => [
                     'licensed' => $this->_suiteHelper->verify(),
                     'mode'     => $this->_config->getMode(),
-                    'dropin'   => $this->_config->setMethodCode($this->methodCode)->dropInEnabled()
+                    'sca'      => $this->_config->shouldUse3dV2(),
+                    'dropin'   => $this->_config->setMethodCode($this->methodCode)->dropInEnabled(),
+                    'newWindow'=> $this->_config->get3dNewWindow()
                 ]
             ]
         ];

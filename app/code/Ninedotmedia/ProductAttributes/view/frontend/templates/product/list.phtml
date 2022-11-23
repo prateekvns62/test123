@@ -125,32 +125,37 @@ $additionalHelper = $this->helper('Ninedotmedia\ProductAttributes\Helper\Additio
                             </div>
                         <?php endif; ?>
                         <?= $block->getReviewsSummaryHtml($_product, $templateType) ?>
-                        <?= /* @escapeNotVerified */ $block->getProductPrice($_product) ?>
-                        <?= $block->getProductDetailsHtml($_product) ?>
+                        
 
                         <div class="product-item-inner">
                             <?php if($showAdvantages): ?>
-                                <div class="product additional product-item-advantages">
-                                    <?php if ($advantagesBlock = $block->getChildBlock('additional.advantages')): ?>
-                                        <?php  $advantagesBlock->setProduct($_product); ?>
-                                        <?= $block->getChildHtml('additional.advantages', false); ?>
-                                    <?php endif; ?>
-                                </div>
+                                <div class="prod-inner-wrap">
+                                    <div class="product additional product-item-advantages">
+                                        <?php if ($advantagesBlock = $block->getChildBlock('additional.advantages')): ?>
+                                            <?php  $advantagesBlock->setProduct($_product); ?>
+                                            <?= $block->getChildHtml('additional.advantages', false); ?>
+                                        <?php endif; ?>
+                                    </div>
                             <?php endif; ?>
                             <?php if($showAttributes): ?>
-                                <div class="product attributes product-item-attributes">
-                                    <?php if ($attrBlock = $block->getChildBlock('category.product.attributes')): ?>
-                                        <?php  $attrBlock->setProduct($_product); ?>
-                                        <?= $block->getChildHtml('category.product.attributes', false); ?>
-                                    <?php endif; ?>
+                                    <div class="product attributes product-item-attributes">
+                                        <?php if ($attrBlock = $block->getChildBlock('category.product.attributes')): ?>
+                                            <?php  $attrBlock->setProduct($_product); ?>
+                                            <?= $block->getChildHtml('category.product.attributes', false); ?>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                             <?php endif; ?>
+                            <?= /* @escapeNotVerified */ $block->getProductPrice($_product) ?>
+                            <?= $block->getProductDetailsHtml($_product) ?>
                             <div class="product actions product-item-actions"<?= strpos($pos, $viewMode . '-actions') ? $position : '' ?>>
                                 <div class="actions-primary"<?= strpos($pos, $viewMode . '-primary') ? $position : '' ?>>
                                     <?php if ($_product->isSaleable()): ?>
                                         <?php $postParams = $block->getAddToCartPostParams($_product); ?>
-                                        <form data-role="tocart-form" data-product-sku="<?= $block->escapeHtml($_product->getSku()) ?>" action="<?= /* @NoEscape */ $postParams['action'] ?>" method="post">
+                                        <form data-role="tocart-form" data-product-sku="<?= $block->escapeHtml($_product->getSku()) ?>" action="<?= /* @NoEscape */ $postParams['action'] ?>" method="post" id="product_addtocart_form<?php echo $_product->getId(); ?>">
                                             <input type="hidden" name="product" value="<?= /* @escapeNotVerified */ $postParams['data']['product'] ?>">
+                                             <input type="hidden" name="button_event" id="button_event" value="" />
+											 <input type="hidden" name="caturl"  value="<?php   echo $this->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true])?>" />
                                             <input type="hidden" name="<?= /* @escapeNotVerified */ Action::PARAM_NAME_URL_ENCODED ?>" value="<?= /* @escapeNotVerified */ $postParams['data'][Action::PARAM_NAME_URL_ENCODED] ?>">
                                             <?= $block->getBlockHtml('formkey') ?>
                                             <a class="product-item-link" href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>">
@@ -158,11 +163,117 @@ $additionalHelper = $this->helper('Ninedotmedia\ProductAttributes\Helper\Additio
                                                     <?= /* @escapeNotVerified */ __('Info') ?>
                                                 </span>
                                             </a>
-                                            <button type="submit"
+                                            <?php 
+											$otype ='';
+                                            $_helper = $this->helper('Magento\Catalog\Helper\Output');
+                                            $_attributeValue = $_product->getAttributeText('in_store');
+											$productId = $_product->getId();
+											$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+											$product = $objectManager->get('Magento\Catalog\Model\Product')->load($productId);
+											$otype = $product->getResource()->getAttribute('order_type')->getFrontend()->getValue($product);
+											
+											if($otype == "Add To Cart"){
+                                            
+                                            ?>
+                                <?php if($_product->getNdmCondition()!='22') { ?>
+           <button type="submit"
                                                     title="<?= $block->escapeHtml(__('Add to Cart')) ?>"
                                                     class="action tocart primary">
                                                 <span><?= /* @escapeNotVerified */ __('Add to Cart') ?></span>
                                             </button>
+        <?php } else  { ?>
+		<div class="new_custom_add_to_cart_button">
+              <button type="submit"
+                                                    title="<?= $block->escapeHtml(__('Add to Cart')) ?>"
+                                                    class="action tocart primary">
+                                                <span><?= /* @escapeNotVerified */ __('Add to Cart') ?></span>
+                                            </button>
+                                        </div>
+         <div class="custom_button"> 
+		 <button type="button"
+                    title="<?= $block->escapeHtml(__('Add to Cart')) ?>"
+                    class="action primary tocart"
+                    id="product-addtocart-button"
+                    data-trigger="trigger<?php echo $_product->getId(); ?>">
+                <span><?= /* @escapeNotVerified */ __('Add to Cart') ?></span> 
+            </button>
+		 </div>
+            <div data-bind="mageInit: {
+        'Magento_Ui/js/modal/modal':{
+            'type': 'popup',
+           
+            'trigger': '[data-trigger=trigger<?php echo $_product->getId(); ?>]',
+            'responsive': true
+        }}">
+        
+    <p>Before you proceed, please check all pictures of this item as there may be cosmetic marks on the front / side of the product hence the heavy price reduction! If you do have any more questions please call us on 0330 124 6527.</p>
+        
+    <button type="button"
+                    title="Add to Cart"
+                    id="close-popup<?php echo $_product->getId(); ?>"
+                    data-role="closeBtn">
+                <span>Return Back To Product</span>
+            </button>
+            
+            
+            
+              <button type="button"
+                    title="Continue Shopping"
+                id="continue-shopping<?php echo $_product->getId(); ?>">
+                <span>Continue Shopping</span>
+            </button>
+            
+             <button type="button"
+                    title="Continue To Checkout"
+                   id="continue-to-checkout<?php echo $_product->getId(); ?>">
+                <span>Continue To Checkout</span>
+            </button>
+</div>
+
+<script>
+    require([
+        'jquery',
+        'priceBox'
+    ], function($){
+      $(document).on("click","#continue-shopping<?php echo $_product->getId(); ?>",function() {
+          $("#close-popup<?php echo $_product->getId(); ?>").click();   
+         $('#product_addtocart_form<?php echo $_product->getId(); ?> #button_event').val('continue-shopping');
+          $('#product_addtocart_form<?php echo $_product->getId(); ?>').submit();
+    });
+    
+     $(document).on("click","#continue-to-checkout<?php echo $_product->getId(); ?>",function() {
+        //   alert('test');
+          $("#close-popup<?php echo $_product->getId(); ?>").click();   
+         $('#product_addtocart_form<?php echo $_product->getId(); ?> #button_event').val('continue-to-checkout');
+          $('#product_addtocart_form<?php echo $_product->getId(); ?>').submit();
+    });
+    
+    });
+</script>
+        
+        <?php } ?>
+                                            
+                                            
+                                            <?php //}
+												}else if($otype == "Local Only"){
+
+												echo "<span style='line-height: 37px;margin-right: 10px;'>In Stock, Call us on 0330 124 6527 for delivery (Free Leicester Delivery)</span>";
+												
+											 }else if($otype == "Back Order"){
+
+												echo "<span style='line-height: 37px;margin-right: 10px;'> Call us on 0330 124 6527 for a price and delivery time frame.</span>";
+											?>
+												<style>
+											.column.main .products-list .product-item .product-item-info .price-box[ data-product-id="<?php echo $_product->getId(); ?>"]{
+												display: none;
+											}
+											</style>
+											<?php
+											 } else{
+												 echo "<span style='line-height: 37px;margin-right: 10px;'>In Stock, Call us on 0330 124 6527 for delivery (Free Leicester Delivery)</span>";
+											 }
+											?>
+											
                                         </form>
                                     <?php else: ?>
                                         <?php if ($_product->isAvailable()): ?>
@@ -186,6 +297,7 @@ $additionalHelper = $this->helper('Ninedotmedia\ProductAttributes\Helper\Additio
                                 </div>
                             <?php endif; ?>
                         </div>
+                        
                     </div>
                 </div>
                 <?= ($iterator == count($_productCollection)+1) ? '</li>' : '' ?>

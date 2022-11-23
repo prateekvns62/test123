@@ -1,0 +1,336 @@
+<?php 
+$om = \Magento\Framework\App\ObjectManager::getInstance();
+$productCollection = $om->create('Magento\Catalog\Model\ResourceModel\Product\Collection');
+$_productCollection = $productCollection->addAttributeToSelect('*')->addAttributeToFilter('order_type_value',['eq'=>"Add To Cart"])->addAttributeToFilter('is_salable',['eq'=>1])->setPageSize(9)->setCurPage(1)->load();
+$store = $om->get('Magento\Store\Model\StoreManagerInterface')->getStore();
+$listProductBlock = $om->get('Magento\Catalog\Block\Product\ListProduct');
+
+?>
+
+<link rel="stylesheet" type="text/css" href="<?php echo $block->getViewFileUrl('Tech9logy_Enquiries::css/slick-theme.css')?>">
+<link rel="stylesheet" type="text/css" href="<?php echo $block->getViewFileUrl('Tech9logy_Enquiries::css/slick.css')?>">
+<link rel="stylesheet" type="text/css" href="<?php echo $block->getViewFileUrl('Tech9logy_Enquiries::css/styles.css')?>">
+
+
+<div class="page-wrapper">
+    <div class="hero-section">
+        <div class="hero-row">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Trade Orders</h1>
+                    <div class="hero-point">
+                        <p>Property Developers <span>/</span> Letting Agents <span>/</span> Builders <span>/</span> <br>
+                        Private Landlords <span>/</span> Student Accommodation<br></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="headline-section">
+        <div class="container">
+            <div class="headline-row">
+                <h2>We offer <strong>discounts</strong> for large orders</h2>
+            </div>
+        </div>
+    </div>
+    <div class="banner-form-section">
+        <div class="trade-form-bx">
+            <div class="container">
+                <div class="bargain-form-bx">
+                    <h5>Like what you see?</h5>
+                    <p>Drop us a message and we'll get straight back to you.</p>
+                    <form autocomplete="off"method="POST" action="<?php echo $block->getUrl('enquiries/index/save');?>" data-hasrequired="<?= $block->escapeHtmlAttr(__('* Required Fields')) ?>"
+      data-mage-init='{"validation":{}}'>
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" class="input-bx" placeholder="Name:" data-validate="{required:true}" />
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" class="input-bx" placeholder="Email:" data-validate="{required:true, 'validate-email':true}"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="telephone" pattern="[0-9]*" inputmode="numeric" name="telephone" data-validate="{required:true, 'validate-number':true}" class="input-bx input-text required-entry validate-length maximum-length-10 minimum-length-10 validate-digits" placeholder="Telephone:" />
+                        </div>
+                        <div class="form-group">
+                            <select class="input-bx" id="units" name="units" name="trade-enquiry-units">
+                                <option value="" disabled="" selected="">Estimated units:</option>
+                                <option value="1-10">1-10</option>
+                                <option value="10+">10+</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <textarea type="text" id="message" name="message" class="input-bx" placeholder="Message"></textarea>
+                        </div>
+                        <div class="button-row" id="click-me"><span class="submit-btn"><button>submit</button></span></div>
+                    </form>
+                    <div class="text-small">or give us a call on </div>
+                    <div class="phone-number"><a href="tel:0116 271 0320">0116 271 0320</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- <script type="text/javascript">
+
+    require(['jquery'],function (jQuery) {
+       jQuery(document).ready(function(){
+          /* if (document.getElementById("mobile").value == "") {
+           alert("Orderid may not be blank");
+           return false;
+           }*/
+           $("#click-me").click(function(){
+                var name = jQuery("#name").val();
+                var email = jQuery("#email").val();
+                var telephone = jQuery("#telephone").val();
+                var units = jQuery("#units").val();
+                var message = jQuery("#message").val();
+                            
+                jQuery.ajax({
+                type:'POST',
+                showLoader: true ,
+                url:"<?php echo $block->getUrl('enquiries/index/save');?>",
+                data: {namepost:name,emailpost:email,telephonepost:telephone,unitspost:units,messagepost:message},
+                success:function(feedback) {
+                    jQuery("#success").html("Mail Send Successfully.");                  
+                }     
+                });
+           });
+           
+        });
+    });
+
+</script>  -->
+
+    <div class="card-info-section">
+        <div class="container">
+            <div class="card-info-row">
+                <div class="card-info-col">
+                    <div class="card-images">
+                        <img src="<?php echo $this->getViewFileUrl('Tech9logy_Enquiries::img/card-img.png'); ?>">
+                    </div>
+                    <div class="card-text">
+                        <h5>Knowledgeable Staff</h5>
+                        <p>We'll work directly with you to ensure you get the right products for your needs. All of our Trade team have been expertly trained to serve every kind of business, from contractors seeking large orders to a commercial business looking to update staff facilities.</p>
+                    </div>
+                </div>
+                <div class="card-info-col">
+                    <div class="card-images">
+                        <img src="<?php echo $this->getViewFileUrl('Tech9logy_Enquiries::img/card2.png'); ?>">
+                    </div>
+                    <div class="card-text">
+                        <h5>Bulk Orders & Payment Options</h5>
+                        <p>We strive to always deliver the best prices, and offer discounts for bulk orders. A number of payments options are available, including BACS and Faster Payments, and we offer VAT receipts with all transactions.</p>
+                    </div>
+                </div>
+                <div class="card-info-col">
+                    <div class="card-images">
+                        <img src="<?php echo $this->getViewFileUrl('Tech9logy_Enquiries::img/card-img.png'); ?>">
+                    </div>
+                    <div class="card-text">
+                        <h5>Our Delivery Service</h5>
+                        <p>Using our own fleet of delivery vehicles means we can ensure you receive the best service possible - 6 days a week - so there's no need to put your project on hold when buying with Bargain Buyz.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="home-pro-section">
+        <div class="container">
+             <!-- <div class="supplied-business-section">
+                <div class="supplied-slider">
+                    <div>
+                        <div class="suppl-row">
+                            <div class="suppl-text">
+                                <div class="title"> Who we've supplied </div>
+                                <div class="company">Lucas Fit Out Ltd </div>
+                                <ul class="bullet-points">
+                                    <li>50 apartments</li>
+                                    <li>Range of products</li>
+                                </ul>
+                                <div class="business-logo">
+                                    <ul>
+                                        <li><img src="<?php echo $this->getViewFileUrl('Tech9logy_Enquiries::img/Blomberg-image.png'); ?>"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="suppl-figure">
+                                <img src="<?php echo $this->getViewFileUrl('Tech9logy_Enquiries::img/slideshow-image.png'); ?>">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="suppl-row">
+                            <div class="suppl-text">
+                                <div class="title">Who we've supplied</div>
+                                <div class="company">NPS London Ltd</div>
+                                <ul class="bullet-points">
+                                    <li>30 apartments</li>
+                                    <li>Range of products</li>
+                                </ul>
+                                <div class="business-logo">
+                                    <ul>
+                                        <li><img src="<?php echo $this->getViewFileUrl('Tech9logy_Enquiries::img/Blomberg-image.png'); ?>"></li>
+                                        <li><img src="<?php echo $this->getViewFileUrl('Tech9logy_Enquiries::img/Blomberg-image.png'); ?>"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="suppl-figure">
+                                <img src="<?php echo $this->getViewFileUrl('Tech9logy_Enquiries::img/slideshow-imag.png'); ?>">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="suppl-row">
+                            <div class="suppl-text">
+                                <div class="title">Who we've supplied</div>
+                                <div class="company">X1 Development Ltd</div>
+                                <ul class="bullet-points">
+                                    <li>140 apartments</li>
+                                    <li>Range of products</li>
+                                </ul>
+                                <div class="business-logo">
+                                    <ul>
+                                        <li><img src="<?php echo $this->getViewFileUrl('Tech9logy_Enquiries::img/Blomberg-image.png'); ?>"></li>
+                                        <li><img src="<?php echo $this->getViewFileUrl('Tech9logy_Enquiries::img/Blomberg-image.png'); ?>"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="suppl-figure">
+                                <img src="<?php echo $this->getViewFileUrl('Tech9logy_Enquiries::img/slideshow-imag.png'); ?>">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>  -->
+            
+            <div class="reco-product-section">
+                <h3 class="heading-title">We recommend</h3>
+                <div class="home-product-row">
+                    <?php foreach ($_productCollection as $_product): ?>
+                       <?php //echo '<pre>'; print_r($_product->getData()); exit; ?>
+                        <?php $postParams = $listProductBlock->getAddToCartPostParams($_product); ?> 
+                        <div class="home-product-col">
+                            <div class="product-img">
+                                <img src="<?= $store->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $_product->getImage(); ?>">
+                            </div>
+                            <div class="product-text">
+                                <a href="<?php echo $_product->getUrlKey().".html"; ?>">
+                                    <h6><?= $_product->getName(); ?></h6>
+                                </a>
+                                <p><?php echo $_product->getAttributeText('manufacturer');  ?><br><?= $_product->getSku(); ?></p>
+                                <div class="product-buy">
+                                    <?php
+                                        if($_product->getSpecialPrice() && $_product->getSpecialPrice() > 0 && $_product->getSpecialPrice() < $_product->getPrice()){
+                                            $productPrice = $_product->getSpecialPrice();
+                                        }else{
+                                            $productPrice =  $_product->getPrice();
+                                        }
+                                    ?>
+                                    <p class="price"><?= number_format($productPrice, 2); ?></p>
+                                    <div class="product actions product-item-actions">
+                                        <div class="actions-primary">    
+                                            <form data-role="tocart-form" action="<?php /* @escapeNotVerified */ echo $postParams['action']; ?>" method="post">
+                                                <input type="hidden" name="product" value="<?php /* @escapeNotVerified */ echo $postParams['data']['product']; ?>">
+                                                <?php echo $block->getBlockHtml('formkey')?>
+                                                <?php $storeManager = \Magento\Framework\App\ObjectManager::getInstance()->get('Magento\Store\Model\StoreManagerInterface'); ?>
+                                                    <button type="submit"
+                                                            title="<?php echo $block->escapeHtml(__('Add to Cart')); ?>"
+                                                            class="action tocart primary">
+                                                        <span><?php /* @escapeNotVerified */ echo __('Add to Cart') ?></span>
+                                                    </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach;?>
+                </div>
+            </div>
+        </div>
+    </div> 
+     <div class="our-brand-section">
+        <div class="container">
+            <h3 class="heading-title">Our top brands</h3>
+            <div class="our-brand-row">
+                <div class="brand-box">
+                    <img class="brandImg" src="https://staging.bargainbuyz.co.uk/media/wysiwyg/enquiry_image/aeg.png" alt="AEG">
+                    <a href="<?= $block->getUrl('laundry.html?manufacturer=48'); ?>"><p>Aeg Laundry</p></a>
+                    <a href="<?= $block->getUrl('refrigeration.html?manufacturer=48'); ?>"><p>Aeg Refrigeration</p></a>
+                    <a href="<?= $block->getUrl('dishwashers.html?manufacturer=48'); ?>"><p>Aeg Dishwashers</p></a>
+                    <a href="<?= $block->getUrl('cooking.html?manufacturer=48'); ?>"><p>Aeg Cooking</p></a>
+                </div>
+                <div class="brand-box">
+                    <img class="brandImg" src="https://staging.bargainbuyz.co.uk/media/wysiwyg/enquiry_image/bosch.png" alt="bosch">
+                    <a href="<?= $block->getUrl('laundry.html?manufacturer=90'); ?>"><p>Bosch Laundry</p></a>
+                    <a href="<?= $block->getUrl('refrigeration.html?manufacturer=90'); ?>"><p>Bosch Refrigeration</p></a>
+                    <a href="<?= $block->getUrl('dishwashers.html?manufacturer=90'); ?>"><p>Bosch Dishwashers</p></a>
+                    <a href="<?= $block->getUrl('cooking.html?manufacturer=90'); ?>"><p>Bosch Cooking</p></a>
+                </div>
+                <div class="brand-box">
+                    <img class="brandImg" src="https://staging.bargainbuyz.co.uk/media/wysiwyg/enquiry_image/hoover.png" alt="Hoover">
+                    <a href="<?= $block->getUrl('laundry.html?manufacturer=69'); ?>"><p>Hoover Laundry</p></a>
+                    <a href="<?= $block->getUrl('refrigeration.html?manufacturer=69'); ?>"><p>Hoover Refrigeration</p>
+                    <a href="<?= $block->getUrl('dishwashers.html?manufacturer=69'); ?>"><p>Hoover Dishwashers</p></a>
+                    <a href="<?= $block->getUrl('cooking.html?manufacturer=69'); ?>"><p>Hoover Cooking</p></a>
+                </div>
+                <div class="brand-box">
+                    <img class="brandImg" src="https://staging.bargainbuyz.co.uk/media/wysiwyg/enquiry_image/hotpoint.png" alt="hotpoint">
+                    <a href="<?= $block->getUrl('laundry.html?manufacturer=70'); ?>"><p>Hotpoint Laundry</p></a>
+                    <a href="<?= $block->getUrl('refrigeration.html?manufacturer=70'); ?>"><p>Hotpoint Refrigeration</p>
+                    <a href="<?= $block->getUrl('dishwashers.html?manufacturer=70'); ?>"><p>Hotpoint Dishwashers</p></a>
+                    <a href="<?= $block->getUrl('cooking.html?manufacturer=70'); ?>"><p>Hotpoint Cooking</p></a>
+                </div>
+                <div class="brand-box">
+                    <img class="brandImg" src="https://staging.bargainbuyz.co.uk/media/wysiwyg/enquiry_image/Haier_logo.png" alt="Haier">
+                    <a href="<?= $block->getUrl('laundry.html?manufacturer=67'); ?>"><p>Haier Laundry</p></a>
+                    <a href="<?= $block->getUrl('refrigeration.html?manufacturer=67'); ?>"><p>Haier Refrigeration</p></a>
+                    <a href="<?= $block->getUrl('dishwashers.html?manufacturer=67'); ?>"><p>Haier Dishwashers</p></a>
+                    <a href="<?= $block->getUrl('cooking.html?manufacturer=67'); ?>"><p>Haier Cooking</p></a>
+                </div>
+                <div class="brand-box">
+                    <img class="brandImg" src="https://staging.bargainbuyz.co.uk/media/wysiwyg/enquiry_image/Indesit-Logo-500x281.png" alt="Indesit">
+                    <a href="<?= $block->getUrl('laundry.html?manufacturer=91'); ?>"><p>Indesit Laundry</p></a>
+                    <a href="<?= $block->getUrl('refrigeration.html?manufacturer=91'); ?>"><p>Indesit Refrigeration</p></a>
+                    <a href="<?= $block->getUrl('dishwashers.html?manufacturer=91'); ?>"><p>Indesit Dishwashers</p></a>
+                    <a href="<?= $block->getUrl('cooking.html?manufacturer=91'); ?>"><p>Indesit Cooking</p></a>
+                </div>
+                <div class="brand-box">
+                    <img class="brandImg" src="https://staging.bargainbuyz.co.uk/media/wysiwyg/enquiry_image/Neff-logo.png" alt="Neff">
+                    <a href="<?= $block->getUrl('laundry.html?manufacturer=75'); ?>"><p>Neff Laundry</p></a>
+                    <a href="<?= $block->getUrl('refrigeration.html?manufacturer=75'); ?>"><p>Neff Refrigeration</p></a>
+                    <a href="<?= $block->getUrl('dishwashers.html?manufacturer=75'); ?>"><p>Neff Dishwashers</p></a>
+                    <a href="<?= $block->getUrl('cooking.html?manufacturer=75'); ?>"><p>Neff Cooking</p></a>
+                </div>
+                <div class="brand-box">
+                    <img class="brandImg" src="https://staging.bargainbuyz.co.uk/media/wysiwyg/enquiry_image/zanussi-logo.png" alt="Zanussi">
+                    <a href="<?= $block->getUrl('laundry.html?manufacturer=89'); ?>"><p>Zanussi Laundry</p></a>
+                    <a href="<?= $block->getUrl('refrigeration.html?manufacturer=89'); ?>"><p>Zanussi Refrigeration</p></a>
+                    <a href="<?= $block->getUrl('dishwashers.html?manufacturer=89'); ?>"><p>Zanussi Dishwashers</p></a>
+                    <a href="<?= $block->getUrl('cooking.html?manufacturer=89'); ?>"><p>Zanussi Cooking</p></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>   
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> 
+
+<style>
+    .product-item-actions button.tocart, .product-item-actions button.tocart:hover,  .product-item-actions button.tocart:active{
+        background-color: #ce0400 !important;
+        border: 1px solid #ce0400 !important;
+        color: #fff !important;
+        border-radius: 0px !important;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 20px;
+    }
+    .action.primary, .action.primary:hover, .action.primary:active {
+        background-color: #ce0400 !important;
+        border: 1px solid #ce0400 !important;
+        color: #fff !important; 
+    }
+    .reco-product-section .product-item-actions {
+        display: block !important;
+    }
+</style>

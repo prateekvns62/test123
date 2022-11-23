@@ -1,3 +1,131 @@
+## [1.2.40] - 2021-07-07
+### Fixed
+- Module not recovering cart when PI 3D fails.
+- Fraud check failing after Opayo update
+
+## [1.2.39] - 2021-05-26
+### Added
+- Debug Mode setting
+- Prevent customer personal data from logging setting
+- Show 3rdMan score and score breakdown on order details
+### Fixed
+- 0.01 difference when you try to invoice PI Defer orders
+- Invoice created successfully in Magento when transaction was aborted
+- PI Authorize and Capture orders not being invoiced
+- Recover cart message appearing in product page after successful order with PI and 3D
+
+## [1.2.27.1] - 2021-05-12
+### Fixed
+- PI with 3D redirecting to cart after checkout
+
+## [1.2.27] - 2021-02-01
+### Fixed
+- PI repeat with 3Dv2
+- Recover cart when session is lost
+- Fraud not being retrieved for non default sotres in multi-store setup
+- Verification result not showing
+- Browser Ipv6 error on PI
+
+## [1.2.26] - 2020-11-24
+### Fixed
+- 3Dv1 not working with Protocol 4.00 for PI
+- PI refund problem with Multi-Store sites
+- Duplicated Callbacks received for FORM
+
+## [1.2.25] - 2020-10-27	
+### Changed
+- Server cancel payment redirection to checkout shipping method
+- Added new Order Details fields names in block
+
+### Fixed
+- Fix duplicate 3D callback and duplicate response for threeDSubmit
+- CSP Whitelisting file
+- Add routes to webRestrctions.xml to avoid payment failures when Magento's EE restrictions is enabled
+
+## [1.2.24] - 2020-07-08	
+### Changed	
+- Sage Pay text and logo changed to Opayo	
+
+### Fixed	
+- Adapt 3Dv2 to latest updates	
+- Duplicated address problem	
+- 3D, Address, Postcode and CV2 flags not showing up on the order grid	
+- Recover Cart problem when multiple items with same configurable parent	
+- Order cancelled when same increment id on different store views	
+- Duplicated PI Callbacks received cancel the order	
+- Server not recovering cart when cancel the transaction	
+- Add form validation in PI WITHOUT Form
+
+## [1.2.23] - 2020-04-13
+### Fixed
+- Fix PI not working with virtual product and guest checkout
+- Problem with js calls not being sequential and causing errors on checkout with PI
+- Amount is not an integer when trying to make a refund
+
+## [1.2.22] - 2020-03-18
+### Changed
+- Store SecurityKey in Database when SyncFromApi
+- Enhance cart recovery to avoid orders cancelling when customer goes to checkout/cart
+
+### Fixed
+- Round amount when populating amount and currency to avoid 0.01 difference
+- Order not available error with FORM
+
+## [1.2.21] - 2020-02-12
+### Added
+- Compatibility with Magento 2.2.11
+
+### Changed
+- Look transaction by vendorTxCode if not VPSTxId when SyncFromApi
+
+### Fixed
+- Problem with basket format when using Sage50
+- Error while trying to cancel SERVER Authenticate order
+
+## [1.2.20] - 2019-12-19
+### Fixed
+- Items being canceled when order take more than 15 minutes
+- Guest order being created with "Guest" as customer name
+- Pi not loading when there are terms and conditions
+
+## [1.2.19] - 2019-11-26
+### Added
+- Show Fraud information on order grid (3D, Post Code, Address, CV2)
+
+### Changed
+- New PI endpoint
+
+### Fixed
+- Order failing if using special characters on order id prefix
+- Fraud flag showing no flag when 3rd Man and there's no Fraud Rule
+
+### Security
+- Encrypt PI callback URL
+
+## [1.2.18] - 2019-10-28
+### Added
+- Compatibility with Magento 2.2.10
+- Setting to open 3D verification in new window for PI
+
+### Changed
+- Sanitize Post Code on PI
+- Remove spaces from paRes
+- Remove "Load secure credit card form" PI button
+
+### Fixed
+- Frontend using Default Config values instead of Store values on Frontend
+- Multiple 3D responses problem
+
+## [1.2.17] - 2019-09-18
+### Added
+- PI support for PSD2 and SCA
+- Payment Failed Emails implementation for PI
+
+### Fixed
+- Stop the order for try to being captured if txstateid empty
+- 0.00 cost products breaks PayPal
+- Fix Multi Currency Authenticate invoice using Base Currency amount
+
 ## [1.2.16] - 2019-08-07
 ### Added
 - Setting to set max tokens per customer
@@ -187,6 +315,20 @@
 ### Added
 - First release with Magento 2.2.0 compatibility.
 
+[1.2.40]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.40
+[1.2.39]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.39
+[1.2.27.1]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.27.1
+[1.2.27]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.27
+[1.2.26]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.26
+[1.2.25]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.25
+[1.2.24]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.24
+[1.2.23]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.23
+[1.2.22]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.22
+[1.2.21]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.21
+[1.2.20]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.20
+[1.2.19]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.19
+[1.2.18]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.18
+[1.2.17]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.17
 [1.2.16]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.16
 [1.2.15]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.15
 [1.2.14]: https://github.com/ebizmarts/magento2-sage-pay-suite/releases/tag/1.2.14

@@ -3,10 +3,32 @@
     <body>
         <referenceBlock name="product.info.main">
 
-            <container name="wrap.product" htmlClass="wrap-product" htmlTag="div" before="-">
+            <container name="wrap.product" htmlClass="wrap-product" htmlTag="div" before="-"> 
 
                 <container name="wrap.product.left" htmlClass="wrap-product-left" htmlTag="div" before="-">
 
+                <container name="wrap.product.right" htmlClass="wrap-product-right" htmlTag="div" after="wrap.product.left">
+
+
+                    <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="additional.condition" template="Ninedotmedia_ProductAttributes::product/additional/conditiononproduct.phtml" before="-"/>
+                      <container name="holder.product.links" htmlClass="holder-product-links" htmlTag="div">
+
+                            <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="product-links" template="Ninedotmedia_ProductAttributes::product/additional/condition_description.phtml" />
+                        </container>
+
+                      <container name="new.custom.new.class" htmlClass="new-custom-new_class" htmlTag="div"> 
+
+                    <container name="holder.additional.advantages" htmlClass="holder-additional-advantages" htmlTag="div">
+
+                      
+
+                        <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="additional.advantages"
+                               template="Ninedotmedia_ProductAttributes::product/additional/advantages.phtml" after="holder.product.links"/>
+                    </container>
+                         <container name="new.custom.class" htmlClass="new-custom-class" htmlTag="div">
+
+                    <block class="Magento\Catalog\Block\Product\View" name="additional.short.discription"
+                               template="Ninedotmedia_ProductAttributes::product/additional/short_discription.phtml" before="-"/>
                     <container name="holder.product.label" htmlClass="holder-products-label" htmlTag="div">
                         <block class="Ninedotmedia\ProductAttributes\Block\Product\Label" name="product.label.save" before="-">
                             <arguments>
@@ -23,35 +45,45 @@
                         </block>
                     </container>
 
+
+
                     <block class="Ninedotmedia\ProductAttributes\Block\Product\Attributes" name="category.product.attributes" template="Magento_Catalog::product/view/attributes.phtml" after="holder.product.label"/>
 
                 </container>
-
-                <container name="wrap.product.right" htmlClass="wrap-product-right" htmlTag="div" after="wrap.product.left">
-
-
-                    <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="additional.condition" template="Ninedotmedia_ProductAttributes::product/additional/condition.phtml" before="-"/>
-
-                    <container name="holder.additional.advantages" htmlClass="holder-additional-advantages" htmlTag="div">
-
-                        <container name="holder.product.links" htmlClass="holder-product-links" htmlTag="div">
-<!--                            <block class="Magento\Cms\Block\Block" name="product-links" before="-">-->
-<!--                                <arguments>-->
-<!--                                    <argument name="block_id" xsi:type="string">product-links</argument>-->
-<!--                                </arguments>-->
-<!--                            </block>-->
-                            <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="product-links" template="Ninedotmedia_ProductAttributes::product/additional/condition_description.phtml" />
-                        </container>
-
-                        <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="additional.advantages"
-                               template="Ninedotmedia_ProductAttributes::product/additional/advantages.phtml" after="holder.product.links"/>
-                    </container>
-
-                </container>
-
             </container>
 
-        </referenceBlock>
-        <move element="product.info.social" destination="product.info.addtocart" before="-"/>
+  </container>
+
+
+            </container>
+              
+           </container>
+            <container name="product.info.price" label="Product info auxiliary container" htmlTag="div" htmlClass="product-info-price">
+                    <container name="product.info.stock.sku" label="Product auxiliary info" htmlTag="div" htmlClass="product-info-stock-sku">
+                        <container name="product.info.type" before="-"/>
+                        <block class="Magento\Catalog\Block\Product\View\Description" name="product.info.sku" template="Magento_Catalog::product/view/attribute.phtml" after="product.info.type">
+                            <arguments>
+                                <argument name="at_call" xsi:type="string">getSku</argument>
+                                <argument name="at_code" xsi:type="string">sku</argument>
+                                <argument name="css_class" xsi:type="string">sku</argument>
+                                <argument name="at_label" xsi:type="string">default</argument>
+                                <argument name="add_attribute" xsi:type="string">itemprop="sku"</argument>
+                            </arguments>
+                        </block>
+                    </container>
+                    <block class="Magento\Catalog\Block\Product\View" name="product.info.review" template="Magento_Catalog::product/view/review.phtml" after="product.info.stock.sku" />
+                    <block class="Magento\Catalog\Pricing\Render" name="product.price.final">
+                        <arguments>
+                            <argument name="price_render" xsi:type="string">product.price.render.default</argument>
+                            <argument name="price_type_code" xsi:type="string">final_price</argument>
+                            <argument name="zone" xsi:type="string">item_view</argument>
+                        </arguments>
+                    </block>
+                </container>
+
+        </referenceBlock> 
+         <move element="product.addto.wishlist" destination="product.info.addtocart.additional" after="product.info.addtocart" />
+        <move element="product.info.social" destination="product.info.addtocart" before="-"/> 
+
     </body>
 </page>

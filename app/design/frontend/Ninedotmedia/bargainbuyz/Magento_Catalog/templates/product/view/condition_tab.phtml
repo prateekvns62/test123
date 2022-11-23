@@ -1,0 +1,43 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/**
+ * Product additional attributes template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View\Attributes
+ */
+?>
+<?php 
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+    $_product = $block->getProduct();
+$_show = $_product->getAttributeText('ndm_condition');
+if($_show == 'Why Is This Product Graded / Ex-Display? Click here!'){ ?>
+<?php  
+	
+	$attr_arr = array("Front", "Back","Top", "Left Side", "Right Side","Handles");
+?>
+
+<?php if ($_additional = $block->getAdditionalData()): ?>
+    <div class="additional-attributes-wrapper table-wrapper">
+        <table class="data table additional-attributes" id="product-attribute-specs-table-condition">            
+            <tbody>
+            <?php foreach ($_additional as $_data): ?>
+				<?php if (in_array($block->escapeHtml(__($_data['label'])), $attr_arr)){ ?>
+                <tr>
+                    <th class="col label" scope="row"><?= $block->escapeHtml(__($_data['label'])) ?></th>
+                    <td class="col data" data-th="<?= $block->escapeHtml(__($_data['label'])) ?>"><?= /* @escapeNotVerified */ $_helper->productAttribute($_product, $_data['value'], $_data['code']) ?></td>
+                </tr>
+				<?php } ?>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php endif;?>
+
+<?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('product-condition-tab')->toHtml(); ?>
+<?php } ?>

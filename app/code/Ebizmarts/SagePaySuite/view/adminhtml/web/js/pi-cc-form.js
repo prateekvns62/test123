@@ -130,7 +130,7 @@ define([
                                         self.placeTansactionRequest();
                                     } catch (err) {
                                         console.log(err);
-                                        self.showPaymentError("Unable to initialize Sage Pay payment method, please use another payment method.");
+                                        self.showPaymentError("Unable to initialize Opayo payment method, please use another payment method.");
                                     }
                                 } else {
                                     //Check if it is "Authentication failed"
@@ -172,7 +172,7 @@ define([
                                     self.placeTansactionRequest();
                                 } catch (err) {
                                     console.log(err);
-                                    alert("Unable to initialize Sage Pay payment method, please refresh the page and try again.");
+                                    alert("Unable to initialize Opayo payment method, please refresh the page and try again.");
                                 }
                             } else {
                                 self.showPaymentError(self.processNokResponse(status, response));
@@ -180,7 +180,7 @@ define([
                         });
                     } catch (err) {
                         //errorProcessor.process(err);
-                        alert("Unable to initialize Sage Pay payment method, please refresh the page and try again.");
+                        alert("Unable to initialize Opayo payment method, please refresh the page and try again.");
                     }
                 }
             }
@@ -255,18 +255,38 @@ define([
             token_form.elements[4].setAttribute('value', document.getElementById(self.getCode() + '_cc_cid').value);
         },
         placeTansactionRequest: function () {
-
             var self = this;
 
             var serviceUrl = this.options.url.request;
 
             var formData = jQuery("#edit_form").serialize();
-            formData += "&merchant_session_key=" + self.merchantSessionKey;
-            formData += "&card_identifier=" + self.cardIdentifier;
-            formData += "&card_type=" + self.creditCardType;
-            formData += "&card_exp_month=" + self.creditCardExpMonth;
-            formData += "&card_exp_year=" + self.creditCardExpYear;
-            formData += "&card_last4=" + self.creditCardLast4;
+
+            var baseParams = {
+                merchant_session_key: self.merchantSessionKey,
+                card_identifier: self.cardIdentifier,
+                card_type: self.creditCardType,
+                card_exp_month: self.creditCardExpMonth,
+                card_exp_year: self.creditCardExpYear,
+                card_last4: self.creditCardLast4
+            };
+
+            var scaParams = {
+                javascript_enabled: 1,
+                accept_headers: 'Accept headers placeholder.',
+                language: navigator.language,
+                user_agent: navigator.userAgent,
+                java_enabled: navigator.javaEnabled() ? 1 : 0,
+                color_depth: screen.colorDepth,
+                screen_width: screen.width,
+                screen_height: screen.height,
+                timezone: (new Date()).getTimezoneOffset()
+            };
+
+            $.extend(baseParams, scaParams);
+
+            var query = $.param(baseParams);
+            formData += "&";
+            formData += query;
 
             $.ajax({
                 url: serviceUrl,
@@ -279,7 +299,7 @@ define([
                     //redirect to success
                     window.location.href = response.response;
                 } else {
-                    self.showPaymentError(response.error_message ? response.error_message : "Invalid Sage Pay response, please use another payment method.");
+                    self.showPaymentError(response.error_message ? response.error_message : "Invalid Opayo response, please use another payment method.");
                 }
             });
         },

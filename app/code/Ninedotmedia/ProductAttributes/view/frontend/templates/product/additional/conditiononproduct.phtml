@@ -1,0 +1,66 @@
+
+
+<div class="custom_title">
+    <h1>
+<?php 
+
+$objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
+$registry = $objectManager->get('\Magento\Framework\Registry');
+$currentProduct = $registry->registry('current_product');
+print_r( $currentProduct->getName());
+
+
+?>
+</h1>
+</div>
+
+<div class= "new_div_class">
+
+<?php if ($condition = $block->getCondition()){ ?>
+    <div class="product-condition">
+        <?php if($condition == "Why Is This Product Graded / Ex-Display? Click here!"){ ?>
+        <a class="action add" style="color:#fff;" id="tabClick" href="javascript:void(0);"><?= $condition; ?></a>
+        <?php }else{ ?>
+      <p>  <?= $condition; ?></p>
+        <?php } ?>
+    </div>
+<?php } ?>
+
+<script type="text/javascript">
+        require([
+        'jquery'
+    ], function ($) {
+        'use strict';
+            $("#tabClick").on("click" ,function() {
+                
+                $('html,body').animate({
+        scrollTop: parseInt($(".detailed").offset().top)-110},
+        'slow');
+               console.log('48');
+                //your a tag id like below
+                $(".conditiontab").trigger( "click" )
+            });
+});
+</script>
+
+    <?php $_helper = $this->helper('Magento\Catalog\Helper\Output');
+$_attributeValue = $block->getProduct()->getResource()->getAttribute('ndm_guarantee')->getFrontend()->getValue($block->getProduct());
+ if ($_attributeValue == "0"){
+?>
+<?php }else{?>
+<div class="brand-text-wrap">
+   
+<div class="brand">
+
+    <span class="brand_img"><img src="https://staging.bargainbuyz.co.uk/media/attribute/swatch/a/b/warrenty-icon.png"></span>
+<span class="warranty_txt"><strong> <?php 
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+echo $_attributeValue = $block->getProduct()->getResource()->getAttribute('ndm_guarantee')->getFrontend()->getValue($block->getProduct());
+?></strong>
+</span>
+
+</div>
+</div>
+<?php }?>
+
+</div>

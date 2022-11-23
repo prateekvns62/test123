@@ -1,0 +1,15 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+
+	<head>
+        <title>Smart Search</title>        
+    </head>
+    <body>
+        <referenceContainer name="sidebar.main">
+            <block class="Tech9logy\SmartSearch\Block\Index\Sidebar" name="smartsearch_index_sidebar" before="-" template="Tech9logy_SmartSearch::smartsearch_index_sidebar.phtml"/>
+        </referenceContainer>
+
+        <referenceContainer name="content">
+            <block class="Tech9logy\SmartSearch\Block\Index\Index" name="smartsearch_index_index" template="Tech9logy_SmartSearch::smartsearch_index_index.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

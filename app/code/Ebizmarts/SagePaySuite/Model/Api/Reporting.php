@@ -8,6 +8,7 @@ namespace Ebizmarts\SagePaySuite\Model\Api;
 
 use Ebizmarts\SagePaySuite\Api\SagePayData\FraudScreenResponseInterfaceFactory;
 use Ebizmarts\SagePaySuite\Api\SagePayData\FraudScreenRuleInterfaceFactory;
+use Ebizmarts\SagePaySuite\Helper\Fraud;
 use Ebizmarts\SagePaySuite\Model\Config;
 use Ebizmarts\SagePaySuite\Model\Logger\Logger;
 use Magento\Framework\ObjectManager\ObjectManager;
@@ -66,7 +67,6 @@ class Reporting
         FraudScreenResponseInterfaceFactory $fraudResponse,
         FraudScreenRuleInterfaceFactory $fraudScreenRule
     ) {
-
         $this->config              = $config;
         $this->httpTextFactory     = $httpTextFactory;
         $this->apiExceptionFactory = $apiExceptionFactory;
@@ -83,6 +83,8 @@ class Reporting
     {
         if ($this->config->getMode() == Config::MODE_LIVE) {
             return Config::URL_REPORTING_API_LIVE;
+        } elseif ($this->config->getMode() == Config::MODE_DEVELOPMENT) {
+            return Config::URL_REPORTING_API_DEV;
         } else {
             return Config::URL_REPORTING_API_TEST;
         }
@@ -140,18 +142,18 @@ class Reporting
         //parse xml as object
         $response = (object)((array)$response);
 
-        $exceptionPhrase = "Invalid response from Sage Pay API.";
+        $exceptionPhrase = "Invalid response from Opayo API.";
         $exceptionCode = 0;
         $validResponse = false;
 
         if (!empty($response)) {
-            if (is_object($response) && !array_key_exists("errorcode", $response) || $response->errorcode == '0000') {
+            if (is_object($response) && !property_exists($response, "errorcode") || $response->errorcode == '0000') {
                 //this is a successfull response
                 return $response;
             } else { //there was an error
-                if (is_object($response) && array_key_exists("errorcode", $response)) {
+                if (is_object($response) && property_exists($response, "errorcode")) {
                     $exceptionCode = $response->errorcode;
-                    if (array_key_exists("error", $response)) {
+                    if (property_exists($response, "error")) {
                         $exceptionPhrase = $response->error;
                         $validResponse = true;
                     }
@@ -180,7 +182,7 @@ class Reporting
      * @return mixed
      * @throws ApiException
      */
-    public function getTransactionDetails($vpstxid, $storeId = null)
+    public function getTransactionDetailsByVpstxid($vpstxid, $storeId = null)
     {
         $this->config->setConfigurationScopeId($storeId);
 
@@ -189,10 +191,25 @@ class Reporting
         return $this->_handleApiErrors($this->_executeRequest($xml));
     }
 
+    /**
+     * @param $vendorTxCode
+     * @param null|int $storeId
+     * @return mixed
+     * @throws ApiException
+     */
+    public function getTransactionDetailsByVendorTxCode($vendorTxCode, $storeId = null)
+    {
+        $this->config->setConfigurationScopeId($storeId);
+
+        $params = '<vendorTxCode>' . $vendorTxCode . '</vendorTxCode>';
+        $xml = $this->_createXml('getTransactionDetail', $params);
+        return $this->_handleApiErrors($this->_executeRequest($xml));
+    }
+
     public function whitelistIpAddress($ipAddress)
     {
         $params = "<validips><ipaddress><address>$ipAddress</address>";
-        $params .= "<mask>".self::DEFAULT_SUBNET_MASK."</mask></ipaddress></validips>";
+        $params .= "<mask>" . self::DEFAULT_SUBNET_MASK . "</mask></ipaddress></validips>";
         $xml = $this->_createXml('addValidIPs', $params);
         return $this->_handleApiErrors($this->_executeRequest($xml));
     }
@@ -219,8 +236,10 @@ class Reporting
      * @return \Ebizmarts\SagePaySuite\Api\SagePayData\FraudScreenResponseInterface
      * @throws \Ebizmarts\SagePaySuite\Model\Api\ApiException
      */
-    public function getFraudScreenDetail($vpstxid)
+    public function getFraudScreenDetail($vpstxid, $storeId = null)
     {
+        $this->config->setConfigurationScopeId($storeId);
+
         $params = '<vpstxid>' . $vpstxid . '</vpstxid>';
         $xmlRequest = $this->_createXml('getFraudScreenDetail', $params);
 
@@ -233,12 +252,12 @@ class Reporting
         $fraudResponse->setFraudProviderName((string)$result->fraudprovidername);
 
         if ($fraudResponse->getErrorCode() == '0000') {
-            if ($fraudResponse->getFraudProviderName() == 'ReD') {
+            if ($fraudResponse->getFraudProviderName() == Fraud::RED) {
                 $fraudResponse->setFraudScreenRecommendation((string)$result->fraudscreenrecommendation);
                 $fraudResponse->setFraudId((string)$result->fraudid);
                 $fraudResponse->setFraudCode((string)$result->fraudcode);
                 $fraudResponse->setFraudCodeDetail((string)$result->fraudcodedetail);
-            } else if ($fraudResponse->getFraudProviderName() == 'T3M') {
+            } elseif ($fraudResponse->getFraudProviderName() == Fraud::FSG) {
                 $fraudResponse->setThirdmanId((string)$result->t3mid);
                 $fraudResponse->setThirdmanScore((string)$result->t3mscore);
                 $fraudResponse->setThirdmanAction((string)$result->t3maction);

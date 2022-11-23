@@ -1,0 +1,81 @@
+<!--@subject Sending email from my custom module @-->
+ 
+{{template config_path="design/email/header_template"}}
+<table border="0" cellpadding="0" cellspacing="0" width="700" style=" padding:30px; max-width:700px; width:100%; margin:0px auto; background-color:#fff;">
+	<tbody>
+		<tr class="email-intro">
+			<td style="padding-bottom:10px;">
+				<table border="0" cellpadding="0" cellspacing="0" style="width:100%;" >	
+					<tbody>
+						<tr>
+							<td style="width:18%; vertical-align:top; font-weight:bold;">Name:</td>
+							<td style="width:82%; vertical-align:top; padding-left:10px;">{{var name}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+		<tr class="email-intro">
+			<td style="padding-bottom:10px;">
+				<table border="0" cellpadding="0" cellspacing="0" style="width:100%;" >	
+					<tbody>
+						<tr>
+							<td style="width:18%; vertical-align:top; font-weight:bold;">Email:</td>
+							<td style="width:82%; vertical-align:top; padding-left:10px;">{{var email}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+		<tr class="email-intro">
+			<td style="padding-bottom:10px;">
+				<table border="0" cellpadding="0" cellspacing="0" style="width:100%;" >	
+					<tbody>
+						<tr>
+							<td style="width:18%; vertical-align:top; font-weight:bold;">Telephone:</td>
+							<td style="width:82%; vertical-align:top; padding-left:10px;">{{var telephone}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+		<tr class="email-intro">
+			<td style="padding-bottom:10px;">
+				<table border="0" cellpadding="0" cellspacing="0" style="width:100%;" >	
+					<tbody>
+						<tr>
+							<td style="width:18%; vertical-align:top; font-weight:bold;">Units:</td>
+							<td style="width:82%; vertical-align:top; padding-left:10px;">{{var units}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+		<tr class="email-intro">
+			<td style="padding-bottom:10px;">
+				<table border="0" cellpadding="0" cellspacing="0" style="width:100%;" >	
+					<tbody>
+						<tr>
+							<td style="width:18%; vertical-align:top; font-weight:bold;">Message:</td>
+							<td style="width:82%; vertical-align:top; padding-left:10px;">{{var message}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+		<tr class="email-intro">
+			<td style="padding-bottom:10px;">
+				<table border="0" cellpadding="0" cellspacing="0" style="width:100%;" >	
+					<tbody>
+						<tr>
+							<td style="width:18%; vertical-align:top; font-weight:bold;">Storename:</td>
+							<td style="width:82%; vertical-align:top; padding-left:10px;">{{var storename}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+ 
+{{template config_path="design/email/footer_template"}}

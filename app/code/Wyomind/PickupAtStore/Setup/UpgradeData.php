@@ -100,35 +100,6 @@ class UpgradeData implements UpgradeDataInterface
 
 
         }
-
-//        if (version_compare($context->getVersion(), '4.0.0') < 0) {
-//            $setup->getConnection()->update(
-//                $setup->getTable('core_config_data'),
-//                ['path' => 'REPLACE(path,"settings/","settings/labels/")'],
-//                ['path like "carriers/pickupatstore%\_title"']
-//            );
-//            $setup->getConnection()->update(
-//                $setup->getTable('core_config_data'),
-//                ['path' => 'carriers/pickupatstore/settings/use_gmap_api/gmap'],
-//                ['path = "carriers/pickupatstore/settings/gmap"']
-//            );
-//            $setup->getConnection()->update(
-//                $setup->getTable('core_config_data'),
-//                ['path' => 'carriers/pickupatstore/settings/date'],
-//                ['path = "carriers/pickupatstore/settings/date_settings/date"']
-//            );
-//            $setup->getConnection()->update(
-//                $setup->getTable('core_config_data'),
-//                ['path' => 'carriers/pickupatstore/settings/time'],
-//                ['path = "carriers/pickupatstore/settings/time_settings/time"']
-//            );
-//            $setup->getConnection()->update(
-//                $setup->getTable('core_config_data'),
-//                ['path' => 'carriers/pickupatstore/settings/gmap'],
-//                ['path = "carriers/pickupatstore/settings/display_gmap"']
-//            );
-//        }
-
         $setup->endSetup();
     }
 }

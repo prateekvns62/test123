@@ -1,0 +1,65 @@
+.abs-sidebar-totals .totals-warranty-summary.expanded .amount .price::after,
+.cart-totals .totals-warranty-summary.expanded .amount .price::after,
+.opc-block-summary .table-totals .totals-warranty-summary.expanded .amount .price::after {
+    content: "\e621";
+}
+
+.cart-totals .totals-warranty-summary .amount .price::after,
+.opc-block-summary .table-totals .totals-warranty-summary .amount .price::after {
+    position: absolute;
+    right: 3px;
+    top: 3px;
+}
+
+.abs-sidebar-totals .totals-warranty-summary .amount .price::after,
+.cart-totals .totals-warranty-summary .amount .price::after,
+.opc-block-summary .table-totals .totals-warranty-summary .amount .price::after {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 12px;
+    line-height: 12px;
+    color: inherit;
+    content: "\e622";
+    font-family: "luma-icons";
+    vertical-align: middle;
+    display: inline-block;
+    font-weight: normal;
+    overflow: hidden;
+    speak: none;
+    text-align: center;
+}
+
+.cart-totals .totals-warranty-details,
+.opc-block-summary .table-totals .totals-warranty-details {
+    /* border-bottom: 1px solid #cccccc; */
+    display: none;
+}
+
+.cart-totals .totals-warranty-details.shown,
+.opc-block-summary .table-totals .totals-warranty-details.shown {
+    display: table-row;
+}
+
+.cart-totals .totals-warranty-summary .amount,
+.opc-block-summary .table-totals .totals-warranty-summary .amount {
+    cursor: pointer;
+}
+
+.cart-totals .totals-warranty-summary .amount .price,
+.opc-block-summary .table-totals .totals-warranty-summary .amount .price {
+    padding-right: 20px;
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.totals-warranty-summary .mark,
+.totals-warranty-summary .amount {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.totals-warranty-summary th.mark, .totals-warranty-summary td.amount span.price {
+    font-size: 16px;
+    font-weight: bold !important;
+}

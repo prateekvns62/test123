@@ -110,7 +110,8 @@ class PayPalRequestManagement implements \Ebizmarts\SagePaySuite\Api\PayPalManag
 
             if ($order) {
                 //set pre-saved order flag in checkout session
-                $this->checkoutSession->setData("sagepaysuite_presaved_order_pending_payment", $order->getId());
+                $this->checkoutSession->setData(\Ebizmarts\SagePaySuite\Model\Session::PRESAVED_PENDING_ORDER_KEY, $order->getId());
+                $this->checkoutSession->setData(\Ebizmarts\SagePaySuite\Model\Session::CONVERTING_QUOTE_TO_ORDER, 1);
 
                 //set payment data
                 $payment = $order->getPayment();
@@ -130,7 +131,7 @@ class PayPalRequestManagement implements \Ebizmarts\SagePaySuite\Api\PayPalManag
                 $this->result->setSuccess(true);
                 $this->result->setResponse($postResponse);
             } else {
-                throw new \Magento\Framework\Validator\Exception(__('Unable to save Sage Pay order'));
+                throw new \Magento\Framework\Validator\Exception(__('Unable to save Opayo order'));
             }
 
             $this->result->setSuccess(true);
@@ -140,14 +141,14 @@ class PayPalRequestManagement implements \Ebizmarts\SagePaySuite\Api\PayPalManag
 
             $this->result->setSuccess(false);
             $this->result->setErrorMessage(
-                __('Something went wrong while generating the Sage Pay request: %1', $apiException->getUserMessage())
+                __('Something went wrong while generating the Opayo request: %1', $apiException->getUserMessage())
             );
         } catch (\Exception $e) {
             $this->suiteLogger->logException($e, [__METHOD__, __LINE__]);
 
             $this->result->setSuccess(false);
             $this->result->setErrorMessage(
-                __('Something went wrong while generating the Sage Pay request: %1', $e->getMessage())
+                __('Something went wrong while generating the Opayo request: %1', $e->getMessage())
             );
         }
 

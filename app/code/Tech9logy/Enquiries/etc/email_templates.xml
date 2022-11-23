@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../Email/etc/email_templates.xsd">
+<template id="enquiriesmail_email_template" label="Email Form" file="enquiriesmail_email_template.html" type="html" module="Tech9logy_Enquiries" area="frontend"/>
+</config>

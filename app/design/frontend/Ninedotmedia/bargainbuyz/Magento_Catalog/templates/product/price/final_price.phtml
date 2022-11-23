@@ -40,9 +40,15 @@ $schema = ($block->getZone() == 'item_view') ? true : false;
             'skip_adjustments'  => true
         ]); ?>
     </span>
+     <?php  $saveValue = ($priceModel->getAmount()->getValue() - $finalPriceModel->getAmount()->getValue()); ?>
+	 <?php if ((float)$saveValue  > 0 ): ?>
     <span class="save-price">
-        <?php $saveValue = ($priceModel->getAmount()->getValue() - $finalPriceModel->getAmount()->getValue()); ?>
-        <?php if ((float)$saveValue > 0 ): ?>
+       
+        
+       
+            <div class="save_image_icon">
+                                     <img src="https://staging.bargainbuyz.co.uk/media/attribute/swatch/a/b/save-icon.png" height ="30" width="30" />
+                                 </div>
             <?php /* @escapeNotVerified */ echo $block->renderAmount($block->getPrice()->getCustomAmount($saveValue), [
                 'display_label'     => __('Save'),
                 'price_id'          => $block->getPriceId('save-price-' . $idSuffix),

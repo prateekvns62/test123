@@ -17,10 +17,13 @@ use Ebizmarts\SagePaySuite\Model\Logger\Logger;
 use Ebizmarts\SagePaySuite\Model\PiRequest;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Url\EncoderInterface;
 use Magento\Framework\Validator\Exception as ValidatorException;
 use Ebizmarts\SagePaySuite\Model\Config\ClosedForActionFactory;
 use Magento\Sales\Model\Order\Payment\TransactionFactory;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
+use Magento\Sales\Api\PaymentFailuresInterface;
+use Ebizmarts\SagePaySuite\Model\CryptAndCodeData;
 
 class EcommerceManagement extends RequestManagement
 {
@@ -43,6 +46,15 @@ class EcommerceManagement extends RequestManagement
     /** @var Config */
     private $config;
 
+    /** @var PaymentFailuresInterface */
+    private $paymentFailures;
+
+    /** @var EncryptorInterface */
+    private $encryptor;
+
+    /** @var CryptAndCodeData */
+    private $cryptAndCode;
+
     public function __construct(
         Checkout $checkoutHelper,
         PIRest $piRestApi,
@@ -56,7 +68,9 @@ class EcommerceManagement extends RequestManagement
         TransactionFactory $transactionFactory,
         \Magento\Quote\Model\QuoteValidator $quoteValidator,
         InvoiceSender $invoiceEmailSender,
-        Config $config
+        Config $config,
+        PaymentFailuresInterface $paymentFailures,
+        CryptAndCodeData $cryptAndCode
     ) {
         parent::__construct(
             $checkoutHelper,
@@ -72,7 +86,10 @@ class EcommerceManagement extends RequestManagement
         $this->transactionFactory = $transactionFactory;
         $this->quoteValidator     = $quoteValidator;
         $this->invoiceEmailSender = $invoiceEmailSender;
-        $this->config = $config;
+        $this->config             = $config;
+        $this->paymentFailures    = $paymentFailures;
+        $this->paymentFailures    = $paymentFailures;
+        $this->cryptAndCode       = $cryptAndCode;
     }
 
     /**
@@ -110,16 +127,17 @@ class EcommerceManagement extends RequestManagement
 
         if ($order !== null) {
             //set pre-saved order flag in checkout session
-            $this->checkoutSession->setData("sagepaysuite_presaved_order_pending_payment", $order->getId());
+            $this->checkoutSession->setData(\Ebizmarts\SagePaySuite\Model\Session::PRESAVED_PENDING_ORDER_KEY, $order->getId());
+            $this->checkoutSession->setData(\Ebizmarts\SagePaySuite\Model\Session::CONVERTING_QUOTE_TO_ORDER, 1);
 
             $payment = $order->getPayment();
             $payment->setTransactionId($this->getPayResult()->getTransactionId());
             $payment->setLastTransId($this->getPayResult()->getTransactionId());
             $payment->save();
-
+            $this->sagePaySuiteLogger->debugLog($payment->getData(), [__LINE__, __METHOD__]);
             $this->createInvoiceForSuccessPayment($payment, $order);
         } else {
-            throw new ValidatorException(__('Unable to save Sage Pay order'));
+            throw new ValidatorException(__('Unable to save Opayo order'));
         }
 
         $this->getResult()->setSuccess(true);
@@ -127,12 +145,20 @@ class EcommerceManagement extends RequestManagement
         $this->getResult()->setStatus($this->getPayResult()->getStatus());
 
         //additional details required for callback URL
-        $this->getResult()->setOrderId($order->getId());
-        $this->getResult()->setQuoteId($this->getQuote()->getId());
+        $orderId = $order->getId();
+        $orderId = $this->encryptAndEncode($orderId);
+        $this->getResult()->setOrderId($orderId);
 
-        if ($this->getPayResult()->getStatusCode() == Config::AUTH3D_REQUIRED_STATUS) {
+        $quoteId = $this->getQuote()->getId();
+        $quoteId = $this->encryptAndEncode($quoteId);
+        $this->getResult()->setQuoteId($quoteId);
+
+        if ($this->isThreeDResponse()) {
             $this->getResult()->setParEq($this->getPayResult()->getParEq());
+            $this->getResult()->setCreq($this->getPayResult()->getCReq());
             $this->getResult()->setAcsUrl($this->getPayResult()->getAcsUrl());
+        } else {
+            $this->checkoutSession->setData(\Ebizmarts\SagePaySuite\Model\Session::CONVERTING_QUOTE_TO_ORDER, 0);
         }
     }
 
@@ -143,9 +169,12 @@ class EcommerceManagement extends RequestManagement
     private function createInvoiceForSuccessPayment($payment, $order)
     {
         //invoice
-        if ($this->getPayResult()->getStatusCode() === Config::SUCCESS_STATUS) {
+        $statusCode = $this->getPayResult()->getStatusCode();
+        $this->sagePaySuiteLogger->debugLog("StatusCode: " . $statusCode, [__LINE__, __METHOD__]);
+        if ($statusCode === Config::SUCCESS_STATUS) {
             $request = $this->getRequest();
             $sagePayPaymentAction = $request['transactionType'];
+            $this->sagePaySuiteLogger->debugLog("PaymentAction: " . $sagePayPaymentAction, [__LINE__, __METHOD__]);
             if ($sagePayPaymentAction === Config::ACTION_PAYMENT_PI) {
                 $payment->getMethodInstance()->markAsInitialized();
             }
@@ -190,11 +219,18 @@ class EcommerceManagement extends RequestManagement
         $this->getResult()->setSuccess(false);
         $this->getResult()->setErrorMessage(__("Something went wrong: %1", $exceptionObject->getMessage()));
 
-        if ($this->getPayResult() !== null && $this->getPayResult()->getStatusCode() == "0000") {
+        if ($this->getPayResult() !== null && $this->isPaymentSuccessful()) {
             try {
                 $this->getPiRestApi()->void($this->getPayResult()->getTransactionId());
             } catch (ApiException $apiException) {
                 $this->sagePaySuiteLogger->logException($exceptionObject);
+            }
+        } else {
+            if ($this->getPayResult() !== null && !$this->isPaymentSuccessful()) {
+                $this->paymentFailures->handle(
+                    (int)$this->getQuote()->getId(),
+                    $this->getPayResult()->getStatusDetail()
+                );
             }
         }
     }
@@ -224,5 +260,28 @@ class EcommerceManagement extends RequestManagement
     private function invoiceConfirmationIsEnable()
     {
         return (string)$this->config->getInvoiceConfirmationNotification() === "1";
+    }
+
+    /**
+     * @return bool
+     */
+    private function isPaymentSuccessful()
+    {
+        return $this->getPayResult()->getStatusCode() == Config::SUCCESS_STATUS;
+    }
+
+    private function isThreeDResponse()
+    {
+        return $this->getPayResult()->getStatusCode() == Config::AUTH3D_REQUIRED_STATUS ||
+            $this->getPayResult()->getStatusCode() == Config::AUTH3D_V2_REQUIRED_STATUS;
+    }
+
+    /**
+     * @param $data
+     * @return string
+     */
+    public function encryptAndEncode($data)
+    {
+        return $this->cryptAndCode->encryptAndEncode($data);
     }
 }

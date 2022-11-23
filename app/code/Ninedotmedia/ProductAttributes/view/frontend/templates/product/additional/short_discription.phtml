@@ -1,0 +1,24 @@
+<?php
+
+/** @var $objectManager \Magento\Framework\App\ObjectManager */
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+/** @var $configHelper Tech9logy\ElasticsearchPro\Helper\Data */
+$configHelper = $objectManager->get('Tech9logy\SizeCalculator\Helper\Data');
+
+$_product = $block->getProduct();
+$short_Des = $_product->getShortDescription();
+$categoryIds = $_product->getCategoryIds();
+$show_discription = in_array(381, $categoryIds);
+if($show_discription){ ?>
+    <div class="short_discription">
+        <?= $short_Des; ?>
+    </div>
+<?php    }
+?>
+
+<style>
+.new-custom-class .short_discription h3 {
+    margin-top: unset !important;
+}
+
+</style>

@@ -97,20 +97,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     2,
                     ['identity' => false, 'unsigned' => true, 'nullable' => false, 'primary' => true, 'default' => 0],
                     'Attribute Type'
-                )/*->addColumn(
-                    'store_locator',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                    1,
-                    ['identity' => false, 'unsigned' => true, 'nullable' => false, 'primary' => true, 'default' => 1],
-                    'Is attribute available in the store locator'
-                )->addColumn(
-                    'store_page',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                    1,
-                    ['identity' => false, 'unsigned' => true, 'nullable' => false, 'primary' => true, 'default' => 1],
-                    'Is attribute available in the store page'
-                )*/
-                ->addIndex(
+                )->addIndex(
                     $installer->getIdxName('pointofsale_attributes', ['attribute_id']),
                     ['attribute_id']
                 )

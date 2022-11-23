@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="product.info.main">
+
+            <container name="wrap.product" htmlClass="wrap-product" htmlTag="div" before="-">
+
+                <container name="wrap.product.left" htmlClass="wrap-product-left" htmlTag="div" before="-">
+
+                    <container name="holder.product.label" htmlClass="holder-products-label" htmlTag="div">
+                        <block class="Ninedotmedia\ProductAttributes\Block\Product\Label" name="product.label.save" before="-">
+                            <arguments>
+                                <argument name="type" xsi:type="string">saved_money</argument>
+                                <argument translate="true" name="label" xsi:type="string">Save</argument>
+                                <argument name="class" xsi:type="string">promo-saved-money</argument>
+                            </arguments>
+                        </block>
+                        <block class="Ninedotmedia\ProductAttributes\Block\Product\Label" name="product.label.guarantee" after="product.label.save">
+                            <arguments>
+                                <argument name="type" xsi:type="string">guarantee</argument>
+                                <argument name="class" xsi:type="string">promo-guarantee</argument>
+                            </arguments>
+                        </block>
+                    </container>
+
+                    <block class="Ninedotmedia\ProductAttributes\Block\Product\Attributes" name="category.product.attributes" template="Magento_Catalog::product/view/attributes.phtml" after="holder.product.label"/>
+
+                </container>
+
+                <container name="wrap.product.right" htmlClass="wrap-product-right" htmlTag="div" after="wrap.product.left">
+
+
+                    <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="additional.condition" template="Ninedotmedia_ProductAttributes::product/additional/condition.phtml" before="-"/>
+
+                    <container name="holder.additional.advantages" htmlClass="holder-additional-advantages" htmlTag="div">
+
+                        <container name="holder.product.links" htmlClass="holder-product-links" htmlTag="div">
+<!--                            <block class="Magento\Cms\Block\Block" name="product-links" before="-">-->
+<!--                                <arguments>-->
+<!--                                    <argument name="block_id" xsi:type="string">product-links</argument>-->
+<!--                                </arguments>-->
+<!--                            </block>-->
+                            <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="product-links" template="Ninedotmedia_ProductAttributes::product/additional/condition_description.phtml" />
+                        </container>
+
+                        <block class="Ninedotmedia\ProductAttributes\Block\Product\Additional" name="additional.advantages"
+                               template="Ninedotmedia_ProductAttributes::product/additional/advantages.phtml" after="holder.product.links"/>
+                    </container>
+
+                </container>
+
+            </container>
+
+        </referenceBlock>
+        <move element="product.info.social" destination="product.info.addtocart" before="-"/>
+    </body>
+</page>

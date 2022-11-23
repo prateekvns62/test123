@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+   <event name="sales_model_service_quote_submit_before">
+       <observer name="tech9logy_dd_observer_customtcdd" instance="Tech9logy\DD\Observer\Customtcdd" />
+   </event>
+
+<event name="layout_generate_blocks_after">
+<observer name="tech9logy_event_meta" instance="Tech9logy\DD\Observer\Meta" />
+</event>
+</config>

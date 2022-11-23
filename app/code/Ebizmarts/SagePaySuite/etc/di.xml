@@ -7,6 +7,16 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <!-- 3Dv2 -->
+    <type name="\Ebizmarts\SagePaySuite\Model\PiRequest">
+        <plugin name="strongCustomerAuthentication"
+                type="Ebizmarts\SagePaySuite\Plugin\StrongCustomerAuthRequestData"
+                sortOrder="1"
+                disabled="false"
+        />
+    </type>
+    <!-- 3Dv2 -->
+
     <type name="Magento\Framework\View\Asset\Minification">
         <plugin name="preventPiRemoteJsMinification" type="Ebizmarts\SagePaySuite\Plugin\ExcludeFilesFromMinification" />
     </type>
@@ -19,11 +29,14 @@
 
     <type name="Ebizmarts\SagePaySuite\Model\Logger\Logger">
         <arguments>
+            <argument name="config" xsi:type="object">Ebizmarts\SagePaySuite\Model\Config</argument>
+            <argument name="suiteHelper" xsi:type="object">Ebizmarts\SagePaySuite\Helper\Data</argument>
             <argument name="name" xsi:type="string">SagePaySuiteLogger</argument>
             <argument name="handlers"  xsi:type="array">
                 <item name="Request" xsi:type="object">Ebizmarts\SagePaySuite\Model\Logger\Request</item>
                 <item name="Cron" xsi:type="object">Ebizmarts\SagePaySuite\Model\Logger\Cron</item>
                 <item name="Exception" xsi:type="object">Ebizmarts\SagePaySuite\Model\Logger\Exception</item>
+                <item name="Debug" xsi:type="object">Ebizmarts\SagePaySuite\Model\Logger\Debug</item>
             </argument>
         </arguments>
     </type>
@@ -71,6 +84,34 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="sagepay_fraud" xsi:type="object">sales_grid.sagepay_fraud</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\Sales\Model\ResourceModel\Order\Grid" type="Magento\Sales\Model\ResourceModel\Grid">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="sagepay_threeDSecure" xsi:type="object">sales_grid.sagepay_threeDSecure</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\Sales\Model\ResourceModel\Order\Grid" type="Magento\Sales\Model\ResourceModel\Grid">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="sagepay_addressValidation" xsi:type="object">sales_grid.sagepay_addressValidation</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\Sales\Model\ResourceModel\Order\Grid" type="Magento\Sales\Model\ResourceModel\Grid">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="sagepay_postcodeCheck" xsi:type="object">sales_grid.sagepay_postcodeCheck</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\Sales\Model\ResourceModel\Order\Grid" type="Magento\Sales\Model\ResourceModel\Grid">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="sagepay_cvTwoCheckT" xsi:type="object">sales_grid.sagepay_cvTwoCheck</item>
             </argument>
         </arguments>
     </virtualType>

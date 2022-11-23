@@ -11,7 +11,7 @@ use Magento\Sales\Model\Order;
 
 class Payment
 {
-    const ERROR_MESSAGE = "There was an error %1 Sage Pay transaction %2: %3";
+    const ERROR_MESSAGE = "There was an error %1 Opayo transaction %2: %3";
 
     /** @var Api\Shared|\Ebizmarts\SagePaySuite\Model\Api\Pi */
     private $api;
@@ -19,7 +19,7 @@ class Payment
     /** @var \Ebizmarts\SagePaySuite\Model\Logger\Logger */
     private $logger;
 
-    /** @var  */
+    /** @var */
     private $suiteHelper;
 
     /** @var \Ebizmarts\SagePaySuite\Model\Config */
@@ -31,10 +31,10 @@ class Payment
         \Ebizmarts\SagePaySuite\Helper\Data $suiteHelper,
         \Ebizmarts\SagePaySuite\Model\Config $config
     ) {
-        $this->logger      = $logger;
-        $this->api         = $sharedApi;
+        $this->logger = $logger;
+        $this->api = $sharedApi;
         $this->suiteHelper = $suiteHelper;
-        $this->config      = $config;
+        $this->config = $config;
     }
 
     public function setApi(PaymentOperations $apiInstance)
@@ -52,8 +52,8 @@ class Payment
     {
         try {
             $transactionId = "-1";
-            $action        = "with";
-            $order         = $payment->getOrder();
+            $action = "with";
+            $order = $payment->getOrder();
 
             if ($this->canCaptureAuthorizedTransaction($payment, $order)) {
                 $transactionId = $payment->getParentTransactionId();
@@ -69,13 +69,16 @@ class Payment
                     $result = $this->api->captureDeferredTransaction($transactionId, $amount, $order);
                 } elseif ($this->isAuthenticateAction($paymentAction)) {
                     $action = 'authorizing';
+                    if ($this->config->getCurrencyConfig() === CONFIG::CURRENCY_SWITCHER) {
+                        $amount = $this->calculateAmount($amount, $order);
+                    }
                     $result = $this->api->authorizeTransaction($transactionId, $amount, $order);
                 }
 
-                if (\is_array($result) && array_key_exists('data', $result)) {
+                if (\is_array($result) && isset($result['data'])) {
                     $this->addAdditionalInformationToTransaction($payment, $result);
 
-                    if (array_key_exists('VPSTxId', $result['data'])) {
+                    if (isset($result['data']['VPSTxId'])) {
                         $payment->setTransactionId($this->suiteHelper->removeCurlyBraces($result['data']['VPSTxId']));
                     }
                     $payment->setParentTransactionId($payment->getParentTransactionId());
@@ -184,7 +187,7 @@ class Payment
      */
     private function addAdditionalInformationToTransaction(InfoInterface $payment, $result)
     {
-        if (\is_array($result) && array_key_exists('data', $result)) {
+        if (\is_array($result) && isset($result['data'])) {
             foreach ($result['data'] as $name => $value) {
                 $payment->setTransactionAdditionalInfo($name, $value);
             }
@@ -242,10 +245,9 @@ class Payment
      */
     public function calculateAmount($amount, $order)
     {
-        $orderCurrencyCode = $order->getOrderCurrencyCode();
-        $baseCurrencyCode = $order->getBaseCurrencyCode();
-
-        if ($baseCurrencyCode !== $orderCurrencyCode) {
+        if ($amount == $order->getBaseGrandTotal()) {
+            $amount = $order->getGrandTotal();
+        } else {
             $rate = $order->getBaseToOrderRate();
             $currencySwitcherAmount = $amount * $rate;
             $amount = $currencySwitcherAmount;

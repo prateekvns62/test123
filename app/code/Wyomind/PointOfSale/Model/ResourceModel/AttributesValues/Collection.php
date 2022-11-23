@@ -17,11 +17,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
 
     public function getByPointOfSaleId($posId)
     {
-        /*
-         select * from pointofsale_attributes_values as pav
-         left join pointofsale_attributes pa on pa.attribute_id = pav.attribute_id
-         where pointofsale_id = 541
-         */
         $this->addFieldToFilter("pointofsale_id", ["eq" => $posId]);
         $pointofsaleAttributes = $this->getTable("pointofsale_attributes");
         $this->join($pointofsaleAttributes, $pointofsaleAttributes . ".attribute_id = main_table.attribute_id", ["code"]);

@@ -130,9 +130,7 @@ class Save extends \Magento\Backend\App\Action
                 $deleteItems = $this->menuItemModel->deleteItems($menuId);
 
                 if (count($menuData) > 0) {
-                    //echo "<pre>";
-                    //print_r($menuDataFinal);
-//                    die('test');
+                    
                     foreach ($menuDataFinal as $i => $menu_item_data) {
                         $menu_data = $menuDataFinal[$i];
                         if (isset($menu_data['item_name']) && isset($menu_data['item_type'])) {

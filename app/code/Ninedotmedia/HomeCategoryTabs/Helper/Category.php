@@ -5,6 +5,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Ninedotmedia\ThemeConfiguration\Helper\Configuration;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 
 class Category extends Configuration
 {
@@ -16,6 +17,8 @@ class Category extends Configuration
      * @var StoreManagerInterface
      */
     private $storeManager;
+	
+	protected $_productCollectionFactory;
 
     /**
      * @param Context $context
@@ -25,10 +28,12 @@ class Category extends Configuration
     public function __construct(
         Context $context,
         CategoryRepositoryInterface $categoryRepository,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+		CollectionFactory $productCollectionFactory
     ) {
         $this->categoryRepository = $categoryRepository;
         $this->storeManager = $storeManager;
+		$this->_productCollectionFactory = $productCollectionFactory;
         parent::__construct($context);
     }
 
@@ -58,6 +63,47 @@ class Category extends Configuration
         }
         return $result;
     }
+	
+	
+	/**
+     * @param int|string $categoryId
+     * @return null
+     */
+    public function getProductsByCategories($categoryIds)
+    {
+        $result = null;
+		
+		$categoryIds=explode(',',$categoryIds);
+		if ($categoryIds) {
+		$result = $this->_productCollectionFactory->create();
+        $result->addAttributeToSelect('*');
+        $result->addCategoriesFilter(['in' => $categoryIds]);
+		//$result->addAttributeToSort('position', 'ASC');
+        $result->setPageSize($this->getProductPerTab());
+		}
+		
+       
+        return $result;
+    }
+	
+	
+	
+	
+	 public function getMultiCategories()
+    {
+		
+		$catIds=explode(',',$this->getHomepageCategoryTab());
+		
+		$catData=[];
+		foreach($catIds as $catId){
+			
+			$catData[]=$this->getCategoryById($catId);
+		}
+		
+		return $catData;
+    }
+	
+	
 
     /**
      * @param int|string $categoryId

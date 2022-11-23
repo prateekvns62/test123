@@ -29,23 +29,38 @@
         </div>
         <?php endif; ?>
         <div class="actions">
+			<?php $_helper = $this->helper('Magento\Catalog\Helper\Output');
+					$_attributeValue = $_product->getAttributeText('in_store');
+					 if($_attributeValue == "Yes" ){
+					?> <span class="instore-sp"> 
+					<?php
+					print("In-Store Only, Call For More Details");
+					?>
+					</span>
+					<?php
+					  }
+					else {  ?>
             <button type="submit"
                     title="<?= /* @escapeNotVerified */ $buttonTitle ?>"
                     class="action primary tocart"
                     id="product-addtocart-button">
                 <span><?= /* @escapeNotVerified */ $buttonTitle ?></span>
             </button>
+			<?php } ?>
             <?= $block->getChildHtml('', true) ?>
         </div>
     </div>
 </div>
 <?php endif; ?>
 <script type="text/x-magento-init">
-    {
-        "#product_addtocart_form": {
-            "Magento_Catalog/js/validate-product": {}
-        }
-    }
+{
+	"#product_addtocart_form": {
+        "Magento_Catalog/product/view/validation": {
+        	"bindSubmit": true,
+        	"radioCheckboxClosest": ".nested"
+    	}
+	}
+}
 </script>
 
 <div class="wrap-addthis">

@@ -434,9 +434,7 @@ echo $helper->getGoogleMapsApiScript();
                     $(".store-pickup").css({"display": "none"}); // hide shipping address
                     $('li#shipping div#checkout-step-shipping form.form-login').css({'border-bottom': PickupAtStore.backup.borderBottomEmail});
 
-                    //$('#shipping-new-address-form .field._error').attr('aria-invalid', false);
-                    //$('#shipping-new-address-form .field-error').remove();
-                    //$('#shipping-new-address-form .field._error').removeClass('_error');
+                    
                     $("div.billing-address-same-as-shipping-block").css({display: "block"});
                 }
                 PickupAtStore.updateBillingAddress();
@@ -555,25 +553,7 @@ echo $helper->getGoogleMapsApiScript();
             }
         });
 
-        // billing address events
-        //$(document).on('click', "input[name=payment\\[method\\]]", function () {
-        //    if (PickupAtStore.isPASSelected()) {
-        //        var cbx = $(this).parent().parent().find(".payment-method-billing-address input[id^=billing-address-same-as-shipping-]");
-        //        var cancel = $(this).parent().parent().find("button.action-cancel[type=button]");
-        //        if (cbx.length == 0) {
-        //            cbx = $("input[id^=billing-address-same-as-shipping-]");
-        //        }
-        //        var cancel = $("input[name=payment\\[method\\]]").parent().parent().find("button.action-cancel[type=button]");
-        //        if (cancel.length == 0) {
-        //            cancel = $("button.action-cancel[type=button]");
-        //        }
-        //        cancel.css({"display": "none"});
-        //        cbx.parent().css({"display": "none"});
-        //        if (cbx.prop('checked')) {
-        //            cbx.click();
-        //        }
-        //    }
-        //});
+        
         PickupAtStore.waitFor("input[name=payment\\[method\\]]", function () {
             PickupAtStore.updateBillingAddress();
         });
@@ -586,37 +566,7 @@ echo $helper->getGoogleMapsApiScript();
             }
         });
 
-        //PickupAtStore.waitNotFor("#checkout-loader", function () {
-        //    PickupAtStore.waitFor("#co-shipping-form", function () {
-        //        PickupAtStore.waitForLocalStorage(function () {
-        //            var cacheStorage = $.parseJSON(localStorage["mage-cache-storage"]);
-        //            var shippingMethod = null;
-        //            if (typeof cacheStorage['checkout-data'] !== "undefined" && typeof cacheStorage['checkout-data']['selectedShippingRate'] !== "undefined" && cacheStorage['checkout-data']['selectedShippingRate'] !== null) {
-        //                shippingMethod = cacheStorage['checkout-data']['selectedShippingRate'];
-        //            } else if (typeof cacheStorage['cart-data'] !== "undefined" && typeof cacheStorage['cart-data']['shippingMethodCode'] !== "undefined") {
-        //                shippingMethod = cacheStorage['cart-data']['shippingCarrierCode'] + '_' + cacheStorage['cart-data']['shippingMethodCode'];
-        //            }
-        //            if (shippingMethod != null) {
-        //                if (shippingMethod.startsWith("pickupatstore_pickupatstore_")) {
-        //                    var storeId = shippingMethod.replace("pickupatstore_pickupatstore_", "");
-        //                    PickupAtStore.shippingMethodSetup = storeId;
-        //                    $("#pas-yes").attr('checked', 'checked');
-        //                    PickupAtStore.showPickupAtStore(true);
-        //                    $(document).on('pas_gmap_loaded', function (evt) {
-        //                        $('#pas-pos-selector').val(storeId);
-        //                        PickupAtStore.method = {'store': storeId};
-        //                        if (PickupAtStore.config.date === "1") {
-        //                            PickupAtStore.updateDate();
-        //                        } else {
-        //                            PickupAtStore.updateShippingMethod();
-        //                        }
-        //                    });
-        //                }
-        //            }
-        //
-        //        });
-        //    });
-        //});
+        
 
         PickupAtStore.waitFor("select#shipping-method", function () {
             PickupAtStore.paypalExpressReview = true;
@@ -647,32 +597,7 @@ echo $helper->getGoogleMapsApiScript();
             });
         });
 
-        //$(document).on("click", "button[data-role=opc-continue]", function () {
-        //    if (!PickupAtStore.isPASSelected()) {
-        //        if ($('input[id^=s_method_pickupatstore_pickupatstore_]').length > 0) {
-        //            var found = false;
-        //            $('input[id^=s_method_pickupatstore_pickupatstore_]').each(function () {
-        //                if ($(this).attr('checked') == "checked") {
-        //                    alert('Please select a shipping method');
-        //                    found = true;
-        //                    return;
-        //                }
-        //            });
-        //            if (found) {
-        //                return false;
-        //            }
-        //        }
-        //    }
-        //    var initializer = null;
-        //    initializer = setInterval(function () {
-        //        if ($("#payment")[0].style.display == "list-item") {
-        //            clearInterval(initializer);
-        //            setTimeout(function () {
-        //                $(".payment-method._active input[type=radio]").click();
-        //            }, 500);
-        //        }
-        //    }, 200);
-        //});
+        
 
         $(document).on("change click", ".payment-method-billing-address input[id^=billing-address-same-as-shipping-]", function () {
             if (PickupAtStore.isPASSelected()) {

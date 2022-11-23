@@ -116,42 +116,6 @@
                     </item>
                 </item>
             </argument>
-        </field>
-        <!--<field name="store_locator">-->
-            <!--<argument name="data" xsi:type="array">-->
-                <!--<item name="config" xsi:type="array">-->
-                    <!--<item name="sortOrder" xsi:type="number">50</item>-->
-                    <!--<item name="label" xsi:type="string" translate="true">Available in store locator</item>-->
-                    <!--<item name="dataType" xsi:type="string">boolean</item>-->
-                    <!--<item name="formElement" xsi:type="string">checkbox</item>-->
-                    <!--<item name="dataScope" xsi:type="string">store_locator</item>-->
-                    <!--<item name="source" xsi:type="string">attribute</item>-->
-                    <!--<item name="default" xsi:type="string">1</item>-->
-                    <!--<item name="prefer" xsi:type="string">toggle</item>-->
-                    <!--<item name="valueMap" xsi:type="array">-->
-                        <!--<item name="true" xsi:type="number">1</item>-->
-                        <!--<item name="false" xsi:type="number">0</item>-->
-                    <!--</item>-->
-                <!--</item>-->
-            <!--</argument>-->
-        <!--</field>-->
-        <!--<field name="store_page">-->
-            <!--<argument name="data" xsi:type="array">-->
-                <!--<item name="config" xsi:type="array">-->
-                    <!--<item name="sortOrder" xsi:type="number">60</item>-->
-                    <!--<item name="label" xsi:type="string" translate="true">Available in store page</item>-->
-                    <!--<item name="dataType" xsi:type="string">boolean</item>-->
-                    <!--<item name="formElement" xsi:type="string">checkbox</item>-->
-                    <!--<item name="dataScope" xsi:type="string">store_page</item>-->
-                    <!--<item name="source" xsi:type="string">attribute</item>-->
-                    <!--<item name="default" xsi:type="string">1</item>-->
-                    <!--<item name="prefer" xsi:type="string">toggle</item>-->
-                    <!--<item name="valueMap" xsi:type="array">-->
-                        <!--<item name="true" xsi:type="number">1</item>-->
-                        <!--<item name="false" xsi:type="number">0</item>-->
-                    <!--</item>-->
-                <!--</item>-->
-            <!--</argument>-->
-        <!--</field>-->
+        </field>       
     </fieldset>
 </form>

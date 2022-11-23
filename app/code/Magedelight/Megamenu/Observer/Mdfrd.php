@@ -68,7 +68,7 @@ class Mdfrd implements ObserverInterface
                     curl_exec($ch);
                     curl_close($ch);
                 } catch (\Exception $e) {
-                    //$this->messageManager->addError($e->getMessage());
+                    
                 }
             }
         }

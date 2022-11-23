@@ -12,3 +12,92 @@
         </div>
     </div>
 </div>
+
+<script>
+require(['jquery', 'jquery/ui'], function($){ 
+  var back=0;
+
+
+$('.menu-dropdown-icon.dropdown ul').removeClass('animated fadeIn');
+
+$(".menu-dropdown-icon .plus").click(
+  function () {
+$('.menu.horizontal ul:first').css('transform', 'translate(-100%, 0px)');
+   $(this).addClass('bargain-open-menu');
+  }
+
+);
+
+$(".mob-list-box").click(
+  function () {
+
+    
+$('.menu.horizontal ul:first').css('transform', 'translate(-200%, -42px)');
+   
+  }
+
+);
+
+
+ $(document).on("click",".back-nav-part",function() {
+
+    //console.log($(this).parent().get(0));
+if ($(this).parent().closest('.bargin-left-col').length) {
+$('.bargain-open-menu').click();
+$('.menu.horizontal ul:first').css('transform', 'translate(0%, 0px)');
+$('.menu-dropdown-icon .plus').removeClass('bargain-open-menu');
+
+} else {
+
+  $('.menu.horizontal ul:first').css('transform', 'translate(-100%, 0px)');
+   
+}
+
+
+   
+  }
+
+);
+
+  
+
+
+
+});
+</script>
+
+<script>
+require(['jquery', 'jquery/ui'], function($){ 
+$(".sub-bargin .bargin-left-col li").hover(
+  function () {
+   var parrentClass,subClass;
+   parrentClass=$($(this).parent().parent().parent().get(0)).attr('data-parrent');
+   subClass=$(this).attr('data-sub');
+    $('.sub-bargin.'+parrentClass+' li').removeClass("has-active active");
+	$('.sub-bargin.'+parrentClass+' .bargin-right-col div').removeClass("active");
+	$('.sub-bargin.'+parrentClass+' .'+subClass).addClass("active");
+   
+  }
+
+);
+
+$(".column1").hover(
+  function () {
+    var parrentClass;
+	parrentClass=$($(".sub-bargin .bargin-left-col li").parent().parent().parent().get(0)).attr('data-parrent');
+	
+	//console.log($($(this).parent().parent().parent().get(0)).attr('data-parrent'));
+     
+	 $('.sub-bargin.'+parrentClass+' li').removeClass("active");
+	$('.sub-bargin.'+parrentClass+' .bargin-right-col div').removeClass("active");
+	 $('.sub-bargin.'+parrentClass+' li:first').addClass("active");
+	 $('.sub-bargin.'+parrentClass+' .sub-one').addClass("active");
+   
+  }
+
+);
+
+$('.menu-dropdown-icon').removeClass("has-active");
+
+});
+</script>

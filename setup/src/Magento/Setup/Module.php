@@ -57,7 +57,7 @@ class Module implements
                 $headers->addHeaderLine('Cache-Control', 'no-cache, no-store, must-revalidate');
                 $headers->addHeaderLine('Pragma', 'no-cache');
                 $headers->addHeaderLine('Expires', '1970-01-01');
-                $headers->addHeaderLine('X-Frame-Options: SAMEORIGIN');
+               // $headers->addHeaderLine('X-Frame-Options: SAMEORIGIN');
                 $headers->addHeaderLine('X-Content-Type-Options: nosniff');
                 $xssHeaderValue = !empty($_SERVER['HTTP_USER_AGENT'])
                     && strpos($_SERVER['HTTP_USER_AGENT'], XssProtection::IE_8_USER_AGENT) === false

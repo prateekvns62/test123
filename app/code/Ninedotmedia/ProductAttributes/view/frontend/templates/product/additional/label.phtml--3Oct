@@ -1,0 +1,11 @@
+<?php $data = $block->getLabelData(); ?>
+<?php if ($data && is_array($data)): ?>
+    <div class="<?= (isset($data['class'])) ? $data['class'] : 'promo-label'?>">
+        <?php if (isset($data['label'])): ?>
+            <span><?= $data['label']; ?></span>
+        <?php endif; ?>
+        <?php if (isset($data['content'])): ?>
+            <span><?= $data['content']; ?></span>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,68 @@
+<?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$checkoutSession = $objectManager->get('\Magento\Checkout\Model\Session');
+$cartItems = $checkoutSession->getQuote()->getAllItems();
+$servicesApplied = $checkoutSession->getServiceApplied();
+$serviceAmount = $checkoutSession->getServiceAmount();
+?>
+<div class="warranty_services_section">
+<?php
+$priceHelper = $objectManager->create('Magento\Framework\Pricing\Helper\Data');
+if($servicesApplied != "" && $serviceAmount >= 0){ ?>
+    <table class="warranty_services">
+        <tr>
+            <th class="service_charges"><strong>Add-on Services</strong></th>
+            <th class="service_charges_amount"></th>
+        </tr>
+ <?php  foreach(json_decode($servicesApplied) as $servicesData){
+        $servicesData = json_decode($servicesData);//$servicesData->service,$servicesData->product_id,$servicesData->name,price,qty
+        $product = $objectManager->get('\Magento\Catalog\Api\ProductRepositoryInterface')->getById($servicesData->product_id);
+        //echo $servicesData->name;
+    ?>
+        <tr>
+            <td class="<?= $servicesData->service; ?>"><?= $servicesData->name; ?> for <?= $product->getSku(); ?></td>
+            <td><?php $price = $servicesData->price * $servicesData->qty; echo $priceHelper->currency($price, true, false);  ?></td>
+        </tr>
+    <?php
+    }
+    ?>
+    </table>
+    <?php
+}
+?>
+</div>
+
+<style>
+.warranty_services_section .warranty_services th{
+  padding: 11px 0px !important;
+}
+.warranty_services_section .warranty_services th strong{
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+.warranty_services_section .warranty_services th.service_charges_amount{
+  text-align: end;
+}
+.warranty_services_section {
+  border-top: 1px solid #ccc;
+}
+.warranty_services_section .warranty_services th.service_charges_amount::after {
+    font-size: 12px;
+    line-height: 12px;
+    color: inherit;
+    content: '\e622';
+    font-family: 'luma-icons';
+    margin: 3px 0 0;
+    vertical-align: middle;
+    display: inline-block;
+    font-weight: normal;
+    overflow: hidden;
+    speak: none;
+    text-align: center;
+}
+@media only screen and (min-width: 200px) and (max-width: 768px)  {
+    .warranty_services_section {
+        padding: 0px 10px;
+    }
+}
+</style>

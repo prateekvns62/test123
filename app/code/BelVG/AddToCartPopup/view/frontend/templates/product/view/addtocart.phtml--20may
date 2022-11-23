@@ -1,0 +1,118 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\Catalog\Block\Product\View */
+?>
+<?php $_product = $block->getProduct(); ?>
+
+
+
+<?php $buttonTitle = __('Add to Cart'); ?>
+<?php if ($_product->isSaleable()) :?>
+<div class="box-tocart">
+    <div class="fieldset">
+        <?php if ($block->shouldRenderQuantity()) :?>
+        <div class="field qty">
+            <label class="label" for="qty"><span><?= $block->escapeHtml(__('Qty')) ?></span></label>
+            <div class="control">
+                <input type="number"
+                       name="qty"
+                       id="qty"
+                       min="0"
+                       value="<?= $block->getProductDefaultQty() * 1 ?>"
+                       title="<?= $block->escapeHtmlAttr(__('Qty')) ?>"
+                       class="input-text qty"
+                       data-validate="<?= $block->escapeHtmlAttr(json_encode($block->getQuantityValidators())) ?>"
+                       />
+            </div>
+        </div>
+        <?php endif; ?>
+        <div class="actions">
+		<p class="btn message" style="margin: 0px;font-size: 15px;">Call Us For More Details on 0330 124 6527</p> 
+		<?php $_helper = $this->helper('Magento\Catalog\Helper\Output');
+                                            $_attributeValue = $_product->getAttributeText('in_store');
+                                            if($_attributeValue == "Yes" ){ ?>
+                                           <!-- <button class="btn btn-success modal-btn"  type="button" >In-Store Only, Call For More Details</button> 
+
+                                            <div id="modal-contents" style="display:none;">
+                                            <div class="modal-inner-content">
+                                                <h4>This product can only be purchased in-store or over the phone</h4>
+                                                <p>For expert product advice or to place your order today,please call our sales team on <b>0330 124 6527</b></p>
+                                            </div>
+                                        </div>
+                                      <script>
+                                require(
+                                    [
+                                        'jquery',
+                                        'Magento_Ui/js/modal/modal',
+                                         'mage/url'
+                                    ],
+                                    function($, modal) {
+                                        var options = {
+                                            type: 'popup',
+                                            responsive: true,
+                                            innerScroll: true,
+                                            title: 'Call Us to Order Today',
+                                            buttons: [{
+                                                text: $.mage.__('close'),
+                                                class: 'modal-close',
+                                                click: function (){
+                                                    this.closeModal();
+                                                }
+                                            }]
+                                        };
+
+                                        modal(options, $('#modal-contents'));
+                                        $(".modal-btn").on('click',function(){
+                                            $("#modal-contents").modal("openModal");
+                                        });
+                                    }
+                                );
+                                 </script>   -->
+                                
+                                            <?php
+                                              }
+                                            else {
+                                            ?>
+	<?php if($_product->getNdmCondition()!='22') { ?>
+            <!--<button type="submit"
+                    title="<?= $block->escapeHtmlAttr($buttonTitle) ?>"
+                    class="action primary tocart"
+                    id="product-addtocart-button">
+                <span><?= $block->escapeHtml($buttonTitle) ?></span>
+            </button>-->
+		<?php } else  { ?>
+		 <!--<button type="button"
+                    title="<?= $block->escapeHtmlAttr($buttonTitle) ?>"
+                    class="action primary tocart"
+                    id="product-addtocart-button"
+					data-trigger="trigger">
+                <span><?= $block->escapeHtml($buttonTitle) ?></span>
+            </button>-->
+
+          
+
+		
+		<?php } ?>
+		<?php } ?>
+            <?= $block->getChildHtml('', true) ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+<script type="text/x-magento-init">
+    {
+        "#product_addtocart_form": {
+            "Magento_Catalog/js/validate-product": {}
+        }
+    }
+</script>
+
+<div class="wrap-addthis">
+    <span class="label">Share this…</span>
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+    <div class="addthis_inline_share_toolbox"></div>
+</div>

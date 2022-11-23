@@ -15,19 +15,19 @@ use Ebizmarts\SagePaySuite\Api\SagePayData\PiRefundRequestFactory;
 use Ebizmarts\SagePaySuite\Api\SagePayData\PiRepeatRequest;
 use Ebizmarts\SagePaySuite\Api\SagePayData\PiRepeatRequestFactory;
 use Ebizmarts\SagePaySuite\Api\SagePayData\PiThreeDSecureRequestFactory;
+use Ebizmarts\SagePaySuite\Api\SagePayData\PiThreeDSecureV2RequestFactory;
 use Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultAmountFactory;
+use Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultAvsCvcCheck;
+use Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultAvsCvcCheckFactory;
 use Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultCardFactory;
 use Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultFactory;
 use Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultPaymentMethodFactory;
 use Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultThreeD;
 use Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultThreeDFactory;
-use Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultAvsCvcCheck;
-use Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultAvsCvcCheckFactory;
-use Ebizmarts\SagePaySuite\Model\Api\ApiException;
-use Ebizmarts\SagePaySuite\Model\Api\ApiExceptionFactory;
-use Ebizmarts\SagePaySuite\Model\Api\HttpRestFactory;
+use Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultThreeDInterface;
 use Ebizmarts\SagePaySuite\Model\Config;
 use Magento\Store\Model\ScopeInterface;
+use function property_exists;
 
 /**
  * Sage Pay PI REST API
@@ -40,6 +40,7 @@ class PIRest
     const ACTION_TRANSACTIONS             = 'transactions';
     const ACTION_TRANSACTION_INSTRUCTIONS = 'transactions/%s/instructions';
     const ACTION_SUBMIT_3D                = '3d-secure';
+    const ACTION_SUBMIT_3Dv2              = '3d-secure-challenge';
     const ACTION_TRANSACTION_DETAILS      = 'transaction_details';
 
     /** @var Config */
@@ -57,7 +58,7 @@ class PIRest
     /** @var \Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultCardInterface */
     private $cardResultFactory;
 
-    /** @var \Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultThreeDInterface */
+    /** @var PiTransactionResultThreeDInterface */
     private $threedStatusResultFactory;
 
     /** @var \Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultAvsCvcCheck */
@@ -74,6 +75,9 @@ class PIRest
 
     /** @var PiThreeDSecureRequestFactory */
     private $threedRequest;
+
+    /** @var PiThreeDSecureV2RequestFactory */
+    private $threedv2Request;
 
     /** @var PiRefundRequestFactory */
     private $refundRequest;
@@ -119,13 +123,13 @@ class PIRest
         PiMerchantSessionKeyResponseFactory $mskResponse,
         PiMerchantSessionKeyRequestFactory $mskRequest,
         PiThreeDSecureRequestFactory $threeDRequest,
+        PiThreeDSecureV2RequestFactory $threeDV2Request,
         PiRefundRequestFactory $refundRequest,
         PiInstructionRequestFactory $instructionRequest,
         PiInstructionResponseFactory $instructionResponse,
         PiRepeatRequestFactory $repeatRequest,
         PiTransactionResultAvsCvcCheckFactory $avsCvcCheckResultFactory
     ) {
-
         $this->config = $config;
         $this->config->setMethodCode(Config::METHOD_PI);
         $this->apiExceptionFactory        = $apiExceptionFactory;
@@ -137,6 +141,7 @@ class PIRest
         $this->mskResponse                = $mskResponse;
         $this->mskRequest                 = $mskRequest;
         $this->threedRequest              = $threeDRequest;
+        $this->threedv2Request            = $threeDV2Request;
         $this->refundRequest              = $refundRequest;
         $this->instructionRequest         = $instructionRequest;
         $this->instructionResponse        = $instructionResponse;
@@ -156,9 +161,11 @@ class PIRest
     {
         /** @var \Ebizmarts\SagePaySuite\Model\Api\HttpRest $rest */
         $rest = $this->httpRestFactory->create();
+        $rest->getLogger()->sageLog(\Ebizmarts\SagePaySuite\Model\Logger\Logger::LOG_REQUEST, $url, [__METHOD__, __LINE__]);
         $rest->setBasicAuth($this->config->getPIKey(), $this->config->getPIPassword());
         $rest->setUrl($url);
         $response = $rest->executePost($body);
+
         return $response;
     }
 
@@ -180,6 +187,7 @@ class PIRest
 
     /**
      * Returns url for each enviroment according the configuration.
+     *
      * @param $action
      * @param null $vpsTxId
      * @return string
@@ -191,6 +199,7 @@ class PIRest
                 $endpoint = "transactions/$vpsTxId";
                 break;
             case self::ACTION_SUBMIT_3D:
+            case self::ACTION_SUBMIT_3Dv2:
                 $endpoint = "transactions/$vpsTxId/$action";
                 break;
             case self::ACTION_TRANSACTION_INSTRUCTIONS:
@@ -203,6 +212,8 @@ class PIRest
 
         if ($this->config->getMode() == Config::MODE_LIVE) {
             return Config::URL_PI_API_LIVE . $endpoint;
+        } elseif ($this->config->getMode() == Config::MODE_DEVELOPMENT) {
+            return Config::URL_PI_API_DEV . $endpoint;
         } else {
             return Config::URL_PI_API_TEST . $endpoint;
         }
@@ -269,17 +280,68 @@ class PIRest
         $request = $this->threedRequest->create();
         $request->setParEs($paRes);
 
+        $resultData = $this->threeDSecureSubmit($request, self::ACTION_SUBMIT_3D, $vpsTxId);
+
+        $this->validateThreeDSubmit($resultData);
+
+        return $this->threeDSecureSubmitSetResultStatus($resultData);
+    }
+
+    /**
+     * Submit 3D result via POST
+     *
+     * @param string $paRes
+     * @param string $vpsTxId
+     * @return PiTransactionResultThreeD
+     * @throws \Ebizmarts\SagePaySuite\Model\Api\ApiException
+     */
+    public function submit3Dv2($cRes, $vpsTxId)
+    {
+        /** @var \Ebizmarts\SagePaySuite\Api\SagePayData\PiThreeDSecureV2Request $request */
+        $request = $this->threedv2Request->create();
+        $request->setCres($cRes);
+
+        $resultData = $this->threeDSecureSubmit($request, self::ACTION_SUBMIT_3Dv2, $vpsTxId);
+
+        $this->validateThreeDSubmit($resultData);
+
+        return $this->threeDSecureSubmitSetResultStatus($resultData);
+    }
+
+    private function threeDSecureSubmit(\Magento\Framework\Api\AbstractExtensibleObject $request, $url, $vpsTxId)
+    {
         $jsonBody   = json_encode($request->__toArray());
-        $result     = $this->executePostRequest($this->getServiceUrl(self::ACTION_SUBMIT_3D, $vpsTxId), $jsonBody);
-        $resultData = $this->processResponse($result);
+        $result     = $this->executePostRequest($this->getServiceUrl($url, $vpsTxId), $jsonBody);
+        return $this->processResponse($result);
+    }
+
+    /**
+     * @param \stdClass $resultData
+     * @throws \Ebizmarts\SagePaySuite\Model\Api\ApiException
+     */
+    private function validateThreeDSubmit(\stdClass $resultData)
+    {
+        if (!isset($resultData->status)) {
+            if (empty((array)$resultData)) {
+                $resultData->status = "Operation not allowed";
+            } else {
+                throw new ApiException(__('Invalid 3D secure response. ' . $jsonVar = json_encode($resultData, JSON_PRETTY_PRINT)));
+            }
+        }
+    }
+
+    /**
+     * @param string $resultData
+     * @return PiTransactionResultThreeDInterface
+     */
+    private function threeDSecureSubmitSetResultStatus(\stdClass $resultData): PiTransactionResultThreeDInterface
+    {
+        $rest = $this->httpRestFactory->create();
+        $rest->getLogger()->sageLog(\Ebizmarts\SagePaySuite\Model\Logger\Logger::LOG_REQUEST, 'threeDSecureSubmitSetResultStatus', [__METHOD__, __LINE__]);
+        $rest->getLogger()->sageLog(\Ebizmarts\SagePaySuite\Model\Logger\Logger::LOG_REQUEST, json_encode($resultData), [__METHOD__, __LINE__]);
 
         /** @var PiTransactionResultThreeD $response */
         $response = $this->threedStatusResultFactory->create();
-
-        if (!property_exists($resultData, 'status')) {
-            throw new ApiException(__('Invalid 3D secure response.'));
-        }
-
         $response->setStatus($resultData->status);
 
         return $response;
@@ -291,9 +353,10 @@ class PIRest
      * @param $amount
      * @param $currency
      * @param $description
+     * @param $storeId
      * @return \Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultInterface
      */
-    public function refund($vendorTxCode, $refTransactionId, $amount, $description)
+    public function refund($vendorTxCode, $refTransactionId, $amount, $description, $storeId)
     {
         /** @var \Ebizmarts\SagePaySuite\Api\SagePayData\PiRefundRequest $refundRequest */
         $refundRequest = $this->refundRequest->create();
@@ -302,7 +365,7 @@ class PIRest
         $refundRequest->setReferenceTransactionId($refTransactionId);
         $refundRequest->setAmount($amount);
         $refundRequest->setDescription($description);
-
+        $this->config->setConfigurationScopeId($storeId);
         $jsonRequest = json_encode($refundRequest->__toArray());
         $result      = $this->executePostRequest($this->getServiceUrl(self::ACTION_TRANSACTIONS), $jsonRequest);
 
@@ -353,8 +416,10 @@ class PIRest
      * Make release request.
      *
      * @param string $transactionId
-     * @return \Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultInterface
-     * @throws ApiException
+     * @param $amount
+     * @param string $vpsProtocol
+     * @return PiInstructionResponse
+     * @throws \Ebizmarts\SagePaySuite\Model\Api\ApiException
      */
     public function release(string $transactionId, $amount)
     {
@@ -444,11 +509,20 @@ class PIRest
             return $result->getResponseData();
         } else {
             $errorCode = 0;
-            $errorMessage  = "Unable to capture Sage Pay transaction";
+            $errorMessage  = "Unable to capture Opayo transaction";
 
             $errors = $result->getResponseData();
             if (isset($errors->errors) && count($errors->errors) > 0) {
                 $errors = $errors->errors[0];
+            }
+
+            if ($this->_isOperationNotAllowed($errors)) {
+                $rest = $this->httpRestFactory->create();
+                $rest->getLogger()->sageLog(\Ebizmarts\SagePaySuite\Model\Logger\Logger::LOG_REQUEST, 'Operation not allowed detected', [__METHOD__, __LINE__]);
+                $rest->getLogger()->sageLog(\Ebizmarts\SagePaySuite\Model\Logger\Logger::LOG_REQUEST, json_encode($errors), [__METHOD__, __LINE__]);
+
+                $errors->status = 'Operation not allowed';
+                return $errors;
             }
 
             if (isset($errors->code)) {
@@ -473,6 +547,19 @@ class PIRest
     }
 
     /**
+     * @param \stdClass $errors
+     * @return bool
+     */
+    private function _isOperationNotAllowed($errors)
+    {
+        $rest = $this->httpRestFactory->create();
+        $rest->getLogger()->sageLog(\Ebizmarts\SagePaySuite\Model\Logger\Logger::LOG_REQUEST, "Check if operation not allowed detected", [__METHOD__, __LINE__]);
+        $rest->getLogger()->sageLog(\Ebizmarts\SagePaySuite\Model\Logger\Logger::LOG_REQUEST, json_encode($errors), [__METHOD__, __LINE__]);
+
+        return (isset($errors->code) && $errors->code == 1017);
+    }
+
+    /**
      * @param \stdClass $captureResult
      * @return \Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultInterface
      */
@@ -487,7 +574,12 @@ class PIRest
 
         if ($captureResult->status == '3DAuth') {
             $transaction->setAcsUrl($captureResult->acsUrl);
-            $transaction->setParEq($captureResult->paReq);
+
+            if (property_exists($captureResult, 'paReq') === true) {
+                $transaction->setParEq($captureResult->paReq);
+            } else {
+                $transaction->setCReq($captureResult->cReq); //3Dv2
+            }
         } else {
             $transaction->setTransactionType($captureResult->transactionType);
 

@@ -1,0 +1,496 @@
+<?php 
+	$_item = $block->getItem();
+	$_product = $_item->getProduct(); // Get cart product details
+	$additional_data = $block->getAdditionalData(); // Get cart product additionl details defined in block page
+	/** @var $objectManager \Magento\Framework\App\ObjectManager */
+	$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+	/** @var $configHelper Tech9logy\ElasticsearchPro\Helper\Data */
+	$configHelper = $objectManager->get('Tech9logy\ExtendWarranty\Helper\Data');
+	$priceHelper = $objectManager->create('Magento\Framework\Pricing\Helper\Data');
+	
+?>
+<?php if($configHelper->isExtendWarrantyEnabled() || $_product->getData('enable_extend_warranty') == 1 || $_product->getData('enable_extend_warranty') == 1  || $_product->getData('enable_extend_warranty') == 1 ): ?>
+	<div class="warranty_tab">
+		<div class="warranty_section">
+			<?php
+				$checkoutSession = $objectManager->get('\Magento\Checkout\Model\Session');
+				$cartItems = $checkoutSession->getQuote()->getAllItems();
+				$itemQty = 0;
+				$warrantyChecked = false;
+				$recycleChecked = false;
+				$unwrapRecycle = false;
+				foreach($cartItems as $item) {
+					if($_product->getId() == $item->getProductId()){
+						$itemQty = $item->getQty();
+					}
+				}
+				$servicesApplied = $checkoutSession->getServiceApplied();
+				if($servicesApplied != ""){
+					foreach(json_decode($servicesApplied) as $servicesData){
+						$servicesData = json_decode($servicesData);
+						if($servicesData->product_id == $_product->getId()){
+							if($servicesData->service == "extend_warranty"){
+								$warrantyChecked = true;
+							}
+							if($servicesData->service == "recycle_appliance"){
+								$recycleChecked = true;
+							}
+							if($servicesData->service == "unwrap_recycle"){
+								$unwrapRecycle = true;
+							}
+						}
+						//echo '<pre>'; print_r(); exit;
+					}
+				}
+				
+				$product = $objectManager->get('\Magento\Catalog\Api\ProductRepositoryInterface')->getById($_product->getId());
+				$categories = $product->getCategoryIds();
+				
+				$countWarrantyCategory = 0;
+				if ($configHelper->isWarrantyVisibleforAll()) {
+					$countWarrantyCategory++;
+				} else {
+					$warrantyCategoryList = explode(",", $configHelper->getWarrantyEnabledCategory());
+					foreach ($categories as $category) {
+						$cat = $objectManager->create('Magento\Catalog\Model\Category')->load($category);
+						if (in_array($cat->getId(), $warrantyCategoryList)) {
+							$countWarrantyCategory++;
+							break;
+						}
+					}
+				}
+
+				$countRecycleCategory = 0;
+				if ($configHelper->isRecycleVisibleforAll()) {
+					$countRecycleCategory++;
+				} else {
+					$recycleCategoryList = explode(",", $configHelper->getRecycleEnabledCategory());
+					foreach ($categories as $category) {
+						$cat = $objectManager->create('Magento\Catalog\Model\Category')->load($category);
+						if (in_array($cat->getId(), $recycleCategoryList)) {
+							$countRecycleCategory++;
+							break;
+						}
+					}
+				}
+				
+				$countUnwrapCategory = 0;
+				if ($configHelper->isUnwrapRecycleVisibleforAll()) {
+					$countUnwrapCategory++;
+				} else {
+					$unwrapCategoryList = explode(",", $configHelper->getUnwrapRecycleEnabledCategory());
+					
+					foreach ($categories as $category) {
+						$cat = $objectManager->create('Magento\Catalog\Model\Category')->load($category);
+						if (in_array($cat->getId(), $unwrapCategoryList)) {
+							$countUnwrapCategory++;
+							break;
+						}
+					}
+				}
+			?>
+			
+			<?php if(($configHelper->isWarrantyEnable() && $countWarrantyCategory > 0) || $product->getData('enable_extend_warranty') == 1): ?>
+				<?php
+					if($product->getData('enable_extend_warranty') == 1 && $product->getData('warranty_years') != ""){
+						$warrantyYear = $product->getData('warranty_years');
+					}else{
+						$warrantyYear = $configHelper->getWarrantyTime();
+					}
+					if($product->getData('enable_extend_warranty') == 1 && $product->getData('warranty_charges') != ""){
+						$warrantyCharges = $product->getData('warranty_charges');
+					}else{
+						$warrantyCharges = $configHelper->getWarrantyCharges();
+					}
+				?>
+				<div class="checkbox warrantyCheckbox">
+					<div class="left_block">
+					<label class="checkcontainer">
+						<p> <?= $configHelper->getWarrantyMsg(); ?> for <?= $warrantyYear; ?> Years.
+						<span class="hidden-xs" style="color:#ffc823"> At only <span class="option-price"><?= $priceHelper->currency($warrantyCharges); ?> </span></span></p>
+						    <?php if($warrantyChecked == true): ?>
+									<input type="checkbox" checked="check" value="" data-id="ew_<?= $product->getId(); ?>" data-price="<?= number_format($itemQty * $warrantyCharges, 2); ?>" name="extend_warranty" data-ecommerce='{"product_id":"<?= $product->getId(); ?>", "sku":"<?= $product->getSku(); ?>", "service":"extend_warranty","name":"<?= $configHelper->getWarrantyMsg(); ?>","price":"<?= number_format($warrantyCharges, 2); ?>","qty":"<?= $itemQty; ?>"}'>
+							<?php else: ?>
+								<input type="checkbox" value="" data-id="ew_<?= $product->getId(); ?>" data-price="<?= number_format($itemQty * $warrantyCharges, 2); ?>" name="extend_warranty" data-ecommerce='{"product_id":"<?= $product->getId(); ?>", "sku":"<?= $product->getSku(); ?>", "service":"extend_warranty","name":"<?= $configHelper->getWarrantyMsg(); ?>","price":"<?= number_format($warrantyCharges, 2); ?>","qty":"<?= $itemQty; ?>"}'>
+							<?php endif; ?>
+						<span class="mark checkbox"></span>
+					</label>
+					</div>
+					<div class="img_right_block">
+						<img src="/media/logo/<?= $configHelper->getWarrantyLogo(); ?>" alt="" />
+					</div>
+				</div>
+			<?php endif; ?>
+			
+			<?php if(($configHelper->isRecycleEnable() && $countRecycleCategory > 0) || $product->getData('enable_recycle_option') == 1 ): ?>
+				
+				<?php
+					if($product->getData('enable_extend_warranty') == 1 && $product->getData('recycle_charges') != ""){
+						$recycleCharges = $product->getData('recycle_charges');
+					}else{
+						$recycleCharges = $configHelper->getRecycleCharges();
+					}
+				?>
+				<div class="checkbox checkboxOLDPRODCOL">
+					<div class="left_block">
+					<label class="checkcontainer">
+						<p style="width: 100%;"><span class="hidden-xs" style="color:#50a842"><?= $configHelper->getRecycleMsg(); ?> </span> for just <span class="option-price"><?= $priceHelper->currency($recycleCharges); ?></span></p>
+						    <?php if($recycleChecked == true): ?>
+								<input type="checkbox" checked="check" value="" data-id="roa_<?= $product->getId(); ?>" data-price="<?= number_format($itemQty * $recycleCharges, 2); ?>" name="recycle_old_applience" data-ecommerce='{"product_id":"<?= $product->getId(); ?>", "sku":"<?= $product->getSku(); ?>", "service":"recycle_appliance","name":"<?= $configHelper->getRecycleMsg(); ?>","price":"<?= number_format($recycleCharges, 2); ?>","qty":"<?= $itemQty; ?>"}'>
+							<?php else: ?>
+								<input type="checkbox" value="" data-id="roa_<?= $product->getId(); ?>" data-price="<?= number_format($itemQty * $recycleCharges,2); ?>" name="recycle_old_applience" data-ecommerce='{"product_id":"<?= $product->getId(); ?>", "sku":"<?= $product->getSku(); ?>", "service":"recycle_appliance","name":"<?= $configHelper->getRecycleMsg(); ?>","price":"<?= number_format($recycleCharges, 2); ?>","qty":"<?= $itemQty; ?>"}'>
+							<?php endif; ?>	
+						<span class="mark checkbox"></span>
+					</label>
+					</div>
+					<div class="img_right_block">
+						<img src="/media/logo/<?= $configHelper->getRecycleLogo(); ?>" alt="" />
+					</div>
+				</div>
+			<?php endif; ?>
+			
+			<?php if(($configHelper->isUnwrapRecycleEnable() && $countUnwrapCategory > 0) || $product->getData('enable_unwrap_recycle ') == 1 ): ?>
+				<?php
+					if($product->getData('enable_extend_warranty') == 1 && $product->getData('unwrap_recycle_charges') != ""){
+						$unwrapCharges = $product->getData('unwrap_recycle_charges');
+					}else{
+						$unwrapCharges = $configHelper->getUnwrapRecycleCharges();
+					}
+				?>
+				<div class="checkbox checkboxUNWRAP">
+					<div class="left_block">
+					<label class="checkcontainer">
+						<p><span class="hidden-xs" style="color:#0054a5"><?= $configHelper->getUnwrapRecycleMsg(); ?></span><span class="option-price"> for just <?= $priceHelper->currency($unwrapCharges); ?></span></p>
+							<?php if($unwrapRecycle == true): ?>
+								<input type="checkbox" checked="check" value="" data-id="ar_<?= $product->getId(); ?>" data-price="<?= number_format($itemQty * $unwrapCharges, 2); ?>" name="unwrap_recycle" data-ecommerce='{"product_id":"<?= $product->getId(); ?>", "sku":"<?= $product->getSku(); ?>", "service":"unwrap_recycle","name":"<?= $configHelper->getUnwrapRecycleMsg(); ?>","price":"<?= number_format($unwrapCharges, 2); ?>","qty":"<?= $itemQty; ?>"}'>
+							<?php else: ?>
+								<input type="checkbox" value="" data-id="ar_<?= $product->getId(); ?>" data-price="<?= number_format($itemQty * $unwrapCharges, 2); ?>" name="unwrap_recycle" data-ecommerce='{"product_id":"<?= $product->getId(); ?>", "sku":"<?= $product->getSku(); ?>", "service":"unwrap_recycle","name":"<?= $configHelper->getUnwrapRecycleMsg(); ?>","price":"<?= number_format($unwrapCharges, 2); ?>","qty":"<?= $itemQty; ?>"}'>
+							<?php endif; ?>
+						<span class="mark checkbox"></span>
+					</label>
+					</div>
+					<div class="img_right_block">
+							<img src="/media/logo/<?= $configHelper->getUnwrapRecycleLogo(); ?>" alt="" />
+					</div>
+				</div>
+			<?php endif; ?>	
+		</div>
+	</div>
+<?php endif; ?>
+
+<script>
+   require(['jquery', 'jquery/ui'], function($){
+		'use strict';
+
+		$(document).ready( function() {
+			var finalServices = [];
+			var finalPrice = 0;
+			$('input[type=checkbox]:checked').each(function() {
+				finalServices.push($(this).attr("data-ecommerce"));
+				finalPrice = finalPrice +  parseInt($(this).attr("data-price"));
+			});
+			updateToCart(finalServices, finalPrice);
+			$('input[type=checkbox]').change(function() {
+				
+				var finalServices = [];
+				var finalPrice = 0;
+				$('input[type=checkbox]:checked').each(function() {
+					finalServices.push($(this).attr("data-ecommerce"));
+					finalPrice = finalPrice +  parseInt($(this).attr("data-price"));
+				});
+				if($(this).prop('checked')){
+					updateToCart(finalServices, finalPrice);
+				}else{
+					removeFromCart(finalServices, finalPrice);
+					//count++;
+				}
+			});
+		});
+		function updateToCart(finalServices, finalPrice){
+			//alert(DataId);
+			$.ajax('/extendwarranty/index/addservices', {
+				type: 'POST',  // http method
+				data: { 'data': finalServices , 'price': finalPrice },  // data to submit
+				success: function (response) {
+					$("#s_method_flatrate_flatrate").trigger('click');
+					$(".totals-warranty-details").remove();
+					$(".totals-warranty-summary").replaceWith(response.htmlResponse);
+					$("tr.grand.totals td.amount strong").html(response.baseGrandTotal);
+					collapseWarranty();
+				}
+			});
+		}
+		function removeFromCart(finalServices, finalPrice){
+			//alert(DataId);
+			$.ajax('/extendwarranty/index/addservices', {
+				type: 'POST',  // http method
+				data: { 'data': finalServices , 'price': finalPrice },  // data to submit
+				success: function (response) {
+					$("#s_method_flatrate_flatrate").trigger('click');
+					$(".totals-warranty-details").remove();
+					$(".totals-warranty-summary").replaceWith(response.htmlResponse);
+					$("tr.grand.totals td.amount strong").html(response.baseGrandTotal);
+					collapseWarranty();
+				}
+			});
+		}
+		function collapseWarranty(){
+			$(".totals-warranty-summary").click(function(){
+				if($(this).hasClass("expanded")){
+					$(this).removeClass("expanded");
+					$(".totals-warranty-details").removeClass("shown");
+				}else{
+					$(this).addClass("expanded");
+					$(".totals-warranty-details").addClass("shown");
+				}
+			}); 
+		}
+   });
+</script>
+
+<style>
+.totals-warranty-summary .mark strong {
+  font-size: 16px;
+}
+.checkcontainer {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+/* Hide the default checkbox */
+.checkcontainer input {
+  visibility: hidden;
+  cursor: pointer;
+}
+
+/* Create a custom checkbox */
+.mark.checkbox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: gray;
+}
+
+.checkcontainer:hover input ~ .mark {
+  background-color: gray;
+}
+
+.checkcontainer input:checked ~ .mark {
+  background-color: #ff000c;
+}
+
+/* Create the mark/indicator (hidden when not checked) */
+.mark.checkbox:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the mark when checked */
+.checkcontainer input:checked ~ .mark:after {
+  display: block;
+}
+
+/* Style the mark/indicator */
+.checkcontainer .mark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+.warranty_tab .warranty_section img{
+    width: 50px;
+    height: 50px;
+}
+.left_block{
+    display: flex;
+    width: 85%;
+}
+.warranty_tab{
+    width: 430px;
+    top: 50px;
+    position: relative;
+    right: 16px;
+    margin-bottom: 42px;
+}
+.warranty_section{
+    display: block;
+    width: 100%;
+}
+
+.warrantyCheckbox{
+    display: flex;
+    border: 2px solid #0054a5;
+    background-color: #0054a5;
+    color: #fff;
+    padding: 10px 10px 0px 5px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    line-height: 1.2em;
+    margin-bottom: 15px;
+    width: 100%;
+    justify-content: space-between;
+}
+.checkboxOLDPRODCOL{
+    display: flex;
+    border: 2px solid #50a842;
+    background-color: #fff;
+    color: #000;
+    padding: 10px 10px 0px 5px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    line-height: 1.2em;
+    margin-bottom: 15px;
+    width: 100%;
+    justify-content: space-between;
+}
+.checkboxUNWRAP{
+    display: flex;
+    border: 2px solid #abdef3;
+    background-color: #fff;
+    color: #000;
+    padding: 10px 10px 0px 5px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    line-height: 1.2em;
+    margin-bottom: 15px;
+    width: 100%;
+    justify-content: space-between;
+}
+input[type="checkbox"] {
+    margin: 0px 5px 0px 5px;
+    position: relative;
+    top: -5px;
+    width: 25px;
+}
+@media only screen and (min-width: 200px) and (max-width: 767px)  {
+	.warranty_tab{
+		width: unset;
+		top: 40px;
+		position: relative;
+		right: 48px;
+		margin-bottom: 42px;
+	}
+	.checkcontainer {
+		display: block;
+		position: relative;
+		padding-left: 30px;
+		margin-bottom: 0px;
+		cursor: pointer;
+	}
+	.checkcontainer p {
+		margin-bottom: 0px;
+	}
+}
+@media only screen and (min-width: 768px) and (max-width: 922px)  {
+	.warranty_tab{
+		width: unset;
+		top: 50px;
+		position: relative;
+		right: 16px;
+		margin-bottom: 42px;
+	}
+	.warrantyCheckbox{
+		display: flex;
+		border: 2px solid #0054a5;
+		background-color: #0054a5;
+		color: #fff;
+		padding: 10px 0px 0px 0px;
+		border-radius: 10px;
+		font-size: 1em;
+		line-height: 1.2em;
+		margin-bottom: 15px;
+		width: 100%;
+		justify-content: space-between;
+	}
+	.checkboxOLDPRODCOL{
+		display: flex;
+		border: 2px solid #50a842;
+		background-color: #fff;
+		color: #000;
+		padding: 10px 0px 0px 0px;
+		border-radius: 10px;
+		font-size: 1em;
+		line-height: 1.2em;
+		margin-bottom: 15px;
+		width: 100%;
+		justify-content: space-between;
+	}
+	.checkboxUNWRAP{
+		display: flex;
+		border: 2px solid #abdef3;
+		background-color: #fff;
+		color: #000;
+		padding: 10px 0px 0px 0px;
+		border-radius: 10px;
+		font-size: 1em;
+		line-height: 1.2em;
+		margin-bottom: 15px;
+		width: 100%;
+		justify-content: space-between;
+	}
+	.img_right_block {
+		display: none;
+	}
+	.left_block {
+		display: flex;
+		width: 100%;
+	}
+	.checkcontainer {
+		display: block;
+		position: relative;
+		padding-left: 30px;
+		margin-bottom: 0px;
+		cursor: pointer;
+	}
+	.checkcontainer p {
+		margin-bottom: 0px;
+	}
+}
+@media only screen and (min-width: 923px) and (max-width: 1028px)  {
+	.warranty_tab{
+		width: 200px;
+		top: 50px;
+		position: relative;
+		right: 16px;
+		margin-bottom: 42px;
+	}
+	.checkcontainer {
+		display: block;
+		position: relative;
+		padding-left: 30px;
+		margin-bottom: 0px;
+		cursor: pointer;
+	}
+	.checkcontainer p {
+		margin-bottom: 0px;
+	}
+}
+@media only screen and (min-width: 1028px) and (max-width: 1242px)  {
+	.warranty_tab{
+		width: 275px;
+		top: 50px;
+		position: relative;
+		right: 16px;
+		margin-bottom: 42px;
+	}
+	.checkcontainer {
+		display: block;
+		position: relative;
+		padding-left: 30px;
+		margin-bottom: 0px;
+		cursor: pointer;
+	}
+	.checkcontainer p {
+		margin-bottom: 0px;
+	}
+}
+</style>

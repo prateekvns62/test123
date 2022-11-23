@@ -5,31 +5,22 @@ namespace Wyomind\PointOfSale\Controller\Adminhtml\Manage;
 class Save extends \Wyomind\PointOfSale\Controller\Adminhtml\PointOfSale
 {
     public function execute()
-    {
-        // check if data sent
+    {        
         $data = $this->getRequest()->getPost();
         if ($data) {
             $model = $this->_objectManager->create('Wyomind\PointOfSale\Model\PointOfSale');
-
             $id = $this->getRequest()->getParam('place_id');
-
             if ($id) {
                 $model->load($id);
             }
-
             if (isset($data['image']['delete']) && $data['image']['delete'] == 1) {
                 $data['image'] = "";
             } else {
                 try {
                     /* Starting upload */
-                    $uploader = new \Magento\Framework\File\Uploader("image");
-                    // Any extension would work
+                    $uploader = new \Magento\Framework\File\Uploader("image");                    
                     $uploader->setAllowedExtensions(["jpg", "jpeg", "gif", "png"]);
                     $uploader->setAllowRenameFiles(true);
-                    // Set the file upload mode
-                    // false -> get the file directly in the specified folder
-                    // true -> get the file in the product like folders
-                    // (file.jpg will go in something like /media/f/i/file.jpg)
                     $uploader->setFilesDispersion(false);
                     $uploader->setAllowCreateFolders(true);
                     // We set media as the upload dir

@@ -9,7 +9,7 @@
     <system>
         <section id="payment">
             <group id="sagepaysuite" translate="label" type="text" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Sage Pay Suite</label>
+                <label>Opayo (formerly Sage Pay)</label>
                 <group id="version" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
                     <frontend_model>Ebizmarts\SagePaySuite\Block\Adminhtml\System\Config\Fieldset\Version</frontend_model>
                 </group>
@@ -28,23 +28,29 @@
                         <source_model>Ebizmarts\SagePaySuite\Model\Config\Source\Mode</source_model>
                         <config_path>sagepaysuite/global/mode</config_path>
                     </field>
-                    <field id="currency" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <field id="protocol" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="0" showInStore="0">
+                        <label>Protocol</label>
+                        <comment><![CDATA[Protocol 4.00 may not be available for live mode yet. Please check the link <a target="_blank" href="https://www.sagepay.co.uk/strong-customer-authentication-faqs">HERE</a> for more information]]></comment>
+                        <source_model>Ebizmarts\SagePaySuite\Model\Config\Source\Protocol</source_model>
+                        <config_path>sagepaysuite/global/protocol</config_path>
+                    </field>
+                    <field id="currency" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Currency</label>
                         <source_model>Ebizmarts\SagePaySuite\Model\Config\Source\Currency</source_model>
                         <config_path>sagepaysuite/global/currency</config_path>
                     </field>
-                    <field id="token" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <field id="token" translate="label" type="select" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Save Credit Card Tokens</label>
                         <comment><![CDATA[Customer's credit card will be saved as a secure token for quick access in the future. Your merchant account needs to have this feature enabled.]]></comment>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>sagepaysuite/global/token</config_path>
                     </field>
-                    <field id="reporting_user" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <field id="reporting_user" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Reporting API User</label>
-                        <comment><![CDATA[Your merchant's credentials, same as the ones to access Sage Pay's dashboard.]]></comment>
+                        <comment><![CDATA[Your merchant's credentials, same as the ones to access Opayo's dashboard.]]></comment>
                         <config_path>sagepaysuite/global/reporting_user</config_path>
                     </field>
-                    <field id="reporting_password" translate="label" type="obscure" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <field id="reporting_password" translate="label" type="obscure" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Reporting API Password</label>
                         <config_path>sagepaysuite/global/reporting_password</config_path>
                         <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
@@ -52,15 +58,27 @@
                 </group>
                 <group id="advanced" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Advanced Settings</label>
+                    <field id="debug_mode" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                        <label>Debug Mode</label>
+                        <comment><![CDATA[This will create two new logs and start logging more information. We recommend having it disabled unless it's required.]]></comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>sagepaysuite/advanced/debug_mode</config_path>
+                    </field>
+                    <field id="prevent_personal_data_logging" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                        <label>Prevent personal data logging</label>
+                        <comment><![CDATA[Customers' personal information will no longer be logged, XXXXX will be logged instead.]]></comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>sagepaysuite/advanced/prevent_personal_data_logging</config_path>
+                    </field>
                     <field id="threedsecure" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>3D Secure Authentication</label>
-                        <comment><![CDATA[The 3D Secure configuration is also declared in Sage Pay's dashboard and will be overwritten by this setting if not set to 'default'.]]></comment>
+                        <comment><![CDATA[The 3D Secure configuration is also declared in Opayo's dashboard and will be overwritten by this setting if not set to 'default'.]]></comment>
                         <source_model>Ebizmarts\SagePaySuite\Model\Config\Source\ThreeDSecure</source_model>
                         <config_path>sagepaysuite/advanced/threedsecure</config_path>
                     </field>
                     <field id="avscvc" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Avs/Cvc Authentication</label>
-                        <comment><![CDATA[The Avs/Cvc configuration is also declared in Sage Pay's dashboard and will be overwritten by this setting if not set to 'default'.]]></comment>
+                        <comment><![CDATA[The Avs/Cvc configuration is also declared in Opayo's dashboard and will be overwritten by this setting if not set to 'default'.]]></comment>
                         <source_model>Ebizmarts\SagePaySuite\Model\Config\Source\AvsCvc</source_model>
                         <config_path>sagepaysuite/advanced/avscvc</config_path>
                     </field>
@@ -99,7 +117,7 @@
                     </field>
                 </group>
                 <group id="sagepaysuiteform" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Sage Pay FORM Integration</label>
+                    <label>Opayo FORM Integration</label>
                     <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Enabled</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -162,7 +180,7 @@
                     <field id="model"></field>
                 </group>
                 <group id="sagepaysuitepi" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Sage Pay Pi Integration (recommended)</label>
+                    <label>Opayo Pi Integration (recommended)</label>
                     <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Enabled</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -196,6 +214,17 @@
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>payment/sagepaysuitepi/use_dropin</config_path>
                     </field>
+                    <field id="threed_new_window" translate="label" type="select" sortOrder="19" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Open 3D verification in new window</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>payment/sagepaysuitepi/threed_new_window</config_path>
+                    </field>
+                    <field id="challengewindowsize" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Challenge Window Size</label>
+                        <comment>Dimensions of the challenge window that has been displayed to the Cardholder.</comment>
+                        <source_model>Ebizmarts\SagePaySuite\Model\Config\Source\PiChallengeWindowSize</source_model>
+                        <config_path>payment/sagepaysuitepi/challengewindowsize</config_path>
+                    </field>
                     <field id="sort_order" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Sort Order</label>
                         <frontend_class>validate-number</frontend_class>
@@ -223,7 +252,7 @@
                     <field id="model"></field>
                 </group>
                 <group id="sagepaysuiteserver" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Sage Pay SERVER Integration</label>
+                    <label>Opayo SERVER Integration</label>
                     <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Enabled</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -272,7 +301,7 @@
                     <field id="model"></field>
                 </group>
                 <group id="sagepaysuitepaypal" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Sage Pay PayPal Integration</label>
+                    <label>Opayo PayPal Integration</label>
                     <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Enabled</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -325,7 +354,7 @@
                     <field id="model"></field>
                 </group>
                 <group id="sagepaysuiterepeat" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Sage Pay REPEAT Integration (Backend Only)</label>
+                    <label>Opayo REPEAT Integration (Backend Only)</label>
                     <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Enabled</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

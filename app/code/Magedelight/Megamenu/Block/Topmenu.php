@@ -383,7 +383,9 @@ class Topmenu extends MagentoTopmenu
             //return $this->storeManager->getStore()->getBaseUrl() . $linkurl;
         }
         if ($menuItem->getItemType() == "category") {
+			if($menuItem->getObjectId() != 85){
             $url = $this->categoryRepository->get($menuItem->getObjectId())->getUrl();
+			} 
         }
         if ($menuItem->getItemType() == "pages") {
             $url = $this->storeManager->getStore()->getBaseUrl() . $menuItem->getItemLink();
@@ -402,7 +404,10 @@ class Topmenu extends MagentoTopmenu
     {
         $name = '';
         if ($menuItem->getItemType() == "category") {
+			if($menuItem->getObjectId() != 85){
             $name = $this->categoryRepository->get($menuItem->getObjectId(), $this->getStoreId())->getName();
+			}
+            
         } /* elseif ($menuItem->getItemType() == "pages") {
           $name = $this->pageModel->setStoreId($this->getStoreId())->load($menuItem->getObjectId())->getTitle();
           } */ else {
@@ -696,6 +701,14 @@ class Topmenu extends MagentoTopmenu
                 $html .= '</ul></li>';
             } else {
                 $html .= '<li class="' . $class . ' ' . $dataclass . '"><a href="' . $linkurl . '"><span class="megaitemicons">' . $menuTree->getItemFontIcon() . '</span> ' . $this->generateMenuName($menuTree) . '</a></li>';
+                 $str = "christmas-deals snow-animation";
+
+                if($dataclass == $str){
+                     $html .= '<li class="' . $class . ' ' . $dataclass . '"><a href="' . $linkurl . '"><span class="megaitemicons snow-megamenu">' . $menuTree->getItemFontIcon() .'<img class="snow-desktop" src="https://www.bargainbuyz.co.uk/static/frontend/Ninedotmedia/bargainbuyz/en_GB/Tech9logy_SmartSearch/img/snow-christmas.png"></img>'.'<img class="snow-mobile" src="https://www.bargainbuyz.co.uk/static/frontend/Ninedotmedia/bargainbuyz/en_GB/Tech9logy_SmartSearch/img/mobile-snow.png"></img>'. '</span> '. '<span class="snowanimate-megaitems"></span>'. $this->generateMenuName($menuTree).'</a></li>';
+
+                }
+
+
             }
         }
         $hasChildrenMenu = $menuTree->getItemColumns();

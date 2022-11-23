@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock  name="additional.product.info">
+            <block class="Tech9logy\ExtendWarranty\Block\WarrantyProInfo" name="cart_item_warranty_info" template="Tech9logy_ExtendWarranty::checkout/cart/item/warrantyinfo.phtml" cacheable="false"/>
+        </referenceBlock >
+        <referenceBlock name="checkout.cart.totals">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="block-totals" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="warranty_services" xsi:type="array">
+                                    <item name="sortOrder" xsi:type="string">40</item>
+                                    <item name="component" xsi:type="string">Tech9logy_ExtendWarranty/js/view/summary/services</item>
+                                    <item name="config" xsi:type="array">
+                                        <item name="title" xsi:type="string" translate="true">Add-on Services</item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

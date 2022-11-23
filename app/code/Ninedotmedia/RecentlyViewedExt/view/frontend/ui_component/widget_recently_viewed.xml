@@ -32,13 +32,13 @@
                             <item name="default" xsi:type="array">
                                 <item name="children" xsi:type="array">
                                     <item name="regular_price" xsi:type="array">
-                                        <item name="label" xsi:type="string" translate="true">Was</item>
+                                        <item name="label" xsi:type="string" translate="true">RRP</item>
                                     </item>
                                     <item name="minimal_regular_price" xsi:type="array">
-                                        <item name="label" xsi:type="string" translate="true">Was</item>
+                                        <item name="label" xsi:type="string" translate="true">RRP</item>
                                     </item>
+                                        <item name="label" xsi:type="string" translate="true">RRP</item>
                                     <item name="max_regular_price" xsi:type="array">
-                                        <item name="label" xsi:type="string" translate="true">Was</item>
                                     </item>
                                     <item name="save_price" xsi:type="array">
                                         <item name="label" xsi:type="string" translate="true">Save Price</item>

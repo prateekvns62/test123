@@ -1,0 +1,22 @@
+<!-- ko if: showExtendedServices() -->
+<tr class="totals-warranty-summary" data-bind="mageInit: {'toggleAdvanced':{'selectorsToggleClass': 'shown', 'baseToggleClass': 'expanded', 'toggleContainers': '.totals-warranty-details'}}">
+    <th class="mark" scope="row"><strong data-bind="text: title">Add-on Services</strong></th>
+    <td data-bind="attr: {'data-th': title }" class="amount" data-th="Warranty">
+        <strong><span class="price" data-bind="text: getValue()"></span></strong>
+    </td>
+</tr>
+<!-- ko foreach: { data: getServicesApplied(), as: 'item' } -->
+<tr class="totals-warranty-details">
+    <th class="mark" scope="row">
+        <span class="label" data-bind="text: item.name"></span></br>
+        <span class="value" data-bind="text: item.skutitle"></span>
+    </th>
+    <td class="amount">
+        <span class="price" data-bind="text: item.amount"></span>
+    </td>
+</tr>
+<!-- /ko -->
+<!-- /ko -->
+<!-- ko ifnot: showExtendedServices() -->
+<tr class="totals-warranty-summary"></tr>
+<!-- /ko -->

@@ -6,21 +6,24 @@
 
 namespace Ebizmarts\SagePaySuite\Controller\Paypal;
 
-use Ebizmarts\SagePaySuite\Helper\Checkout;
 use Ebizmarts\SagePaySuite\Helper\Data as SuiteHelper;
 use Ebizmarts\SagePaySuite\Model\Api\Post;
 use Ebizmarts\SagePaySuite\Model\Config;
 use Ebizmarts\SagePaySuite\Model\Logger\Logger;
+use Ebizmarts\SagePaySuite\Model\ObjectLoader\OrderLoader;
 use Ebizmarts\SagePaySuite\Model\OrderUpdateOnCallback;
+use Ebizmarts\SagePaySuite\Model\RecoverCart;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Request\InvalidRequestException;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Validator\Exception as ValidatorException;
 use Magento\Quote\Model\Quote;
-use Magento\Quote\Model\QuoteFactory;
-use Magento\Sales\Model\OrderFactory;
-use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Quote\Model\QuoteRepository;
+use Ebizmarts\SagePaySuite\Helper\CustomerLogin;
 
 class Callback extends Action
 {
@@ -48,19 +51,8 @@ class Callback extends Action
 
     private $postData;
 
-    /** @var OrderFactory */
-    private $orderFactory;
-
     /** @var Post */
     private $postApi;
-
-    /** @var \Magento\Sales\Model\Order */
-    private $order;
-
-    /**
-     * @var QuoteFactory
-     */
-    private $quoteFactory;
 
     /** @var OrderUpdateOnCallback */
     private $updateOrderCallback;
@@ -73,6 +65,18 @@ class Callback extends Action
      */
     private $encryptor;
 
+    /** @var RecoverCart */
+    private $recoverCart;
+
+    /** @var OrderLoader */
+    private $orderLoader;
+
+    /** @var QuoteRepository */
+    private $quoteRepository;
+
+    /** @var CustomerLogin */
+    private $customerLogin;
+
     /**
      * Callback constructor.
      * @param Context $context
@@ -81,11 +85,13 @@ class Callback extends Action
      * @param Logger $suiteLogger
      * @param Post $postApi
      * @param Quote $quote
-     * @param OrderFactory $orderFactory
-     * @param QuoteFactory $quoteFactory
+     * @param QuoteRepository $quoteRepository
      * @param OrderUpdateOnCallback $updateOrderCallback
      * @param SuiteHelper $suiteHelper
      * @param EncryptorInterface $encryptor
+     * @param RecoverCart $recoverCart
+     * @param OrderLoader $orderLoader
+     * @param CustomerLogin $customerLogin
      */
     public function __construct(
         Context $context,
@@ -94,36 +100,48 @@ class Callback extends Action
         Logger $suiteLogger,
         Post $postApi,
         Quote $quote,
-        OrderFactory $orderFactory,
-        QuoteFactory $quoteFactory,
+        QuoteRepository $quoteRepository,
         OrderUpdateOnCallback $updateOrderCallback,
         SuiteHelper $suiteHelper,
-        EncryptorInterface $encryptor
+        EncryptorInterface $encryptor,
+        RecoverCart $recoverCart,
+        OrderLoader $orderLoader,
+        CustomerLogin $customerLogin
     ) {
-    
         parent::__construct($context);
-        $this->config              = $config;
-        $this->checkoutSession     = $checkoutSession;
-        $this->suiteLogger         = $suiteLogger;
-        $this->postApi             = $postApi;
-        $this->quote               = $quote;
-        $this->orderFactory        = $orderFactory;
-        $this->quoteFactory        = $quoteFactory;
-        $this->updateOrderCallback = $updateOrderCallback;
-        $this->suiteHelper         = $suiteHelper;
-        $this->encryptor           = $encryptor;
+        $this->config               = $config;
+        $this->checkoutSession      = $checkoutSession;
+        $this->suiteLogger          = $suiteLogger;
+        $this->postApi              = $postApi;
+        $this->quote                = $quote;
+        $this->quoteRepository      = $quoteRepository;
+        $this->updateOrderCallback  = $updateOrderCallback;
+        $this->suiteHelper          = $suiteHelper;
+        $this->encryptor            = $encryptor;
+        $this->recoverCart          = $recoverCart;
+        $this->orderLoader          = $orderLoader;
+        $this->customerLogin        = $customerLogin;
 
         $this->config->setMethodCode(Config::METHOD_PAYPAL);
     }
 
     /**
-     * Paypal callback
-     * @throws LocalizedException
+     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface|void
      * @throws LocalizedException
      */
     public function execute()
     {
+        $orderId = null;
         try {
+            $this->loadQuoteFromDataSource();
+            $order = $this->orderLoader->loadOrderFromQuote($this->quote);
+            $orderId = $order->getId();
+            $customerId = $order->getCustomerId();
+
+            if ($customerId != null) {
+                $this->customerLogin->logInCustomer($customerId);
+            }
+
             //get POST data
             $this->postData = $this->getRequest()->getPost();
 
@@ -131,10 +149,6 @@ class Callback extends Action
             $this->suiteLogger->sageLog(Logger::LOG_REQUEST, $this->postData, [__METHOD__, __LINE__]);
 
             $this->validatePostDataStatusAndStatusDetail();
-
-            $this->loadQuoteFromDataSource();
-
-            $order = $this->loadOrderFromDataSource();
 
             $completionResponse = $this->sendCompletionPost()["data"];
 
@@ -145,7 +159,7 @@ class Callback extends Action
 
             $this->updatePaymentInformation($transactionId, $payment, $completionResponse);
 
-            $this->updateOrderCallback->setOrder($this->order);
+            $this->updateOrderCallback->setOrder($order);
             $this->updateOrderCallback->confirmPayment($transactionId);
 
             //prepare session to success or cancellation page
@@ -155,12 +169,13 @@ class Callback extends Action
             $this->checkoutSession->setLastOrderId($order->getId());
             $this->checkoutSession->setLastRealOrderId($order->getIncrementId());
             $this->checkoutSession->setLastOrderStatus($order->getStatus());
-            $this->checkoutSession->setData("sagepaysuite_presaved_order_pending_payment", null);
+            $this->checkoutSession->setData(\Ebizmarts\SagePaySuite\Model\Session::PRESAVED_PENDING_ORDER_KEY, null);
 
             $this->_redirect('checkout/onepage/success');
 
             return;
         } catch (\Exception $e) {
+            $this->recoverCart->setShouldCancelOrder(true)->setOrderId($orderId)->execute();
             $this->suiteLogger->logException($e);
             $this->redirectToCartAndShowError('We can\'t place the order: ' . $e->getMessage());
         }
@@ -225,27 +240,12 @@ class Callback extends Action
 
     private function loadQuoteFromDataSource()
     {
-        $this->quote = $this->quoteFactory->create()->load(
-            $this->encryptor->decrypt($this->getRequest()->getParam("quoteid"))
-        );
+        $quoteId = $this->encryptor->decrypt($this->getRequest()->getParam("quoteid"));
+        $this->quote = $this->quoteRepository->get($quoteId);
 
-        if (empty($this->quote->getId())) {
+        if (!isset($this->quote) || empty($this->quote->getId())) {
             throw new LocalizedException(__("Unable to find payment data."));
         }
-    }
-
-    /**
-     * @return mixed
-     * @throws LocalizedException
-     */
-    private function loadOrderFromDataSource()
-    {
-        $order = $this->order = $this->orderFactory->create()->loadByIncrementId($this->quote->getReservedOrderId());
-        if ($order === null || $order->getId() === null) {
-            throw new LocalizedException(__("Invalid order."));
-        }
-
-        return $order;
     }
 
     /**
@@ -256,9 +256,24 @@ class Callback extends Action
      */
     private function updatePaymentInformation($transactionId, $payment, $completionResponse)
     {
+        $this->suiteLogger->sageLog(
+            Logger::LOG_REQUEST,
+            "Flag TransactionId: " . $transactionId,
+            [__METHOD__, __LINE__]
+        );
+        $this->suiteLogger->sageLog(
+            Logger::LOG_REQUEST,
+            "Flag getLastTransId: " . $payment->getLastTransId(),
+            [__METHOD__, __LINE__]
+        );
+
         if (!empty($transactionId) && $payment->getLastTransId() == $transactionId) {
             $payment->setAdditionalInformation('statusDetail', $completionResponse['StatusDetail']);
-            $payment->setAdditionalInformation('threeDStatus', $completionResponse['3DSecureStatus']);
+            $payment->setAdditionalInformation('AVSCV2', $completionResponse['AVSCV2']);
+            $payment->setAdditionalInformation('AddressResult', $completionResponse['AddressResult']);
+            $payment->setAdditionalInformation('PostCodeResult', $completionResponse['PostCodeResult']);
+            $payment->setAdditionalInformation('CV2Result', $completionResponse['CV2Result']);
+            $payment->setAdditionalInformation('3DSecureStatus', $completionResponse['3DSecureStatus']);
             $payment->setCcType("PayPal");
             $payment->setLastTransId($transactionId);
             $payment->save();

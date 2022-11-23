@@ -15,6 +15,7 @@ use Ebizmarts\SagePaySuite\Model\Api\ApiException;
  */
 class Server extends \Magento\Payment\Model\Method\AbstractMethod
 {
+
     /**
      * @var string
      */
@@ -263,20 +264,24 @@ class Server extends \Magento\Payment\Model\Method\AbstractMethod
 
         try {
             $order              = $payment->getOrder();
-            $transactionDetails = $this->reportingApi->getTransactionDetails($transactionId, $order->getStoreId());
+            $transactionDetails = $this->reportingApi->getTransactionDetailsByVpstxid($transactionId, $order->getStoreId());
 
             if ((int)$transactionDetails->txstateid === PaymentOperations::DEFERRED_AWAITING_RELEASE) {
                 if ($order->canInvoice()) {
-                    $this->sharedApi->abortDeferredTransaction($transactionId, $order);
+                    $this->sharedApi->abortDeferredTransaction($transactionDetails);
                 }
-            } else {
-                $this->sharedApi->voidTransaction($transactionId, $order);
+            }
+            elseif ((int)$transactionDetails->txstateid === PaymentOperations::AUTHENTICATED_AWAITING_AUTHORISE){
+                $this->sharedApi->cancelAuthenticatedTransaction($transactionDetails);
+            }
+            else {
+                $this->sharedApi->voidTransaction($transactionDetails);
             }
         } catch (ApiException $apiException) {
             if ($this->exceptionCodeIsInvalidTransactionState($apiException)) {
                 //unable to void transaction
                 throw new LocalizedException(
-                    __('Unable to VOID Sage Pay transaction %1: %2', $transactionId, $apiException->getUserMessage())
+                    __('Unable to VOID Opayo transaction %1: %2', $transactionId, $apiException->getUserMessage())
                 );
             } else {
                 $this->_logger->critical($apiException);
@@ -285,7 +290,7 @@ class Server extends \Magento\Payment\Model\Method\AbstractMethod
         } catch (\Exception $e) {
             $this->_logger->critical($e);
             throw new LocalizedException(
-                __('Unable to VOID Sage Pay transaction %1: %2', $transactionId, $e->getMessage())
+                __('Unable to VOID Opayo transaction %1: %2', $transactionId, $e->getMessage())
             );
         }
 

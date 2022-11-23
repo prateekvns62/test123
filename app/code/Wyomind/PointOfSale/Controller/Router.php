@@ -49,8 +49,6 @@ class Router implements \Magento\Framework\App\RouterInterface
         $pos = $this->_posCollectionFactory->create()->getByUrlKey($identifier);
 
         if ($pos) {
-
-            // if store found
             $request->setModuleName('pointofsale')
                 ->setControllerName('store')
                 ->setActionName('index')

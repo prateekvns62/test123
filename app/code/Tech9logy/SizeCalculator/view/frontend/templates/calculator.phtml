@@ -1,0 +1,1337 @@
+<?php
+/** @var $objectManager \Magento\Framework\App\ObjectManager */
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+/** @var $configHelper Tech9logy\ElasticsearchPro\Helper\Data */
+$configHelper = $objectManager->get('Tech9logy\SizeCalculator\Helper\Data');
+
+$_product = $block->getProduct(); 
+$product_  = $_product->getData('unit_per_package');
+$categories = $_product->getCategoryCollection()->addAttributeToSelect('*')->addIsActiveFilter();
+$CalculatorCategoryList = explode(",", $configHelper->getSelectedCategory());
+$countCategory = 0;
+if ($configHelper->isVisibleforAll()) {
+    $countCategory++;
+} else {
+    foreach ($categories as $category) {
+        if (in_array($category->getEntityId(), $CalculatorCategoryList)) {
+            $countCategory++;
+            break;
+        }
+    }
+}   
+
+if($_product->getData('show_calculator') == 1 && $_product->getData('unit_per_package') && $_product->getData('unit_per_package') != "" && $_product->getData('unit_per_package') != 0 ){
+    $packagePerUnitValue = $_product->getData('unit_per_package');
+} elseif ($configHelper->getPackagePerUnitValue() != "") {
+    $packagePerUnitValue = $configHelper->getPackagePerUnitValue();
+}else{
+    $packagePerUnitValue = 2.2;
+}
+
+if($_product->getData('show_calculator') == 1 && $_product->getAttributeText('zp_pack_unit') != ""){
+    $packageDefaultUnit = $_product->getAttributeText('zp_pack_unit');
+}elseif ($configHelper->getPackageDefaultUnit()) {
+    $packageDefaultUnit = $configHelper->getPackageDefaultUnit();
+}else{
+    $packageDefaultUnit = $_product->getAttributeText('zp_pack_unit');
+}
+
+if ($packageDefaultUnit == "Kilometer") {
+    $sign = "km";
+} elseif($packageDefaultUnit == "Foot") {
+    $sign = "f";
+} elseif($packageDefaultUnit == "Centi-meter") {
+    $sign = "cm";
+} else {
+    $sign = "m";
+}
+?>
+<?php if(($configHelper->isSizeCalculatorEnabled() && $countCategory > 0) || $_product->getData('show_calculator') == 1): ?>
+    <div class="custom-block">
+        <div class="size-calculator">
+            <div class="calculator-header">
+                <h4 class="calculator-title"> Calculate Area</h4>
+                <div class="calculator-close-icon" style="display: inline-flex;">
+                    <img src='<?php echo $this->getViewFileUrl('Tech9logy_SizeCalculator::images/arrow_up.png'); ?>' alt="image-icon" width="30" height="25">
+                </div>
+                <div class="calculator-open-icon" style="display: none;">
+                    <img src='<?php echo $this->getViewFileUrl('Tech9logy_SizeCalculator::images/arrow_down.png'); ?>' alt="image-icon" width="30" height="25">
+                </div>
+            </div>
+            <div class="calculator-body">
+                <p>Add Wall/Floor</p>
+                <div class="calculator">
+                    <div class="surface addtiles">
+                        <div class="container p0 itemcount" data-value="0">
+                            <div class="row">
+                                <div class="p0 labeltag one">
+                                    <h2>Wall/Floor</h2>
+                                </div>
+                                <div class="col-md-9 col-xs-8 overalldimension">
+                                    <div class="first-label col-xs-4">
+                                        <label for="tileHeight" class="height">Length(<?= $sign; ?>)</label>
+                                        <input type="number" min="0" class="tileHeight" value=0>
+                                    </div>
+                                    <span class="mutiply col-xs-1">x</span>
+                                    <div class="second-label col-xs-4">
+                                        <label class="width">Width(<?= $sign; ?>)</label>
+                                        <input type="number" min="0" class="tileWidth" value=0>
+                                    </div>
+                                    <div class="third-label col-xs-4">
+                                        <label class="area-m2">Area(<?= $sign; ?><sup>2</sup>)</label>
+                                        <div class="area col-xs-2">
+                                            <span id="equal">=</span>
+                                            <span class="m2class">0.00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row calculator-buttons m0">
+                        <div class="col-md-6 col-xs-6 totalarea">
+                        <p id="window-Floor">Additional Wall/Floor</p>
+                        <div class="plusicon">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" baseProfile="tiny" height="14" width="14" fill="white" id="Layer_1" version="1.2" viewBox="0 0 24 24" xml:space="preserve">
+                                <path d="M18,10h-4V6c0-1.104-0.896-2-2-2s-2,0.896-2,2l0.071,4H6c-1.104,0-2,0.896-2,2s0.896,2,2,2l4.071-0.071L10,18  c0,1.104,0.896,2,2,2s2-0.896,2-2v-4.071L18,14c1.104,0,2-0.896,2-2S19.104,10,18,10z"></path>
+                            </svg>
+                        </div>
+                        </div>
+                        <div class="col-md-6 col-xs-6 btnadd">
+                        <div class="total-area wallarea">
+                            <p class="mobile_responsive">Total =</p>
+                            <span class="total-area-needed">0</span><span>&nbsp;<?= $sign; ?><sup>2</sup></span>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="factorobstacles">
+                    <div class="col-md-6 col-xs-12 obstacleshow flex">
+                        <p id="window-Door">Subtract Window/Door</p>
+                        <div id="arrowbig" class="icons" style="display: none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="white">
+                                <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z"></path>
+                            </svg>
+                        </div>
+                        <div id="arrowsmall" class="icons down-arrow" style="display: inline-flex;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="white" viewBox="0 0 24 24">
+                                <path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="obstacles-count" style="display: none;">
+                        <div class="surface two">
+
+                        </div>
+                        <div class="row calculator-buttons two m0" >
+                            <div class="col-md-6 col-xs-6 totalarea">
+                                <p id="window-Floor">Additional Window/Door</p>
+                                <div class="plusicon two">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" baseProfile="tiny" height="14" width="14" fill="white" id="Layer_1" version="1.2" viewBox="0 0 24 24" xml:space="preserve">
+                                    <path  d="M18,10h-4V6c0-1.104-0.896-2-2-2s-2,0.896-2,2l0.071,4H6c-1.104,0-2,0.896-2,2s0.896,2,2,2l4.071-0.071L10,18  c0,1.104,0.896,2,2,2s2-0.896,2-2v-4.071L18,14c1.104,0,2-0.896,2-2S19.104,10,18,10z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-xs-6 btnadd">
+                                <div class="total-area wallarea">
+                                    <p class="mobile_responsive">Total =</p>
+                                    <span class="total-area-subtracted">0</span><span>&nbsp;<?= $sign; ?><sup>2</sup></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <?php if($configHelper->isWastageEnable()): ?>
+                    <div class="wastage-body test" >
+                        <div class="obstacleshow flex">
+                            <p id="window-Door">Add Wastage <?= $configHelper->getWastagePercentage(); ?>% </p>
+                            <input type="checkbox" id="wastage" name="wastage" value="wastage">
+                        </div>
+                        <div class="col-md-6 col-xs-6 btnadd">
+                            <div class="total-area westage">
+                                <p class="mobile_responsive">Total =</p>
+                                <span class="total-area-wastage">0</span><span>&nbsp;<?= $sign; ?><sup>2</sup></span>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <div class="row calculator-buttons m0 calculator-footer" >
+                <div class="total-tiles">
+                    <h4>Area/Pack :&nbsp;</h4>
+                    <span class="base-size"><?php echo $packagePerUnitValue; echo " ".$sign;  ?><sup>2</sup></span>
+                </div>
+                <div class="total-tiles">
+                    <h4>Packs Required :&nbsp;</h4>
+                    <span class="pack-needed">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+<script>
+   require(['jquery', 'jquery/ui'], function($){
+       var totalAreaNeeded = 0;
+       var totaltilesAreaNeeded = 0;
+       var totalNeedtoSubtract = 0;
+       var wastage_tiles = 0;
+       var count = 1;
+       $(document).ready( function() { 
+           $("#arrowsmall").click(function(){
+                $(this).parents(".factorobstacles").find(".obstacles-count").css("display", "block");
+                $(this).css("display", "none");
+                $("#arrowbig").css("display", "inline-flex");
+                if(count == 1){
+                    var html = '<div class="container p0 subtractcount" data-value="0"><div class="row"><div class="p0 labeltag"><h2>Window/Door </h2></div>';
+                    html = html+'<div class="col-md-9 col-xs-8 overalldimension"><div class="first-label col-xs-4"><label for="tileHeight" class="height">Length(<?= $sign; ?>)</label><input type="number" min="0" class="tileHeight tileHeight01" value=0></div>';
+                    html = html+'<span class="mutiply col-xs-1">x</span><div class="second-label col-xs-4"><label class="width">Width(<?= $sign; ?>)</label><input type="number" min="0" class="tileWidth tileWidth01" value=0></div>';
+                    html = html+'<div class="third-label col-xs-4"><label class="area-m2">Area(<?= $sign; ?><sup>2</sup>)</label><div class="area col-xs-2"><span id="equal">=</span><span class="m2class">0.00</span></div></div><button type="button" class="close btnRemove two col-md-1">×</button></div></div></div>';
+                    $(".surface.two").append(html);
+                    count = count+1;
+                }
+                updatehtml(); 
+           });
+           $("#arrowbig").click(function(){
+                $(this).parents(".factorobstacles").find(".obstacles-count").css("display", "none");
+                $(this).css("display", "none");
+                $("#arrowsmall").css("display", "inline-flex");
+                updatehtml();
+           });
+           $(".calculator-close-icon").click(function(){
+                $(this).parents(".size-calculator").find(".calculator-footer").css("display", "none");
+                $(this).parents(".size-calculator").find(".calculator-body").css("display", "none");
+                $(this).css("display", "none");
+                $(".calculator-open-icon").css("display", "inline-flex");
+                $(".custom-block").css("border-radius", "unset");
+                $(".custom-block").css("border-top-right-radius", "9px");
+                $(".custom-block").css("border-top-left-radius", "9px");
+           });
+           $(".calculator-open-icon").click(function(){
+                $(this).parents(".size-calculator").find(".calculator-footer").css("display", "flex");
+                $(this).parents(".size-calculator").find(".calculator-body").css("display", "block");
+                $(this).css("display", "none");
+                $(".calculator-close-icon").css("display", "inline-flex");
+                $(".custom-block").css("border-radius", "9px");
+           });
+           
+           $(".plusicon").click(function(){
+               if($(this).hasClass("two")){
+                   var html = '<div class="container p0 subtractcount" data-value="0"><div class="row"><div class="p0 labeltag"><h2>Window/Door </h2></div>';
+                   html = html+'<div class="col-md-9 col-xs-8 overalldimension"><div class="first-label col-xs-4"><input type="number" min="0" class="tileHeight tileHeight01" value=0></div>';
+                   html = html+'<span class="mutiply col-xs-1">x</span><div class="second-label col-xs-4"><input type="number" min="0" class="tileWidth tileWidth01" value=0></div>';
+                   html = html+'<div class="third-label col-xs-4"><div class="area col-xs-2"><span id="equal">=</span><span class="m2class">0.00</span></div></div><button type="button" class="close btnRemove two col-md-1">×</button></div></div></div>';
+                   $(".surface.two").append(html);
+                   count = count+1;
+               }else{
+                   var html = '<div class="container p0 itemcount" data-value="0"><div class="row"><div class="p0 labeltag one"><h2>Wall/Floor </h2></div>';
+                   html = html+'<div class="col-md-9 col-xs-8 overalldimension"><div class="first-label col-xs-4"><input type="number" min="0" class="tileHeight" value=0></div>';
+                   html = html+'<span class="mutiply col-xs-1">x</span><div class="second-label col-xs-4"><input type="number" min="0" class="tileWidth" value=0></div>';
+                   html = html+'<div class="third-label col-xs-4"><div class="area col-xs-2"><span id="equal">=</span><span class="m2class">0.00</span></div></div><button type="button" class="close btnRemove col-md-1">×</button></div></div></div>';
+                   $(".surface.addtiles").append(html);
+               }
+               updatehtml();
+           });
+           
+           updatehtml();
+       });
+       function updatehtml(){
+           $("input[type=number]").blur(function(){
+               if($(this).attr("id") != "qty") {
+                   if($(this).parents(".container").hasClass("subtractcount")) {
+                       var tileHeight = $(this).parents(".subtractcount").find(".tileHeight").val();
+                       var tileWidth = $(this).parents(".subtractcount").find(".tileWidth").val();
+                       var preArea = parseInt($(this).parents(".subtractcount").attr('data-value'));
+                       var totaltiles = parseFloat((tileHeight*tileWidth).toFixed(2));
+                       $(this).parents(".subtractcount").attr('data-value',totaltiles);
+                       $(this).parents(".subtractcount").find(".m2class").text(totaltiles);
+                       updateTotal2(totaltiles, preArea);
+                   } else {
+                       var tileHeight = $(this).parents(".itemcount").find(".tileHeight").val();
+                       var tileWidth = $(this).parents(".itemcount").find(".tileWidth").val();
+                       var preArea = parseInt($(this).parents(".itemcount").attr('data-value'));
+                       var totaltiles = parseFloat((tileHeight*tileWidth).toFixed(2));
+                       $(this).parents(".itemcount").attr('data-value',totaltiles);
+                       $(this).parents(".itemcount").find(".m2class").text(totaltiles);
+                       updateTotal(totaltiles, preArea);
+                   }
+               }
+           });
+            $('input[type=checkbox]').change(function() {
+                updateTotal3();
+            });
+           $(".btnRemove").click(function(){
+               if($(this).hasClass("two")){
+                   var removeArea = parseInt($(this).parents(".subtractcount").attr('data-value'));
+                   $(this).parents(".subtractcount").html("");
+                   $(this).parents(".subtractcount").remove(); 
+                   if($.isNumeric(removeArea)){
+                        count = count - 1;
+                        if(count == 1){
+                                $(".factorobstacles").find(".obstacles-count").css("display", "none");
+                                $("#arrowbig").css("display", "none");
+                                $("#arrowsmall").css("display", "inline-flex");
+                        }
+                       updateTotal2(0,removeArea);
+                   }
+               }else{
+                   var removeArea = parseInt($(this).parents(".itemcount").attr('data-value'));
+                   $(this).parents(".itemcount").html("");
+                   $(this).parents(".itemcount").remove();
+                   if($.isNumeric(removeArea)){
+                       updateTotal(0,removeArea);
+                   }
+               }
+           });
+       }
+       function updateTotal(totaltiles, preArea){
+           totalAreaNeeded = parseFloat(((totalAreaNeeded + totaltiles) - preArea).toFixed(2));
+           $(".total-area-needed").text(totalAreaNeeded);
+           totaltilesAreaNeeded = totalAreaNeeded - totalNeedtoSubtract;
+            if($('input[type=checkbox]').prop('checked')){
+                var wastage_percentage = "<?php echo($configHelper->isWastageEnable()? $configHelper->getWastagePercentage() : 0); ?>"
+                if(wastage_percentage != 0){
+                    wastage_tiles = parseFloat(((totaltilesAreaNeeded * wastage_percentage)/100).toFixed(2));
+                }else{
+                    wastage_tiles = 0;
+                }
+                var totaltilesAreaNeeded2 = parseFloat((totaltilesAreaNeeded + wastage_tiles).toFixed(2));
+            }else{
+                var totaltilesAreaNeeded2 = totaltilesAreaNeeded;
+            }
+            $(".total-area-wastage").text(wastage_tiles);
+           var pack_needed = Math.ceil(totaltilesAreaNeeded2/<?= $packagePerUnitValue; ?>);
+           $(".pack-needed").text(pack_needed);
+           $("#qty").val(pack_needed);
+       }
+       
+       function updateTotal2(totaltiles, preArea){
+           totalNeedtoSubtract = parseFloat(((totalNeedtoSubtract + totaltiles) - preArea).toFixed(2));
+           $(".total-area-subtracted").text(totalNeedtoSubtract);
+           totaltilesAreaNeeded = parseFloat((totalAreaNeeded - totalNeedtoSubtract).toFixed(2));
+
+           if($('input[type=checkbox]').prop('checked')){
+                var wastage_percentage = "<?php echo($configHelper->isWastageEnable()? $configHelper->getWastagePercentage() : 0); ?>"
+                if(wastage_percentage != 0){
+                    wastage_tiles = parseFloat(((totaltilesAreaNeeded * wastage_percentage)/100).toFixed(2));
+                }else{
+                    wastage_tiles = 0;
+                }
+                var totaltilesAreaNeeded2 = parseFloat((totaltilesAreaNeeded + wastage_tiles).toFixed(2));
+            }else{
+                var totaltilesAreaNeeded2 = totaltilesAreaNeeded;
+            }
+            $(".total-area-wastage").text(wastage_tiles);
+            var pack_needed = Math.ceil(totaltilesAreaNeeded2/<?= $packagePerUnitValue; ?>);
+            $(".pack-needed").text(pack_needed);
+            $("#qty").val(pack_needed);
+       }
+       function updateTotal3(){
+            if($('input[type=checkbox]').prop('checked')){
+                var wastage_percentage = "<?php echo($configHelper->isWastageEnable()? $configHelper->getWastagePercentage() : 0); ?>"
+                if(wastage_percentage != 0){
+                    wastage_tiles = parseFloat(((totaltilesAreaNeeded * wastage_percentage)/100).toFixed(2));
+                }else{
+                    wastage_tiles = 0;
+                }
+                var totaltilesAreaNeeded2 = parseFloat((totaltilesAreaNeeded + wastage_tiles).toFixed(2));
+            }else{
+                wastage_tiles = 0;
+                var totaltilesAreaNeeded2 = totaltilesAreaNeeded;
+            }
+
+            $(".total-area-wastage").text(wastage_tiles);
+           var pack_needed = Math.ceil(totaltilesAreaNeeded2/<?= $packagePerUnitValue; ?>);
+           $(".pack-needed").text(pack_needed);
+           $("#qty").val(pack_needed);
+       }
+   });
+</script>
+<style type="text/css">
+   .custom-block {
+    clear: both;
+    margin-bottom: 10px;
+    border: 2px solid #ff000c;
+    border-top-left-radius: 9px;
+    border-top-right-radius: 9px;
+   }
+   .labeltag.one{
+    padding-right: 19px;
+   }
+   input[type="checkbox"] {
+        vertical-align: top;
+        width: 15px !important;
+        height: 15px !important;
+   }
+    input[type="checkbox"]:checked::before {
+        width: 15px !important;
+        height: 15px !important;
+    }
+   .row.calculator-buttons.two.m0 {
+     margin-bottom: 0px !important;
+    }
+   .calculator-close-icon, .calculator-open-icon {
+        background-color: #fff;
+        height: 35px;
+        width: 35px;
+        border-radius: 10px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 20px;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -ms-flex-align: center;
+        align-items: center;
+        display: -ms-flexbox;
+        display: flex;
+    }
+   .calculator-footer{
+   margin: 0px 0px 0px 8px !important;
+   }
+   .total-tiles{
+   display:flex;
+   padding-left: 14px;
+    padding-right: 100px;
+   }
+   .total-tiles span{
+   margin: 1.3rem 0.3rem;
+   font-weight: bold;
+   font-size: 16px;
+   }
+   .calculator-header {
+   background: #ff000c;
+   color: white;
+   font-size: 24px;
+   border-top-right-radius: 5px;
+   border-top-left-radius: 5px;
+   display: flex;
+    justify-content: space-between;
+   }
+   h4.calculator-title {
+   margin: 0;
+   padding: 5px 0;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 24px;
+   text-align: center;
+    padding-left: 30px;
+    }
+   .calculator-body{
+    max-height: 500px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding-top: 12px;
+   }
+   .calculator-body p {
+   margin-bottom: 8px;
+   line-height: 26px;
+   font-size: 13px;
+   padding-left: 30px;
+   padding-right: 9px;
+   color: #29275b;
+   font-weight: bold;
+   }
+   .calculator {
+   overflow: auto;
+   overflow-x: auto;
+   height: 100%;
+   max-height: 504px;
+   overflow-x: hidden;
+   }
+   .surface {
+   margin-bottom: 8px;
+   }
+   .p0 {
+   padding: 0px;
+   }
+   .row {
+   -webkit-box-sizing: border-box;
+   box-sizing: border-box;
+   display: -ms-flexbox;
+   display: flex;
+   -ms-flex: 0 1 auto;
+   flex: 0 1 auto;
+   -ms-flex-direction: row;
+   flex-direction: row;
+   -ms-flex-wrap: wrap;
+   flex-wrap: wrap;
+   margin-right: -8px;
+   margin-left: -8px;
+   }
+   .col-md-3 {
+   -ms-flex-preferred-size: 25%;
+   flex-basis: 25%;
+   max-width: 25%;
+   }
+   .surface h2 {
+   margin: 38px 0 0 0;
+   padding-left: 37px;
+   font-size: 12px;
+   color: #48403d;
+   font-family: Arial, Helvetica, sans-serif;
+   }
+   .overalldimension {
+   position: relative;
+   width: 72%;
+   }
+   .btnRemove {
+   width: 20px;
+   height: 20px;
+   background: #b9b9b9;
+   padding: 0px;
+   font-size: 18px;
+   color: #fff;
+   font-weight: bold;
+   margin-left: 6px;
+   border: none;
+   border-radius: 10px;
+   float: right;
+   margin-top: 34px;
+   margin-right: 38px;
+   font-family: Arial;
+   }
+   .first-label, .second-label, .third-label {
+   float: left;
+   margin: 0 0 0 10px;
+   position: relative;
+   width: 13%;
+   padding-left: 0;
+   }
+   .height, .width {
+   font-size: 12px;
+   font-family: Arial;
+   color: #48403d;
+   position: absolute;
+   } 
+   .area-m2{
+   font-size: 12px;
+   font-family: Arial;
+   color: #48403d;
+   position: absolute;
+   padding-left: 27px;
+   }
+   span.mutiply {
+   float: left;
+   padding-top: 33px;
+   padding-left: 15px;
+   padding-right: 10px;
+   font-size: 17px;
+   color: #48403d;
+   }
+   .rightheight {
+   padding-left: 68px;
+   }
+   .area {
+   float: left;
+   margin: 34px 0px 0px 8px;
+   font-weight: bold;
+   font-size: 11px;
+   padding-left: 14px;
+   width: 41%;
+   display: -ms-flexbox;
+   display: flex;
+   }
+   #equal {
+   float: inherit;
+   padding-left: 10px;
+   font-size: 18px;
+   color: #3e3c3b;
+   font-weight: 100;
+   }
+   .m2class {
+   float: left;
+   padding-left: 40px;
+   font-size: 16px;
+   font-weight: 100;
+   color: #2a275c;
+   font-family: Arial;
+   margin-top: 2px;
+   }
+   .tileHeight {
+   height: 31px;
+   border: 2px solid #e1e1e1;
+   background: white;
+   width: 60px;
+   text-align: center;
+   display: block;
+   margin-top: 26px;
+   line-height: 0px !important;
+   border-radius: 5px;
+   padding-left: 0;
+   }
+   .tileWidth {
+   height: 31px;
+   border: 2px solid #e1e1e1;
+   background: white;
+   width: 58px;
+   text-align: center;
+   display: block;
+   margin-top: 26px;
+   line-height: 0px !important;
+   border-radius: 5px;
+   }
+   .calculator-buttons {
+   margin: 20px 0px 23px 0px;
+   border-bottom: 1px solid #ececec;
+   -ms-flex-align: center;
+   align-items: center;
+   justify-content: space-between;
+
+   }
+   .totalarea {
+   display: -ms-flexbox;
+   display: flex;
+   }
+   .totalarea p {
+   padding-left: 21px;
+   color: #11a599;
+   }
+   .plusicon {
+   font-size: 10px;
+   background-color: #11a599;
+   height: 20px;
+   width: 20px;
+   text-align: center;
+   border-radius: 10px;
+   color: #fff;
+   display: -ms-flexbox;
+   display: flex;
+   -ms-flex-pack: center;
+   justify-content: center;
+   -ms-flex-align: center;
+   align-items: center;
+   margin-top: 2px;
+   cursor: pointer;
+   }
+   .plusicon svg {
+   margin-right: 0.7px;
+   }
+   .total-area {
+   text-align: end;
+   font-size: 13px;
+   font-weight: bold;
+   display: -ms-flexbox;
+   display: flex;
+   -ms-flex-pack: end;
+   justify-content: flex-end;
+   padding-right: 100px;
+   }
+   .total-area p {
+   margin: 0px;
+   padding: 0px;
+   color: #48403d;
+   font-family: Arial;
+   }
+   .total-area span {
+   float: right;
+   font-size: 18px;
+   color: #2a275c;
+   padding-left: 3px;
+   font-family: Arial;
+   }
+   .factorobstacles {
+    border-bottom: 1px solid #ececec;
+    }
+    .wastage-body{
+            border-bottom: 1px solid #ececec;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0px;
+    }
+    input[type="checkbox"] {
+        margin: 7px 5px 0 0;
+        position: relative;
+        top: 0px !important;
+    }
+    .flex {
+        display: -ms-flexbox;
+        display: flex;
+    }
+.obstacleshow p {
+  font-size: 12px;
+  padding-left: 21px;
+}
+.icons {
+  background-color: #29275b;
+  height: 18px;
+  width: 18px;
+  border-radius: 10px;
+  color: #fff;
+  margin-top: 4px;
+  cursor: pointer;
+  font-size: 20px;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -ms-flexbox;
+  display: flex;
+}
+.icons {
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+}
+@media only screen and (max-width: 600px) {
+   .calculator-close-icon, .calculator-open-icon {
+        background-color: #fff;
+        height: 35px;
+        width: 35px;
+        border-radius: 10px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 20px;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -ms-flex-align: center;
+        align-items: center;
+        display: -ms-flexbox;
+        display: flex;
+    }
+   .calculator-footer{
+   margin: 0px 0px 0px 8px !important;
+   }
+   .total-tiles{
+   display:flex;
+   padding-left: 2px;
+    padding-right: 10px;
+   }
+   .total-tiles h4 {
+    font-size: 1.2rem !important;
+   }
+   .total-tiles span{
+   margin: 1.6rem 0.3rem;
+   font-weight: bold;
+   font-size: 14px;
+   }
+   .calculator-header {
+   background: #ff000c;
+   color: white;
+   font-size: 24px;
+   border-top-right-radius: 5px;
+   border-top-left-radius: 5px;
+   display: flex;
+    justify-content: space-between;
+   }
+   h4.calculator-title {
+   margin: 0;
+   padding: 5px 0;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 24px;
+   text-align: center;
+    padding-left: 30px;
+    }
+   .calculator-body{
+    max-height: 500px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+   }
+   .calculator-body p {
+   margin-bottom: 0px;
+   line-height: 26px;
+   font-size: 12px;
+   padding-left: 10px;
+   padding-right: 4px;
+   color: #29275b;
+   font-weight: bold;
+   }
+   .calculator {
+   overflow: auto;
+   overflow-x: auto;
+   height: 100%;
+   max-height: 504px;
+   overflow-x: hidden;
+   }
+   .surface {
+   margin-bottom: 8px;
+   }
+   .p0 {
+   padding: 0px;
+   }
+   .row {
+   -webkit-box-sizing: border-box;
+   box-sizing: border-box;
+   display: -ms-flexbox;
+   display: flex;
+   -ms-flex: 0 1 auto;
+   flex: 0 1 auto;
+   -ms-flex-direction: row;
+   flex-direction: row;
+   -ms-flex-wrap: wrap;
+   flex-wrap: wrap;
+   margin-right: -8px;
+   margin-left: -8px;
+   }
+   .col-md-3 {
+   -ms-flex-preferred-size: 25%;
+   flex-basis: 25%;
+   max-width: 25%;
+   }
+   .surface h2 {
+   margin: 35px 0 0 0;
+   padding-left: 15px;
+   font-size: 12px;
+   color: #48403d;
+   font-family: Arial, Helvetica, sans-serif;
+   }
+   .overalldimension {
+   position: relative;
+   width: 72%;
+   }
+   .btnRemove {
+   width: 20px;
+   height: 20px;
+   background: #b9b9b9;
+   padding: 0px;
+   font-size: 18px;
+   color: #fff;
+   font-weight: bold;
+   margin-left: 6px;
+   border: none;
+   border-radius: 10px;
+   float: right;
+   margin-top: 34px;
+   margin-right: 15px;
+   font-family: Arial;
+   }
+   .first-label, .second-label, .third-label {
+   float: left;
+   margin: 0 0 0 10px;
+   position: relative;
+   width: 13%;
+   padding-left: 0;
+   }
+   .height, .width {
+   font-size: 12px;
+   font-family: Arial;
+   color: #48403d;
+   position: absolute;
+   } 
+   .area-m2{
+   font-size: 12px;
+   font-family: Arial;
+   color: #48403d;
+   position: absolute;
+   padding-left: 12px;
+   }
+   span.mutiply {
+    float: left;
+    padding-top: 33px;
+    padding-left: 27px;
+    padding-right: 1px;
+    font-size: 17px;
+    color: #48403d;
+   }
+   .rightheight {
+   padding-left: 68px;
+   }
+   .area {
+   float: left;
+   margin: 34px 0px 0px 0px;
+   font-weight: bold;
+   font-size: 11px;
+   padding-left: 0px;
+   width: 41%;
+   display: -ms-flexbox;
+   display: flex;
+   }
+   #equal {
+   float: inherit;
+   padding-left: 10px;
+   font-size: 18px;
+   color: #3e3c3b;
+   font-weight: 100;
+   }
+   .m2class {
+   float: left;
+   padding-left: 10px;
+   font-size: 16px;
+   font-weight: 100;
+   color: #2a275c;
+   font-family: Arial;
+   margin-top: 1px;
+   }
+   .tileHeight {
+   height: 31px;
+   border: 2px solid #e1e1e1;
+   background: white;
+   width: 60px;
+   text-align: center;
+   display: block;
+   margin-top: 26px;
+   line-height: 0px !important;
+   border-radius: 5px;
+   padding-left: 0;
+   }
+   .tileWidth {
+   height: 31px;
+   border: 2px solid #e1e1e1;
+   background: white;
+   width: 58px;
+   text-align: center;
+   display: block;
+   margin-top: 26px;
+   line-height: 0px !important;
+   border-radius: 5px;
+   }
+   .calculator-buttons.two {
+   margin: 20px 0px 0px 0px;
+   border-bottom: unset !important;
+   -ms-flex-align: center;
+   align-items: center;
+   justify-content: space-between;
+   padding-bottom: 0px !important;
+   }
+   .calculator-buttons {
+   margin: 20px 0px 0px 0px;
+   border-bottom: 1px solid #ececec;
+   -ms-flex-align: center;
+   align-items: center;
+   justify-content: space-between;
+   padding-bottom: 8px;
+   }
+   .totalarea {
+   display: -ms-flexbox;
+   display: flex;
+   }
+   .totalarea p {
+   padding-left: 10px;
+   color: #11a599;
+   }
+   .plusicon {
+   font-size: 10px;
+   background-color: #11a599;
+   height: 20px;
+   width: 20px;
+   text-align: center;
+   border-radius: 10px;
+   color: #fff;
+   display: -ms-flexbox;
+   display: flex;
+   -ms-flex-pack: center;
+   justify-content: center;
+   -ms-flex-align: center;
+   align-items: center;
+   margin-top: 2px;
+   cursor: pointer;
+   }
+   .plusicon svg {
+   margin-right: 0.7px;
+   }
+   .total-area {
+   text-align: end;
+   font-size: 13px;
+   font-weight: bold;
+   display: -ms-flexbox;
+   display: flex;
+   -ms-flex-pack: end;
+   justify-content: flex-end;
+   padding-right: 10px;
+   }
+   .total-area p {
+   margin: 0px;
+   padding: 0px;
+   color: #48403d;
+   font-family: Arial;
+   }
+   .total-area span {
+   float: right;
+   font-size: 14px;
+   color: #2a275c;
+   padding-left: 3px;
+   font-family: Arial;
+   padding-top: 2px;
+   }
+   .factorobstacles {
+    border-bottom: 1px solid #ececec;
+    padding: 8px 0px;
+    }
+    .flex {
+  display: -ms-flexbox;
+  display: flex;
+}
+.obstacleshow p {
+  font-size: 12px;
+  padding-left: 10px;
+}
+.icons {
+  background-color: #29275b;
+  height: 18px;
+  width: 18px;
+  border-radius: 10px;
+  color: #fff;
+  margin-top: 4px;
+  cursor: pointer;
+  font-size: 20px;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -ms-flexbox;
+  display: flex;
+}
+.icons {
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+}
+input[type="number"] {
+  width: 47px !important;
+}
+}
+
+@media only screen and (max-width: 1175px) and (min-width: 768px)  {
+
+    .calculator-close-icon, .calculator-open-icon {
+        background-color: #fff;
+        height: 35px;
+        width: 35px;
+        border-radius: 10px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 20px;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -ms-flex-align: center;
+        align-items: center;
+        display: -ms-flexbox;
+        display: flex;
+    }
+   .calculator-footer{
+   margin: 0px 0px 0px 8px !important;
+   }
+   .total-tiles{
+   display:flex;
+   padding-left: 2px;
+    padding-right: 10px;
+   }
+   .total-tiles h4 {
+    font-size: 1.2rem !important;
+   }
+   .total-tiles span{
+   margin: 1.6rem 0.3rem;
+   font-weight: bold;
+   font-size: 14px;
+   }
+   .calculator-header {
+   background: #ff000c;
+   color: white;
+   font-size: 24px;
+   border-top-right-radius: 5px;
+   border-top-left-radius: 5px;
+   display: flex;
+    justify-content: space-between;
+   }
+   h4.calculator-title {
+   margin: 0;
+   padding: 5px 0;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 24px;
+   text-align: center;
+    padding-left: 30px;
+    }
+   .calculator-body{
+    max-height: 500px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+   }
+   .calculator-body p {
+   margin-bottom: 0px;
+   line-height: 26px;
+   font-size: 12px;
+   padding-left: 10px;
+   padding-right: 4px;
+   color: #29275b;
+   font-weight: bold;
+   }
+   .calculator {
+   overflow: auto;
+   overflow-x: auto;
+   height: 100%;
+   max-height: 504px;
+   overflow-x: hidden;
+   }
+   .surface {
+   margin-bottom: 8px;
+   }
+   .p0 {
+   padding: 0px;
+   }
+   .row {
+   -webkit-box-sizing: border-box;
+   box-sizing: border-box;
+   display: -ms-flexbox;
+   display: flex;
+   -ms-flex: 0 1 auto;
+   flex: 0 1 auto;
+   -ms-flex-direction: row;
+   flex-direction: row;
+   -ms-flex-wrap: wrap;
+   flex-wrap: wrap;
+   margin-right: -8px;
+   margin-left: -8px;
+   }
+   .col-md-3 {
+   -ms-flex-preferred-size: 25%;
+   flex-basis: 25%;
+   max-width: 25%;
+   }
+   .surface h2 {
+   margin: 35px 0 0 0;
+   padding-left: 15px;
+   font-size: 12px;
+   color: #48403d;
+   font-family: Arial, Helvetica, sans-serif;
+   }
+   .overalldimension {
+   position: relative;
+   width: 72%;
+   }
+   .btnRemove {
+   width: 20px;
+   height: 20px;
+   background: #b9b9b9;
+   padding: 0px;
+   font-size: 18px;
+   color: #fff;
+   font-weight: bold;
+   margin-left: 6px;
+   border: none;
+   border-radius: 10px;
+   float: right;
+   margin-top: 34px;
+   margin-right: 15px;
+   font-family: Arial;
+   }
+   .first-label, .second-label, .third-label {
+   float: left;
+   margin: 0 0 0 10px;
+   position: relative;
+   width: 13%;
+   padding-left: 0;
+   }
+   .height, .width {
+   font-size: 12px;
+   font-family: Arial;
+   color: #48403d;
+   position: absolute;
+   } 
+   .area-m2{
+   font-size: 12px;
+   font-family: Arial;
+   color: #48403d;
+   position: absolute;
+   padding-left: 12px;
+   }
+   span.mutiply {
+    float: left;
+    padding-top: 33px;
+    padding-left: 27px;
+    padding-right: 1px;
+    font-size: 17px;
+    color: #48403d;
+   }
+   .rightheight {
+   padding-left: 68px;
+   }
+   .area {
+   float: left;
+   margin: 34px 0px 0px 0px;
+   font-weight: bold;
+   font-size: 11px;
+   padding-left: 0px;
+   width: 41%;
+   display: -ms-flexbox;
+   display: flex;
+   }
+   #equal {
+   float: inherit;
+   padding-left: 10px;
+   font-size: 18px;
+   color: #3e3c3b;
+   font-weight: 100;
+   }
+   .m2class {
+   float: left;
+   padding-left: 10px;
+   font-size: 16px;
+   font-weight: 100;
+   color: #2a275c;
+   font-family: Arial;
+   margin-top: 1px;
+   }
+   .tileHeight {
+   height: 31px;
+   border: 2px solid #e1e1e1;
+   background: white;
+   width: 60px;
+   text-align: center;
+   display: block;
+   margin-top: 26px;
+   line-height: 0px !important;
+   border-radius: 5px;
+   padding-left: 0;
+   }
+   .tileWidth {
+   height: 31px;
+   border: 2px solid #e1e1e1;
+   background: white;
+   width: 58px;
+   text-align: center;
+   display: block;
+   margin-top: 26px;
+   line-height: 0px !important;
+   border-radius: 5px;
+   }
+   .calculator-buttons.two {
+   margin: 20px 0px 0px 0px;
+   border-bottom: unset !important;
+   -ms-flex-align: center;
+   align-items: center;
+   justify-content: space-between;
+   padding-bottom: 0px !important;
+   }
+   .calculator-buttons {
+   margin: 20px 0px 0px 0px;
+   border-bottom: 1px solid #ececec;
+   -ms-flex-align: center;
+   align-items: center;
+   justify-content: space-between;
+   padding-bottom: 8px;
+   }
+   .totalarea {
+   display: -ms-flexbox;
+   display: flex;
+   }
+   .totalarea p {
+   padding-left: 10px;
+   color: #11a599;
+   }
+   .plusicon {
+   font-size: 10px;
+   background-color: #11a599;
+   height: 20px;
+   width: 20px;
+   text-align: center;
+   border-radius: 10px;
+   color: #fff;
+   display: -ms-flexbox;
+   display: flex;
+   -ms-flex-pack: center;
+   justify-content: center;
+   -ms-flex-align: center;
+   align-items: center;
+   margin-top: 2px;
+   cursor: pointer;
+   }
+   .plusicon svg {
+   margin-right: 0.7px;
+   }
+   .total-area {
+   text-align: end;
+   font-size: 13px;
+   font-weight: bold;
+   display: -ms-flexbox;
+   display: flex;
+   -ms-flex-pack: end;
+   justify-content: flex-end;
+   padding-right: 10px;
+   }
+   .total-area p {
+   margin: 0px;
+   padding: 0px;
+   color: #48403d;
+   font-family: Arial;
+   }
+   .total-area span {
+   float: right;
+   font-size: 14px;
+   color: #2a275c;
+   padding-left: 3px;
+   font-family: Arial;
+   padding-top: 2px;
+   }
+   .factorobstacles {
+    border-bottom: 1px solid #ececec;
+    padding: 8px 0px;
+    }
+    .flex {
+  display: -ms-flexbox;
+  display: flex;
+}
+.obstacleshow p {
+  font-size: 12px;
+  padding-left: 10px;
+}
+.icons {
+  background-color: #29275b;
+  height: 18px;
+  width: 18px;
+  border-radius: 10px;
+  color: #fff;
+  margin-top: 4px;
+  cursor: pointer;
+  font-size: 20px;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -ms-flexbox;
+  display: flex;
+}
+.icons {
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+}
+input[type="number"] {
+  width: 47px !important;
+}
+}
+
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:600&display=swap');
+
+$black: #363839;
+$lightgray: #9c9e9f;
+$gray: #bdc1c6;
+$white: #fff;
+$green: #06842c;
+input[type="checkbox"] {
+  position: relative;
+  width: 15px !important;
+  height: 15px !important;
+  color: $black;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  appearance: none;
+  outline: 0;
+  cursor: pointer;
+  transition: background 175ms cubic-bezier(0.1, 0.1, 0.25, 1);
+  &::before {
+    position: absolute;
+    content: '';
+    display: block;
+    top: 2px;
+    left: 7px;
+    width: 15px !important;
+    height: 15px !important;
+    border-style: solid;
+    border-color: $white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    opacity: 0;
+  }
+  &:checked {
+    color: $white;
+    border-color: $green;
+    background: $green;
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+
+</style>

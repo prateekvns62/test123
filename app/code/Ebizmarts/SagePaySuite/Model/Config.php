@@ -10,7 +10,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
-use Ebizmarts\SagePaySuite\Model\Logger\Logger;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -21,7 +20,8 @@ class Config
     /**
      * SagePay VPS protocol
      */
-    const VPS_PROTOCOL = '3.00';
+    const VPS_PROTOCOL      = '3.00';
+    const VPS_PROTOCOL_FOUR = '4.00';
 
     /**
      * SagePaySuite Integration codes
@@ -49,12 +49,14 @@ class Config
     const ACTION_AUTHORISE       = 'AUTHORISE';
     const ACTION_POST            = 'post';
     const ACTION_ABORT           = 'ABORT';
+    const ACTION_CANCEL          = 'CANCEL';
 
     /**
      * SagePay MODES
      */
     const MODE_TEST = 'test';
     const MODE_LIVE = 'live';
+    const MODE_DEVELOPMENT = 'development';
 
     /**
      * 3D secure MODES
@@ -91,12 +93,16 @@ class Config
      */
     const URL_FORM_REDIRECT_LIVE         = 'https://live.sagepay.com/gateway/service/vspform-register.vsp';
     const URL_FORM_REDIRECT_TEST         = 'https://test.sagepay.com/gateway/service/vspform-register.vsp';
-    const URL_PI_API_LIVE                = 'https://live.sagepay.com/api/v1/';
-    const URL_PI_API_TEST                = 'https://test.sagepay.com/api/v1/';
+    const URL_PI_API_LIVE                = 'https://pi-live.sagepay.com/api/v1/';
+    const URL_PI_API_DEV                 = 'http://pi-test.sagepay.com/api/v1/';
+    const URL_PI_API_TEST                = 'https://pi-test.sagepay.com/api/v1/';
     const URL_REPORTING_API_TEST         = 'https://test.sagepay.com/access/access.htm';
     const URL_REPORTING_API_LIVE         = 'https://live.sagepay.com/access/access.htm';
+    const URL_REPORTING_API_DEV          = 'http://test.sagepay.com/access/access.htm';
     const URL_SHARED_VOID_TEST           = 'https://test.sagepay.com/gateway/service/void.vsp';
     const URL_SHARED_VOID_LIVE           = 'https://live.sagepay.com/gateway/service/void.vsp';
+    const URL_SHARED_CANCEL_TEST         = 'https://test.sagepay.com/gateway/service/cancel.vsp';
+    const URL_SHARED_CANCEL_LIVE         = 'https://live.sagepay.com/gateway/service/cancel.vsp';
     const URL_SHARED_REFUND_TEST         = 'https://test.sagepay.com/gateway/service/refund.vsp';
     const URL_SHARED_REFUND_LIVE         = 'https://live.sagepay.com/gateway/service/refund.vsp';
     const URL_SHARED_RELEASE_TEST        = 'https://test.sagepay.com/gateway/service/release.vsp';
@@ -110,6 +116,7 @@ class Config
     const URL_SHARED_ABORT_TEST          = 'https://test.sagepay.com/gateway/service/abort.vsp';
     const URL_SHARED_ABORT_LIVE          = 'https://live.sagepay.com/gateway/service/abort.vsp';
     const URL_SERVER_POST_TEST           = 'https://test.sagepay.com/gateway/service/vspserver-register.vsp';
+    const URL_SERVER_POST_DEV            = 'http://test.sagepay.com/gateway/service/vspserver-register.vsp';
     const URL_SERVER_POST_LIVE           = 'https://live.sagepay.com/gateway/service/vspserver-register.vsp';
     const URL_DIRECT_POST_TEST           = 'https://test.sagepay.com/gateway/service/vspdirect-register.vsp';
     const URL_DIRECT_POST_LIVE           = 'https://live.sagepay.com/gateway/service/vspdirect-register.vsp';
@@ -123,6 +130,7 @@ class Config
      */
     const SUCCESS_STATUS         = '0000';
     const AUTH3D_REQUIRED_STATUS = '2007';
+    const AUTH3D_V2_REQUIRED_STATUS = '2021';
 
     /**
      * SagePay Third Man Score Statuses
@@ -131,6 +139,15 @@ class Config
     const T3STATUS_OK       = 'OK';
     const T3STATUS_HOLD     = 'HOLD';
     const T3STATUS_REJECT   = 'REJECT';
+    
+     /**
+     * SagePay Response Statuses
+     */
+    const OK_STATUS             = 'OK';
+    const PENDING_STATUS        = 'PENDING';
+    const REGISTERED_STATUS     = 'REGISTERED';
+    const DUPLICATED_STATUS     = 'DUPLICATED';
+    const AUTHENTICATED_STATUS  = 'AUTHENTICATED';
 
     /**
      * SagePay ReD Score Statuses
@@ -172,12 +189,6 @@ class Config
     private $storeManager;
 
     /**
-     * Logging instance
-     * @var \Ebizmarts\SagePaySuite\Model\Logger\Logger
-     */
-    private $suiteLogger;
-
-    /**
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
@@ -186,17 +197,13 @@ class Config
      * Config constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param StoreManagerInterface $storeManager
-     * @param Logger $suiteLogger
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        StoreManagerInterface $storeManager,
-        Logger $suiteLogger
+        StoreManagerInterface $storeManager
     ) {
-    
         $this->scopeConfig  = $scopeConfig;
         $this->storeManager = $storeManager;
-        $this->suiteLogger  = $suiteLogger;
 
         $this->configurationScopeId = null;
         $this->configurationScope   = ScopeInterface::SCOPE_STORE;
@@ -409,6 +416,19 @@ class Config
     public function getMode()
     {
         return $this->getGlobalValue("mode");
+    }
+
+    /**
+     * @return string 3.00|4.00
+     */
+    public function getProtocolVersion()
+    {
+        return $this->getGlobalValue("protocol");
+    }
+
+    public function shouldUse3dV2()
+    {
+        return self::VPS_PROTOCOL_FOUR === $this->getProtocolVersion();
     }
 
     public function isTokenEnabled()
@@ -683,5 +703,20 @@ class Config
     public function getMaxTokenPerCustomer()
     {
         return $this->getAdvancedValue("max_token");
+    }
+
+    public function get3dNewWindow()
+    {
+        return $this->getValue("threed_new_window");
+    }
+
+    public function getDebugMode()
+    {
+        return $this->getAdvancedValue("debug_mode");
+    }
+
+    public function getPreventPersonalDataLogging()
+    {
+        return $this->getAdvancedValue("prevent_personal_data_logging");
     }
 }

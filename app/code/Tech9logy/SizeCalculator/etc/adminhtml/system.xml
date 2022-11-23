@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Prateek Kumar Singh
+ * @copyright Copyright (c) 2022 Tech9logy (https://www.tech9logy.com/)
+ * @package Tech9logy_SizeCalculator
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="tech9logy" sortOrder="450" translate="label">
+            <label>Tech9logy</label>
+        </tab>
+        <section id="tech9logy_sizeCalculator" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="5" translate="label">
+            <label>Area and Price Calculator</label>
+            <tab>tech9logy</tab>
+            <resource>Tech9logy_SizeCalculator::tech9logy_sizeCalculator</resource>
+            <group id="general" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="0" translate="label">
+                <label>General Configuration</label>
+                <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Module Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable/disable Area and Price Calculator.</comment>
+                </field>
+                <field id="enable_wastage" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Add Wastage Option</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable if you want to allow customer to add wastage.</comment>
+                    <depends>
+			            <field id="*/*/enable">1</field>
+                    </depends>
+                </field>
+                <field id="wastage_percentage" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Wastage Value in Percentage</label>
+                    <comment>Enter value greater than zero without %.</comment>
+                    <validate>required-entry validate-number</validate>
+		            <depends>
+			            <field id="*/*/enable">1</field>
+                        <field id="*/*/enable_wastage">1</field>
+                    </depends>
+                </field>
+                <field id="package_default_unit" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Default Package Units</label>
+                    <source_model>Tech9logy\SizeCalculator\Model\Product\Attribute\Source\PackUnit</source_model>
+                    <comment>Select unit as per your pack.</comment>
+                    <validate>required-entry</validate>
+		            <depends>
+			            <field id="*/*/enable">1</field>
+                    </depends>
+                </field>
+                <field id="package_unit_value" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Default Package Area</label>
+                    <comment>Enter value greater than zero.</comment>
+                    <validate>required-entry validate-number</validate>
+		            <depends>
+			            <field id="*/*/enable">1</field>
+                    </depends>
+                </field>
+                <field id="visible_for_all" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable For All Category</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable if you want to show this calculator for every products.</comment>
+                    <depends>
+			            <field id="*/*/enable">1</field>
+                    </depends>
+                </field>
+                <field id="selected_category" translate="label" type="multiselect" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Select Categories</label>
+                    <source_model>Tech9logy\SizeCalculator\Model\Config\Source\Category</source_model>
+                    <comment>Calculator will be available for only selected categories.</comment>
+                    <validate>required-entry</validate>
+                    <depends>
+			            <field id="*/*/enable">1</field>
+                        <field id="*/*/visible_for_all">0</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

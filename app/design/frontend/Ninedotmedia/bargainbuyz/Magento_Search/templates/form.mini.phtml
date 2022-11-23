@@ -11,6 +11,15 @@
 /** @var $helper \Magento\Search\Helper\Data */
 $helper = $this->helper(\Magento\Search\Helper\Data::class);
 ?>
+<style type="text/css">
+  @media screen and (max-width: 767px)
+{
+  .trustpilot_t9l {
+    display: none;
+}
+}
+</style>
+<div class="trustpilot_t9l"><?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('trustpilots')->toHtml(); ?></div>
 <div class="block block-search">
     <div class="block block-title"><strong><?= /* @escapeNotVerified */ __('Search') ?></strong></div>
     <div class="block block-content">

@@ -5,9 +5,18 @@ namespace Ebizmarts\SagePaySuite\Model\PiRequestManagement;
 use Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultInterface;
 use Ebizmarts\SagePaySuite\Model\Api\ApiException;
 use Ebizmarts\SagePaySuite\Model\Config;
-use Magento\Framework\Validator\Exception as ValidatorException;
 use Ebizmarts\SagePaySuite\Model\Config\ClosedForActionFactory;
+use Ebizmarts\SagePaySuite\Model\CryptAndCodeData;
+use Magento\Framework\Validator\Exception as ValidatorException;
+use Magento\Sales\Api\PaymentFailuresInterface;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
+use Ebizmarts\SagePaySuite\Model\Config\SagePayCardType;
+use Ebizmarts\SagePaySuite\Model\Logger\Logger;
+use Ebizmarts\SagePaySuite\Model\PiRequest;
+use Magento\Checkout\Model\Session;
+use Magento\Framework\App\RequestInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\Order\Payment\TransactionFactory;
 
 class ThreeDSecureCallbackManagement extends RequestManagement
 {
@@ -40,6 +49,35 @@ class ThreeDSecureCallbackManagement extends RequestManagement
     /** @var Config */
     private $config;
 
+    /** @var PaymentFailuresInterface */
+    private $paymentFailures;
+
+    /** @var CryptAndCodeData */
+    private $cryptAndCode;
+
+    /** @var Logger */
+    private $suiteLogger;
+
+    /**
+     * ThreeDSecureCallbackManagement constructor.
+     * @param \Ebizmarts\SagePaySuite\Helper\Checkout $checkoutHelper
+     * @param \Ebizmarts\SagePaySuite\Model\Api\PIRest $piRestApi
+     * @param SagePayCardType $ccConvert
+     * @param PiRequest $piRequest
+     * @param \Ebizmarts\SagePaySuite\Helper\Data $suiteHelper
+     * @param \Ebizmarts\SagePaySuite\Api\Data\PiResultInterface $result
+     * @param Session $checkoutSession
+     * @param RequestInterface $httpRequest
+     * @param TransactionFactory $transactionFactory
+     * @param \Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultFactory $payResultFactory
+     * @param ClosedForActionFactory $actionFactory
+     * @param OrderRepositoryInterface $orderRepository
+     * @param InvoiceSender $invoiceEmailSender
+     * @param Config $config
+     * @param PaymentFailuresInterface $paymentFailures
+     * @param CryptAndCodeData $cryptAndCode
+     * @param Logger $suiteLogger
+     */
     public function __construct(
         \Ebizmarts\SagePaySuite\Helper\Checkout $checkoutHelper,
         \Ebizmarts\SagePaySuite\Model\Api\PIRest $piRestApi,
@@ -54,7 +92,10 @@ class ThreeDSecureCallbackManagement extends RequestManagement
         ClosedForActionFactory $actionFactory,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         InvoiceSender $invoiceEmailSender,
-        Config $config
+        Config $config,
+        PaymentFailuresInterface $paymentFailures,
+        CryptAndCodeData $cryptAndCode,
+        Logger $suiteLogger
     ) {
         parent::__construct(
             $checkoutHelper,
@@ -65,14 +106,17 @@ class ThreeDSecureCallbackManagement extends RequestManagement
             $result
         );
 
-        $this->httpRequest        = $httpRequest;
-        $this->checkoutSession    = $checkoutSession;
-        $this->transactionFactory = $transactionFactory;
-        $this->payResultFactory   = $payResultFactory;
-        $this->actionFactory      = $actionFactory;
-        $this->orderRepository    = $orderRepository;
-        $this->invoiceEmailSender = $invoiceEmailSender;
-        $this->config = $config;
+        $this->httpRequest         = $httpRequest;
+        $this->checkoutSession     = $checkoutSession;
+        $this->transactionFactory  = $transactionFactory;
+        $this->payResultFactory    = $payResultFactory;
+        $this->actionFactory       = $actionFactory;
+        $this->orderRepository     = $orderRepository;
+        $this->invoiceEmailSender  = $invoiceEmailSender;
+        $this->config              = $config;
+        $this->paymentFailures     = $paymentFailures;
+        $this->cryptAndCode        = $cryptAndCode;
+        $this->suiteLogger         = $suiteLogger;
     }
 
     public function getPayment()
@@ -87,12 +131,21 @@ class ThreeDSecureCallbackManagement extends RequestManagement
     {
         $payResult = $this->payResultFactory->create();
         $this->setPayResult($payResult);
+        $cres = $this->getRequestData()->getCres();
 
-        /** @var \Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultThreeD $submit3DResult */
-        $submit3DResult = $this->getPiRestApi()->submit3D(
-            $this->getRequestData()->getParEs(),
-            $this->getRequestData()->getTransactionId()
-        );
+        if (isset($cres)) {
+            /** @var \Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultThreeD $submit3Dv2Result */
+            $submit3DResult = $this->getPiRestApi()->submit3Dv2(
+                $cres,
+                $this->getRequestData()->getTransactionId()
+            );
+        } else {
+            /** @var \Ebizmarts\SagePaySuite\Api\SagePayData\PiTransactionResultThreeD $submit3DResult */
+            $submit3DResult = $this->getPiRestApi()->submit3D(
+                $this->getRequestData()->getParEs(),
+                $this->getRequestData()->getTransactionId()
+            );
+        }
 
         $this->getPayResult()->setStatus($submit3DResult->getStatus());
 
@@ -116,13 +169,16 @@ class ThreeDSecureCallbackManagement extends RequestManagement
     {
         $payResult = $this->pay();
 
-        if ($payResult->getStatus() !== null) {
+        if ($payResult->getStatus() == 'Operation not allowed') {
+            $this->getResult()->setErrorMessage(null);
+        } elseif ($payResult->getStatus() !== null) {
             $transactionDetailsResult = $this->retrieveTransactionDetails();
+            $this->suiteLogger->debugLog($transactionDetailsResult, [__LINE__, __METHOD__]);
 
             $this->confirmPayment($transactionDetailsResult);
 
             //remove order pre-saved flag from checkout
-            $this->checkoutSession->setData("sagepaysuite_presaved_order_pending_payment", null);
+            $this->checkoutSession->setData(\Ebizmarts\SagePaySuite\Model\Session::PRESAVED_PENDING_ORDER_KEY, null);
         } else {
             $this->getResult()->setErrorMessage("Invalid 3D secure authentication.");
         }
@@ -139,6 +195,7 @@ class ThreeDSecureCallbackManagement extends RequestManagement
         $transactionDetailsResult = null;
 
         $vpsTxId = $this->getRequestData()->getTransactionId();
+        $this->suiteLogger->debugLog("VPSTxId: " . $vpsTxId, [__LINE__, __METHOD__]);
 
         do {
             try {
@@ -165,13 +222,19 @@ class ThreeDSecureCallbackManagement extends RequestManagement
      */
     private function confirmPayment(PiTransactionResultInterface $response)
     {
+        $quoteId = $this->httpRequest->getParam("quoteId");
+        $quoteId = $this->decodeAndDecrypt($quoteId);
+        $statusCode = $response->getStatusCode();
+        $this->suiteLogger->debugLog("StatusCode: " . $statusCode, [__LINE__, __METHOD__]);
 
-        if ($response->getStatusCode() === Config::SUCCESS_STATUS) {
+        if ($statusCode === Config::SUCCESS_STATUS) {
             $orderId = $this->httpRequest->getParam("orderId");
-            $quoteId = $this->httpRequest->getParam("quoteId");
-            $this->order   = $this->orderRepository->get($orderId);
+            $orderId = $this->decodeAndDecrypt($orderId);
+            $this->suiteLogger->debugLog("orderId: " . $orderId . " quoteId: " . $quoteId, [__LINE__, __METHOD__]);
+            $this->order = $this->orderRepository->get($orderId);
 
             if ($this->order !== null) {
+                $this->suiteLogger->debugLog($this->order->getData(), [__LINE__, __METHOD__]);
                 $this->getPayResult()->setPaymentMethod($response->getPaymentMethod());
                 $this->getPayResult()->setStatusDetail($response->getStatusDetail());
                 $this->getPayResult()->setStatusCode($response->getStatusCode());
@@ -185,8 +248,10 @@ class ThreeDSecureCallbackManagement extends RequestManagement
                 $payment->setTransactionId($this->getPayResult()->getTransactionId());
                 $payment->setLastTransId($this->getPayResult()->getTransactionId());
                 $payment->save();
+                $this->suiteLogger->debugLog($payment->getData(), [__LINE__, __METHOD__]);
 
                 $sagePayPaymentAction = $this->getRequestData()->getPaymentAction();
+                $this->suiteLogger->debugLog("SagePayPaymentAction: " . $sagePayPaymentAction, [__LINE__, __METHOD__]);
 
                 //invoice
                 if ($sagePayPaymentAction === Config::ACTION_PAYMENT_PI) {
@@ -232,10 +297,11 @@ class ThreeDSecureCallbackManagement extends RequestManagement
                 $this->checkoutSession->setLastRealOrderId($this->order->getIncrementId());
                 $this->checkoutSession->setLastOrderStatus($this->order->getStatus());
             } else {
-                throw new ValidatorException(__('Unable to save Sage Pay order'));
+                throw new ValidatorException(__('Unable to save Opayo order'));
             }
         } else {
-            throw new ValidatorException(__('Invalid Sage Pay response: %1', $response->getStatusDetail()));
+            $this->paymentFailures->handle((int)$quoteId, $response->getStatusDetail());
+            throw new ValidatorException(__('Invalid Opayo response: %1', $response->getStatusDetail()));
         }
     }
 
@@ -264,5 +330,14 @@ class ThreeDSecureCallbackManagement extends RequestManagement
     private function invoiceConfirmationIsEnable()
     {
         return (string)$this->config->getInvoiceConfirmationNotification() === "1";
+    }
+
+    /**
+     * @param $data
+     * @return string
+     */
+    public function decodeAndDecrypt($data)
+    {
+        return $this->cryptAndCode->decodeAndDecrypt($data);
     }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <head>
+    	<css src="Tech9logy_Enquiries::css/styles.css" />
+        <css src="Tech9logy_Enquiries::css/slick.css" />        
+        <css src="Tech9logy_Enquiries::css/slick-theme.css" />
+        <script src="Tech9logy_Enquiries::js/slick.min.js"/>
+        <!-- <script src="Tech9logy_Enquiries::js/slick.js"/>  --> 
+    </head>
+</page>

@@ -1,0 +1,131 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+
+/**
+ * Product view template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View
+ */
+?>
+<?php $_helper = $this->helper(Magento\Catalog\Helper\Output::class); ?>
+<?php $_product = $block->getProduct(); ?>
+
+<div class="product-add-form">
+    <form data-product-sku="<?= $block->escapeHtmlAttr($_product->getSku()) ?>"
+          action="<?= $block->escapeUrl($block->getSubmitUrl($_product)) ?>" method="post"
+          id="product_addtocart_form"<?php if ($_product->getOptions()) :?> enctype="multipart/form-data"<?php endif; ?>>
+        <input type="hidden" name="product" value="<?= (int)$_product->getId() ?>" />
+        <input type="hidden" name="selected_configurable_option" value="" />
+		<input type="hidden" name="button_event_name" id="button_event_name" value="" />
+        <input type="hidden" name="related_product" id="related-products-field" value="" />
+        <input type="hidden" name="item"  value="<?= (int)$block->getRequest()->getParam('id') ?>" />
+        <?= $block->getBlockHtml('formkey') ?>
+        <?= $block->getChildHtml('form_top') ?>
+        <?php if (!$block->hasOptions()) :?>
+            <?= $block->getChildHtml('product_info_form_content') ?>
+        <?php else :?>
+            <?php if ($_product->isSaleable() && $block->getOptionsContainer() == 'container1') :?>
+                <?= $block->getChildChildHtml('options_container') ?>
+            <?php endif;?>
+        <?php endif; ?>
+
+        <?php if ($_product->isSaleable() && $block->hasOptions() && $block->getOptionsContainer() == 'container2') :?>
+            <?= $block->getChildChildHtml('options_container') ?>
+        <?php endif;?>
+        <?= $block->getChildHtml('form_bottom') ?>
+    </form>
+</div>
+
+<div class="addcart-pop" data-bind="mageInit: {
+        'Magento_Ui/js/modal/modal':{
+            'type': 'popup',
+           
+            'trigger': '[data-trigger=trigger]',
+            'responsive': true
+        }}">
+		
+	<!--<p>Before you proceed, please check all pictures of this item as there may be cosmetic marks on the front / side of the product hence the heavy price reduction! If you do have any more questions please call us on 0330 124 6527.</p>
+		
+		
+   <form data-product-sku="<?= $block->escapeHtmlAttr($_product->getSku()) ?>"
+          action="<?= $block->escapeUrl($block->getSubmitUrl($_product)) ?>" method="post"
+          id="product_addtocart_form"<?php if ($_product->getOptions()) :?> enctype="multipart/form-data"<?php endif; ?>>
+        <input type="hidden" name="product" value="<?= (int)$_product->getId() ?>" />
+        <input type="hidden" name="selected_configurable_option" value="" />
+		 <input type="hidden" name="button_event_name" id="button_event_name" value="" />
+        <input type="hidden" name="related_product" id="related-products-field" value="" />
+        <input type="hidden" name="item"  value="<?= (int)$block->getRequest()->getParam('id') ?>" />
+        <?= $block->getBlockHtml('formkey') ?>
+        <input type="hidden"
+                       name="qty"
+                       id="qty"
+                       min="0"
+                       value="3"
+                       />
+		
+			  <button type="button"
+                    title="Add to Cart"
+					id="close-popup"
+					data-role="closeBtn">
+                <span>Return Back To Product</span>
+            </button>
+			
+			
+			
+			  <button type="button"
+                    title="Continue Shopping"
+				id="continue-shopping">
+                <span>Continue Shopping</span>
+            </button>
+
+                <button type="button"
+                    title="Continue To Checkout"
+                    class="primary"
+                    id="continue-to-checkout">
+                <span>Continue To Checkout</span>
+            </button>
+            
+    </form>-->
+</div>
+
+
+<script>
+    require([
+        'jquery',
+        'priceBox'
+    ], function($){
+      $(document).on("click","#continue-shopping",function() {
+		  $("#close-popup").click();   
+		 $('#button_event_name').val('continue-shopping');
+		  $('#product_addtocart_form').submit();
+    });
+	
+	 $(document).on("click","#continue-to-checkout",function() {
+		  $("#close-popup").click();   
+		 $('#button_event_name').val('continue-to-checkout');
+		  $('#product_addtocart_form').submit();
+    });
+	
+    });
+</script>
+
+<script>
+    require([
+        'jquery',
+        'priceBox'
+    ], function($){
+        var dataPriceBoxSelector = '[data-role=priceBox]',
+            dataProductIdSelector = '[data-product-id=<?= $block->escapeHtml($_product->getId()) ?>]',
+            priceBoxes = $(dataPriceBoxSelector + dataProductIdSelector);
+
+        priceBoxes = priceBoxes.filter(function(index, elem){
+            return !$(elem).find('.price-from').length;
+        });
+        priceBoxes.priceBox({'priceConfig': <?= /* @noEscape */ $block->getJsonConfig() ?>});
+    });
+</script>

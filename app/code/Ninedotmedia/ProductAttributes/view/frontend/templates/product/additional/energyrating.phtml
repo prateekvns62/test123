@@ -5,4 +5,26 @@ $_product = $block->getProduct();
 <div class="energyrating-<?= $block->getEnergyRating(); ?>">
     <?= $block->getEnergyRatingText(); ?>
 </div>
+<style type="text/css">
+	.energyrating-181, .energyrating-180, .energyrating-182{
+		background: #ffcc03;
+    width: 60px;
+    line-height: 40px;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 20px;
+    color: #000000;
+    font-weight: bold;
+    font-size: 18px;
+    position: relative;
+	}
+	.energyrating-181:after, .energyrating-180:after, .energyrating-182:after {
+          border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid #ffcc03;
+    content: "";
+    position: absolute;
+    right: -20px;
+	}
+</style>
 <?php } ?>

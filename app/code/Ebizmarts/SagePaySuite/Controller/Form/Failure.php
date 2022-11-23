@@ -9,14 +9,15 @@ namespace Ebizmarts\SagePaySuite\Controller\Form;
 
 use Ebizmarts\SagePaySuite\Model\Form;
 use Ebizmarts\SagePaySuite\Model\Logger\Logger;
+use Ebizmarts\SagePaySuite\Model\RecoverCart;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Sales\Model\OrderFactory;
 use Psr\Log\LoggerInterface;
-use Magento\Framework\Encryption\EncryptorInterface;
 
 class Failure extends Action
 {
@@ -64,11 +65,20 @@ class Failure extends Action
      */
     private $encryptor;
 
+    /** @var RecoverCart */
+    private $recoverCart;
+
     /**
+     * Failure constructor.
      * @param Context $context
      * @param Logger $suiteLogger
      * @param LoggerInterface $logger
      * @param Form $formModel
+     * @param OrderFactory $orderFactory
+     * @param QuoteFactory $quoteFactory
+     * @param Session $checkoutSession
+     * @param EncryptorInterface $encryptor
+     * @param RecoverCart $recoverCart
      */
     public function __construct(
         Context $context,
@@ -78,9 +88,9 @@ class Failure extends Action
         OrderFactory $orderFactory,
         QuoteFactory $quoteFactory,
         Session $checkoutSession,
-        EncryptorInterface $encryptor
+        EncryptorInterface $encryptor,
+        RecoverCart $recoverCart
     ) {
-    
         parent::__construct($context);
         $this->suiteLogger     = $suiteLogger;
         $this->logger          = $logger;
@@ -89,6 +99,7 @@ class Failure extends Action
         $this->quoteFactory    = $quoteFactory;
         $this->checkoutSession = $checkoutSession;
         $this->encryptor       = $encryptor;
+        $this->recoverCart     = $recoverCart;
     }
 
     /**
@@ -103,56 +114,37 @@ class Failure extends Action
             //log response
             $this->suiteLogger->sageLog(Logger::LOG_REQUEST, $response, [__METHOD__, __LINE__]);
 
-            if (!array_key_exists("Status", $response) || !array_key_exists("StatusDetail", $response)) {
-                throw new LocalizedException(__('Invalid response from Sage Pay'));
+            if (!isset($response["Status"]) || !isset($response["StatusDetail"])) {
+                throw new LocalizedException(__('Invalid response from Opayo'));
             }
 
-            $this->quote = $this->quoteFactory->create()->load(
-                $this->encryptor->decrypt($this->getRequest()->getParam("quoteid"))
-            );
-            $this->order = $this->orderFactory->create()->loadByIncrementId($this->quote->getReservedOrderId());
-
-            //cancel pending payment order
-            $this->cancelOrder();
+            $orderId = $this->encryptor->decrypt($this->getRequest()->getParam("orderId"));
+            $this->suiteLogger->debugLog('OrderId: ' . $orderId, [__METHOD__, __LINE__]);
+            $this->recoverCart
+                ->setShouldCancelOrder(true)
+                ->setOrderId((int)$orderId)
+                ->execute();
 
             $statusDetail = $this->extractStatusDetail($response);
 
-            $this->checkoutSession->setData("sagepaysuite_presaved_order_pending_payment", null);
+            $this->checkoutSession->setData(\Ebizmarts\SagePaySuite\Model\Session::PRESAVED_PENDING_ORDER_KEY, null);
 
             $this->messageManager->addError($response["Status"] . ": " . $statusDetail);
-            return $this->_redirect('checkout/cart');
         } catch (\Exception $e) {
             $this->messageManager->addError($e->getMessage());
             $this->logger->critical($e);
         }
-    }
 
-    private function cancelOrder()
-    {
-        try {
-            $this->order->cancel()->save();
+        $this->addOrderEndLog($response);
 
-            //recover quote
-            if ($this->quote->getId()) {
-                $this->quote->setIsActive(1);
-                $this->quote->setReservedOrderId(null);
-                $this->quote->save();
-
-                $this->checkoutSession->replaceQuote($this->quote);
-            }
-
-            //Unset data
-            $this->checkoutSession->unsLastRealOrderId();
-        } catch (\Exception $e) {
-            $this->suiteLogger->logException($e, [__METHOD__, __LINE__]);
-        }
+        return $this->_redirect('checkout/cart');
     }
 
     /**
      * @param array $response
      * @return string
      */
-    private function extractStatusDetail(array $response): string
+    private function extractStatusDetail(array $response)
     {
         $statusDetail = $response["StatusDetail"];
 
@@ -161,7 +153,27 @@ class Failure extends Action
             $statusDetail = $statusDetail[1];
         }
 
-
         return $statusDetail;
+    }
+
+    /**
+     * @param array $response
+     * @return string
+     */
+    private function extractIncrementIdFromVendorTxCode(array $response)
+    {
+        $vendorTxCode = explode("-", $response['VendorTxCode']);
+        return $vendorTxCode[0];
+    }
+
+    /**
+     * @param array $response
+     */
+    private function addOrderEndLog(array $response)
+    {
+        $quoteId = $this->encryptor->decrypt($this->getRequest()->getParam("quoteid"));
+        $orderId = isset($response['VendorTxCode']) ? $this->extractIncrementIdFromVendorTxCode($response) : "";
+        $vpstxid = isset($response['VPSTxId']) ? $response['VPSTxId'] : "";
+        $this->suiteLogger->orderEndLog($orderId, $quoteId, $vpstxid);
     }
 }

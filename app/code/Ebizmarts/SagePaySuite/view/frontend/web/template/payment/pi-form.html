@@ -11,7 +11,7 @@
                class="radio"
                data-bind="attr: {'id': getCode()}, value: getCode(), click: sagepaySetForm(), visible: isRadioButtonVisible(), checked: isChecked"/>
         <label data-bind="attr: {'for': getCode()}" class="label">
-            <img class="payment-icon sagepaysuite-payment-icon" src="https://www.sagepay.co.uk/files/logo_0.png"/>
+            <div class="payment-icon sagepaysuite-payment-icon opayo-payment-method-logo"></div>
             <span data-bind="text: getTitle()"></span>
         </label>
     </div>
@@ -55,17 +55,8 @@
             </div>
             <div class="actions-toolbar">
                 <div class="primary">
-                    <button id="load-dropin-form-button" class="action primary checkout"
-                            type="submit"
-                            data-bind="
-                            click: preparePayment,
-                            attr: {title: $t('Load secure credit card form')},
-                            css: {disabled: !isPlaceOrderActionAllowed()},
-                            enable: (getCode() == isChecked())
-                            "
-                            disabled>
-                        <span data-bind="text: $t('Load secure credit card form')"></span>
-                    </button>
+                    <div id="dropin-form" class="action checkout" style="display:none;"
+                         data-bind="afterRender: sagepaySetForm()"></div>
                 </div>
             </div>
         <!-- /ko -->
@@ -102,5 +93,12 @@
             <input type="hidden" name="TermUrl">
             <input type="hidden" name="Md">
          </form>
+
+        <!-- ko if: (scaEnabled())-->
+        <!-- #### sagepay 3D secure form V2#### -->
+        <form data-bind="attr: {id: getCode() + '-3DsecureV2-form'}" method="POST">
+            <input type="hidden" name="creq">
+        </form>
+        <!-- /ko -->
     </div>
 </div>

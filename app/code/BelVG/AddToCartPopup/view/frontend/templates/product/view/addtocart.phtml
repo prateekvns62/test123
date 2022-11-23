@@ -1,0 +1,105 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\Catalog\Block\Product\View */
+?>
+<?php $_product = $block->getProduct(); ?>
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $product = $objectManager->get('Magento\Framework\Registry')->registry('current_product');//get current product
+    $productId =  $product->getId();
+
+    $_helper = $this->helper('Magento\Catalog\Helper\Output');
+   $_attributeValue = $block->getProduct()->getResource()->getAttribute('order_type')->getFrontend()->getValue($block->getProduct());
+    
+	 if($_attributeValue == "Add To Cart"){
+	?>
+
+<?php $buttonTitle = __('Add to Cart'); ?>
+<?php if ($_product->isSaleable()) :?>
+<div class="box-tocart">
+    <div class="fieldset">
+        <?php if ($block->shouldRenderQuantity()) :?>
+        <div class="field qty">
+            <label class="label" for="qty"><span><?= $block->escapeHtml(__('Qty')) ?></span></label>
+            <div class="control">
+                <input type="number"
+                       name="qty"
+                       id="qty"
+                       min="0"
+                       value="<?= $block->getProductDefaultQty() * 1 ?>"
+                       title="<?= $block->escapeHtmlAttr(__('Qty')) ?>"
+                       class="input-text qty"
+                       data-validate="<?= $block->escapeHtmlAttr(json_encode($block->getQuantityValidators())) ?>"
+                       />
+            </div>
+        </div>
+        <?php endif; ?>
+        <div class="actions">
+		<?php $_helper = $this->helper('Magento\Catalog\Helper\Output');
+                                            $_attributeValue = $_product->getAttributeText('in_store');
+                                          
+										   ?>
+                                         
+                                
+                                           
+	<?php if($_product->getNdmCondition()!='22') { ?>
+            <button type="submit"
+                    title="<?= $block->escapeHtmlAttr($buttonTitle) ?>"
+                    class="action primary tocart"
+                    id="product-addtocart-button">
+                <span><?= $block->escapeHtml($buttonTitle) ?></span>
+            </button>
+		<?php } else  { ?>
+		 <button type="button"
+                    title="<?= $block->escapeHtmlAttr($buttonTitle) ?>"
+                    class="action primary tocart"
+                    id="product-addtocart-button"
+					data-trigger="trigger">
+                <span><?= $block->escapeHtml($buttonTitle) ?></span>
+            </button>
+
+          
+
+		
+		<?php } ?>
+		
+            <?= $block->getChildHtml('', true) ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+<script type="text/x-magento-init">
+    {
+        "#product_addtocart_form": {
+            "Magento_Catalog/js/validate-product": {}
+        }
+    }
+</script>
+	 <?php  }elseif($_attributeValue == "Local Only"){
+
+    echo "In Stock, Call us on 0330 124 6527 for delivery (Free Leicester Delivery)";
+    
+ }elseif($_attributeValue == "Back Order"){
+
+    echo " Call us on 0330 124 6527 for price and delivery time";
+?>
+    <style>
+.catalog-product-view .product-info-main .product-info-price {
+    padding: 0px 0px 30px !important;
+    max-width: 100% !important;
+    display: none;
+</style>
+<?php
+ } else{
+     echo "In Stock, Call us on 0330 124 6527 for delivery (Free Leicester Delivery)";
+ }
+?>
+<div class="wrap-addthis">
+    <span class="label">Share this…</span>
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+    <div class="addthis_inline_share_toolbox"></div>
+</div>

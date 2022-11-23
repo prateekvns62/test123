@@ -1,5 +1,38 @@
-<?php if ($condition = $block->getCondition()): ?>
-    <div class="product-condition">
-        <?= $condition; ?>
-    </div>
-<?php endif; ?>
+<?php if ($condition = $block->getCondition()){ ?>
+    <div class="product-condition reviews-actions">
+<?php 
+if ($condition == "Brand New"){?>
+<div class="brand-text-wrap">
+	<h2 class="custom_brand"><p><?= $condition;?></p></h2>
+	 <?php $_helper = $this->helper('Magento\Catalog\Helper\Output');
+$_attributeValue = $block->getProduct()->getResource()->getAttribute('ndm_guarantee')->getFrontend()->getValue($block->getProduct());
+ if ($_attributeValue == "0"){
+?>
+<?php }else{?>
+<div class="brand">
+	<span class="brand_img"><img src="https://staging.bargainbuyz.co.uk/media/attribute/swatch/a/b/warrenty-icon.png"></span>
+<span class="warranty_txt"><strong> <?php 
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+echo $_attributeValue = $block->getProduct()->getResource()->getAttribute('ndm_guarantee')->getFrontend()->getValue($block->getProduct());
+?></strong>
+</span>
+</div>
+<?php }?>
+</div>
+<?php  }else{ 
+   ?>
+   <div class="brand-text-wrap">
+   	<h2 class="custom_non_brand"><p><?= $condition;?></p></h2>
+	<div class="brand">
+		<span class="brand_img"><img src="https://staging.bargainbuyz.co.uk/media/attribute/swatch/a/b/warrenty-icon.png"></span>
+		<span class="warranty_txt"><strong> <?php 
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+echo $_attributeValue = $block->getProduct()->getResource()->getAttribute('ndm_guarantee')->getFrontend()->getValue($block->getProduct());
+?>
+</strong></span>
+</div>
+<?php }	?></div>
+<?php } ?>
+
+
+

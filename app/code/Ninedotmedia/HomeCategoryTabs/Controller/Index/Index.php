@@ -55,7 +55,7 @@ class Index extends Action
 
         if ($post && isset($post['category'])) {
             $resultPage = $this->resultPageFactory->create();
-            if ($categoryProducts = $this->categoryHelper->getProductsByCategory($post['category'])) {
+            if ($categoryProducts = $this->categoryHelper->getProductsByCategories($post['category'])) {
                 $layout = $resultPage->getLayout();
                 $layout->getUpdate()->addHandle('catalog_category_view');
                 $layout->unsetElement('product_list_toolbar');

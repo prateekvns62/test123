@@ -6,15 +6,19 @@
 
 namespace Ebizmarts\SagePaySuite\Helper;
 
-use \Ebizmarts\SagePaySuite\Model\Config;
+use Ebizmarts\SagePaySuite\Model\Config;
 use Ebizmarts\SagePaySuite\Model\Config\ModuleVersion;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
-use Magento\Framework\Module\ModuleList\Loader;
+use Magento\Framework\App\State;
 use Magento\Framework\Stdlib\DateTime\DateTime;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Data extends AbstractHelper
 {
+    const FRONTEND = "frontend";
+    const ADMIN = 'adminhtml';
+
     /**
      * @var \Ebizmarts\SagePaySuite\Model\Config
      */
@@ -31,22 +35,38 @@ class Data extends AbstractHelper
     private $moduleVersion;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @var State
+     */
+    private $state;
+
+    /**
      * Data constructor.
      * @param Context $context
      * @param Config $config
      * @param DateTime $dateTime
      * @param ModuleVersion $moduleVersion
+     * @param StoreManagerInterface $storeManager
+     * @param State $state
      */
     public function __construct(
         Context $context,
         Config $config,
         DateTime $dateTime,
-        ModuleVersion $moduleVersion
+        ModuleVersion $moduleVersion,
+        StoreManagerInterface $storeManager,
+        State $state
     ) {
         parent::__construct($context);
         $this->sagePaySuiteConfig = $config;
         $this->dateTime           = $dateTime;
         $this->moduleVersion      = $moduleVersion;
+        $this->storeManager       = $storeManager;
+        $this->state              = $state;
     }
 
     /**
@@ -81,10 +101,11 @@ class Data extends AbstractHelper
                 break;
         }
 
+        $sanitizedOrderId = $this->sanitizeOrderId($order_id);
         $date = $this->dateTime->gmtDate('Y-m-d-His');
         $time = $this->dateTime->gmtTimestamp();
 
-        return substr($prefix . $order_id . "-" . $date . $time, 0, 40);
+        return substr($prefix . $sanitizedOrderId . "-" . $date . $time, 0, 40);
     }
 
     /**
@@ -101,7 +122,8 @@ class Data extends AbstractHelper
             $this->moduleVersion->getModuleVersion('Ebizmarts_SagePaySuite')
         );
         $localSignature = $this->localSignature(
-            $this->extractHostFromCurrentConfigScopeStoreCheckoutUrl(), $versionNumberToCheck
+            $this->extractHostFromCurrentConfigScopeStoreCheckoutUrl(),
+            $versionNumberToCheck
         );
 
         return ($localSignature == $this->sagePaySuiteConfig->getLicense());
@@ -137,19 +159,10 @@ class Data extends AbstractHelper
      */
     public function obtainConfigurationScopeIdFromRequest()
     {
-        $configurationScopeId = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
-
-        /** @var $requestObject \Magento\Framework\App\RequestInterface */
-        $requestObject = $this->_getRequest();
-
-        $configurationScope = $this->obtainConfigurationScopeCodeFromRequest();
-        if ($this->isConfigurationScopeStore($configurationScope)) {
-            $configurationScopeId = $requestObject->getParam('store');
-        } elseif ($this->isConfigurationScopeWebsite($configurationScope)) {
-            $configurationScopeId = $requestObject->getParam('website');
+        if ($this->getAreaCode() === self::FRONTEND) {
+            return $this->getStoreId();
         }
-
-        return $configurationScopeId;
+        return $this->obtainAdminConfigurationScopeIdFromRequest();
     }
 
     /**
@@ -157,22 +170,10 @@ class Data extends AbstractHelper
      */
     public function obtainConfigurationScopeCodeFromRequest()
     {
-        $configurationScope = $this->defaultScopeCode();
-
-        /** @var $requestObject \Magento\Framework\App\RequestInterface */
-        $requestObject = $this->_getRequest();
-
-        $storeParameter = $requestObject->getParam('store');
-        if ($storeParameter !== null) {
-            $configurationScope = $this->storeScopeCode();
-        } else {
-            $websiteParameter = $requestObject->getParam('website');
-            if ($websiteParameter !== null) {
-                $configurationScope = $this->websiteScopeCode();
-            }
+        if ($this->getAreaCode() === self::FRONTEND) {
+            return $this->storeScopeCode();
         }
-
-        return $configurationScope;
+        return $this->obtainAdminConfigurationScopeCodeFromRequest();
     }
 
     /**
@@ -254,7 +255,7 @@ class Data extends AbstractHelper
      * @param $configurationScope
      * @return bool
      */
-    private function isConfigurationScopeStore($configurationScope)
+    public function isConfigurationScopeStore($configurationScope)
     {
         return $configurationScope == $this->storeScopeCode();
     }
@@ -263,8 +264,215 @@ class Data extends AbstractHelper
      * @param $configurationScope
      * @return bool
      */
-    private function isConfigurationScopeWebsite($configurationScope)
+    public function isConfigurationScopeWebsite($configurationScope)
     {
         return $configurationScope == $this->websiteScopeCode();
+    }
+
+    public function getStoreId()
+    {
+        return $this->storeManager->getStore()->getId();
+    }
+
+    public function getAreaCode()
+    {
+        return $this->state->getAreaCode();
+    }
+
+    /**
+     * @return string
+     */
+    public function obtainAdminConfigurationScopeCodeFromRequest()
+    {
+        $configurationScope = $this->defaultScopeCode();
+
+        /** @var $requestObject \Magento\Framework\App\RequestInterface */
+        $requestObject = $this->getRequest();
+
+        $storeParameter = $requestObject->getParam('store');
+        if ($storeParameter !== null) {
+            $configurationScope = $this->storeScopeCode();
+        } else {
+            $websiteParameter = $requestObject->getParam('website');
+            if ($websiteParameter !== null) {
+                $configurationScope = $this->websiteScopeCode();
+            }
+        }
+
+        return $configurationScope;
+    }
+
+    /**
+     * @return int
+     */
+    public function obtainAdminConfigurationScopeIdFromRequest()
+    {
+        $configurationScopeId = $this->getDefaultStoreId();
+
+        /** @var $requestObject \Magento\Framework\App\RequestInterface */
+        $requestObject = $this->getRequest();
+
+        $configurationScope = $this->obtainConfigurationScopeCodeFromRequest();
+        if ($this->isConfigurationScopeStore($configurationScope)) {
+            $configurationScopeId = $requestObject->getParam('store');
+        } elseif ($this->isConfigurationScopeWebsite($configurationScope)) {
+            $configurationScopeId = $requestObject->getParam('website');
+        }
+
+        return $configurationScopeId;
+    }
+
+    /**
+     * @return \Magento\Framework\App\RequestInterface
+     */
+    public function getRequest()
+    {
+        return $this->_getRequest();
+    }
+
+    /**
+     * @return int
+     */
+    public function getDefaultStoreId()
+    {
+        return \Magento\Store\Model\Store::DEFAULT_STORE_ID;
+    }
+
+    /**
+     * @param $text
+     * @return string
+     */
+    private function sanitizeOrderId($text)
+    {
+        return preg_replace("/[^a-zA-Z0-9-\-\{\}\_\.]/", "", $text);
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function removePersonalInformation($data)
+    {
+        if ($this->sagePaySuiteConfig->getPreventPersonalDataLogging()) {
+            $fieldsNames = $this->getPersonalInfoFieldsNames();
+            $data = $this->findAndReplacePersonalInformation($data, $fieldsNames);
+            $data = $this->removePiShippingBillingInformation($data);
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param Object $data
+     * @return array|Object
+     */
+    public function removePersonalInformationObject($data)
+    {
+        $array = $data;
+        if ($this->sagePaySuiteConfig->getPreventPersonalDataLogging()) {
+            $array = json_decode(json_encode($data), true);
+            if (!empty(json_last_error())) {
+                return $data;
+            }
+            $array = $this->removePersonalInformation($array);
+        }
+
+        return $array;
+    }
+
+    /**
+     * @param array $array
+     * @param array $fieldsNames
+     * @return array
+     */
+    private function findAndReplacePersonalInformation(array $array, array $fieldsNames)
+    {
+        foreach ($fieldsNames as $field) {
+            if (isset($array[$field]) && !empty($array[$field])) {
+                $firstChar = substr($array[$field], 0, 1);
+                $lastChar = substr($array[$field], -1);
+                $array[$field] = $firstChar . "XXXXXXXXX" . $lastChar;
+            }
+        }
+
+        return $array;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getPersonalInfoFieldsNames()
+    {
+        return [
+            "CustomerEMail",
+            "BillingSurname",
+            "BillingFirstnames",
+            "BillingAddress1",
+            "BillingAddress2",
+            "BillingCity",
+            "BillingPostCode",
+            "BillingPhone",
+            "DeliverySurname",
+            "DeliveryFirstnames",
+            "DeliveryAddress1",
+            "DeliveryAddress2",
+            "DeliveryCity",
+            "DeliveryPostCode",
+            "DeliveryPhone",
+            "customer_email",
+            "customer_firstname",
+            "customer_lastname",
+            "customer_middlename",
+            "customerFirstName",
+            "customerLastName",
+            "customerEmail",
+            "customerPhone"
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getPiShippingDetailsFields()
+    {
+        return [
+            "recipientFirstName",
+            "recipientLastName",
+            "shippingAddress1",
+            "shippingAddress2",
+            "shippingCity",
+            "shippingPostalCode"
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getPiBillingAddressFields()
+    {
+        return [
+            "address1",
+            "address2",
+            "city",
+            "postalCode"
+        ];
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    private function removePiShippingBillingInformation(array $data): array
+    {
+        if (isset($data["shippingDetails"]) && !empty($data["shippingDetails"])) {
+            $piShippingDetailsFieldsName = $this->getPiShippingDetailsFields();
+            $data['shippingDetails'] = $this->findAndReplacePersonalInformation($data['shippingDetails'], $piShippingDetailsFieldsName);
+        }
+
+        if (isset($data["billingAddress"]) && !empty($data["billingAddress"])) {
+            $piBillingAddressFieldsName = $this->getPiBillingAddressFields();
+            $data['billingAddress'] = $this->findAndReplacePersonalInformation($data['billingAddress'], $piBillingAddressFieldsName);
+        }
+        return $data;
     }
 }

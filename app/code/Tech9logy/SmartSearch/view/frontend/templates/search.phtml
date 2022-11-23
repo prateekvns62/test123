@@ -1,0 +1,850 @@
+<link href="<?php echo $this->getViewFileUrl('Tech9logy_SmartSearch::webfonts-with-css/css/all.css'); ?>" rel="stylesheet" type="text/css">
+<link href="<?php echo $this->getViewFileUrl('Tech9logy_SmartSearch::css/bootstrap-slider.css'); ?>" rel="stylesheet" type="text/css">
+	<link href="<?php echo $this->getViewFileUrl('Tech9logy_SmartSearch::css/slider-bargin.css'); ?>" rel="stylesheet" type="text/css">
+	
+<?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance(); // Instance of Object Manager
+ $categoryFactory = $objectManager->get('\Magento\Catalog\Model\CategoryFactory');// Instance of Category Model
+ $categoryId = 2; // YOUR CATEGORY ID
+ $category = $categoryFactory->create()->load($categoryId);
+ // Children  Categories
+ $childrenCategories = $category->getChildrenCategories();
+ 
+ 
+ 
+ 
+ $productFactory = $objectManager->create('Magento\Catalog\Model\ProductFactory');
+$collection = $productFactory->create()->getCollection();
+
+
+$storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface'); 
+    $currencyCode = $storeManager->getStore()->getCurrentCurrencyCode(); 
+    $currency = $objectManager->create('Magento\Directory\Model\CurrencyFactory')->create()->load($currencyCode); 
+    $currencySymbol = $currency->getCurrencySymbol();
+
+?>	
+
+<div class="bargin-slider-hp">
+		<div id="myCarousel" class="carousel slide" data-ride="carousel">
+			<ol class="carousel-indicators">
+					<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+					<li data-target="#myCarousel" data-slide-to="1"></li>
+					<li data-target="#myCarousel" data-slide-to="2"></li>
+					<li data-target="#myCarousel" data-slide-to="3"></li>
+					<li data-target="#myCarousel" data-slide-to="4"></li>
+					<!--<li data-target="#myCarousel" data-slide-to="5"></li> -->
+			</ol>		
+			<div class="form-ragne-wrap">
+		<div class="bargain-slider-range">
+
+				<div class="range-left">
+					<div class="left-inner-bx">
+						<h1>Shop our entire range</h1>
+						<div class="bargain-sliders">
+						<div class="rang-list" id="parent-cat">
+							<button type="button" id="parent-cat-txt" data-parent-active="" data-parent-id="">Choose a product type… <i class="fas fa-angle-down"></i></button>
+						</div>
+						<div class="rang-right" id="rang-right-bx">
+						<div class="list-range-content">
+							<div class="list-top-row col-<?php echo ceil(count($childrenCategories)/6); ?>">
+									<?php  $count = 1;  foreach ($childrenCategories as $child) {  ?>	
+									<?php if ($count%6 == 1)
+									{  
+									 ?>									
+									<div class="list-top-col">
+									<div class="inner-side-box">
+									<div class="list-button-row">									
+									<?php } ?>									
+										<div class="list-box-inner">
+											<button type="button" class="parent_cat" data-parent-cat-url="<?php echo $child->getRequestPath(); ?>" data-id="<?php echo $child->getId(); ?>"><?php echo $child->getName(); ?></button>
+										</div>
+									<?php  if ($count%6 == 0)
+									{ ?>
+										</div>
+									</div>
+								</div>
+									<?php } ?>	
+									<?php $count++; } ?>
+									<?php if ($count%6 != 1) echo "</div></div></div>";  ?>
+							</div>
+						</div>
+					</div>			
+					<div class="slider-custom-field">
+						 <div class="rang-list disable" id="childrenCategories">
+							<button type="button" id="childrenCategories-txt" disabled="disabled"  data-child-active="" data-child-id=""><i class="fas fa-angle-down"></i></button>
+						</div>
+						<div class="rang-right" id="rang-right-bx-child-cat"></div>
+					 	<div class="rang-list disable" id="brand">
+							<button type="button" id="brand-txt" disabled="disabled" data-brand-active=""><i class="fas fa-angle-down"></i></button>
+						</div>
+						<div class="rang-right" id="rang-right-bx-manufacturer"></div>
+					</div>
+				</div>
+						<div class="rang-list price-range disable"> 
+						<p>
+						<label for="amount">Price range:</label>
+						<input type="hidden" id="amount" readonly >
+						</p>
+						<div id="slider-range"></div>
+						</div> 
+						<div class="rang-list productCount disable">
+						<p><span class="numCounter"><?php echo $collection->count(); ?></span> products available</p>
+						</div>
+						<div class="reset-button-slider">
+						<div class="reset-button disable"><a class="resetAll">Reset all</a></div>						
+						<div class="rang-list range-search disable">
+							<button type="button" id="search-button">Search now <i class="fas fa-angle-right"></i></button>
+						</div>
+						</div>
+					</div>
+					</div>
+		</div>	
+				</div>
+				<div class="carousel-inner">
+					
+					<div class="item active">
+					<div class="slieder-caption black-fridat-slid" style="background-color: #de0c15;">
+						<a href ="https://www.bargainbuyz.co.uk/delivery-information" target="_blank">
+							<img src="https://www.bargainbuyz.co.uk/static/frontend/Ninedotmedia/bargainbuyz/en_GB/Tech9logy_SmartSearch/img/man_delivery_team.jpg" alt="bargin-desktop-banner"></a>
+							 <div class="caption-row slide-one-row">
+							</div>
+						</div>
+					</div>
+					<div class="item">
+					<div class="slieder-caption black-fridat-slid" style="background-color: #de0c15;">
+						<a href ="https://consumer.snapfinance.co.uk/#/?mid=687996&source=SMS" target="_blank">
+							<img src="https://www.bargainbuyz.co.uk/static/frontend/Ninedotmedia/bargainbuyz/en_GB/Tech9logy_SmartSearch/img/for_finance_interest.png" alt="bargin-desktop-banner"></a>
+							 <div class="caption-row slide-one-row">
+							</div>
+						</div>
+					</div>
+					<div class="item">
+					<div class="slieder-caption black-fridat-slid" style="background-color: #ce0332;">
+						<a href ="https://www.bargainbuyz.co.uk/offers/special-offer.html">
+							<img src="https://www.bargainbuyz.co.uk/static/frontend/Ninedotmedia/bargainbuyz/en_GB/Tech9logy_SmartSearch/img/special_offers_view.jpg" alt="bargin-desktop-banner"></a>
+							 <div class="caption-row slide-one-row">
+
+							<!-- <div class="new-slid-content-row black-friday">
+								<div class="slid-open">
+									<a href ="https://www.bargainbuyz.co.uk/christmas-deals.html">
+									<img src="https://www.bargainbuyz.co.uk/static/frontend/Ninedotmedia/bargainbuyz/en_GB/Tech9logy_SmartSearch/img/christmas-banner.png"></a>
+									
+								</div>
+							</div> -->
+
+							
+							</div>
+						</div>
+					</div> 
+
+					<div class="item">
+					<div class="slieder-caption black-fridat-slid" style="background-color: #de0c15;">
+						<a href ="/ikstar-kitchen-and-bathrooms.html" target="_blank">
+							<img src="https://www.bargainbuyz.co.uk/static/frontend/Ninedotmedia/bargainbuyz/en_GB/Tech9logy_SmartSearch/img/bathroom-banner-min.jpg" alt="bargin-desktop-banner"></a>
+							 <div class="caption-row slide-one-row">
+							</div>
+						</div>
+					</div>
+					<div class="item">
+					<div class="slieder-caption black-fridat-slid" style="background-color: #de0c15;">
+						<a href ="/lvt-flooring-and-shower-panels.html" target="_blank">
+							<img src="https://www.bargainbuyz.co.uk/static/frontend/Ninedotmedia/bargainbuyz/en_GB/Tech9logy_SmartSearch/img/flooring-banner-min.jpg" alt="bargin-desktop-banner"></a>
+							 <div class="caption-row slide-one-row">
+							</div>
+						</div>
+					</div>
+					<!-- <div class="item ">
+						<div class="slieder-caption one-slid">
+							<img src="<?php echo $this->getViewFileUrl('Tech9logy_SmartSearch::img/slider-banner-open.jpg'); ?>" alt="bargin-desktop-banner">
+							<div class="new-slid-content-row">
+								<h2>Our Retail Stores</h2>
+								<div class="slid-open">
+									<img src="<?php echo $this->getViewFileUrl('Tech9logy_SmartSearch::img/openibg.png'); ?>" alt="bargin-desktop-banner">									
+									<h3>Now <br />Fully Open!</h3>
+								</div>
+								<h4>Over 1000 products now in stock for same day / next day delivery anywhere in Leicester and nationwide!</h4>
+								<p>Opening hours 10am - 6pm Monday to Friday and Saturday 10am - 5pm</p>
+							</div>
+						</div>
+					</div>
+					<div class="item ">
+						<div class="slieder-caption">
+							<img src="<?php echo $this->getViewFileUrl('Tech9logy_SmartSearch::img/banner1.jpeg'); ?>" alt="bargin-desktop-banner">
+							 <div class="caption-row slide-one-row">
+							<div class="caption-text-box">
+								<p>We specialise in brand new/ex display and <strong>Grade A appliances</strong> across all our  branches <strong>saving you £££</strong> off the RRP</p>
+							</div> 							
+							</div>
+						</div>
+					</div>	
+					<div class="item">
+						<div class="slieder-caption">							
+							<img src="<?php echo $this->getViewFileUrl('Tech9logy_SmartSearch::img/banner2.jpeg'); ?>" alt="bargin-desktop-banner">							
+							<div class="caption-row slide-two-row">
+								<div class="caption-text-box">
+									<p class="large-text-heading">We <strong>update</strong> our <strong>website</strong> on a <strong>daily basis!</strong></p>
+									<p class="midum-text-heading">With over <strong>500 products</strong> coming into our stores weekly</p>
+									<h6>we're confident we will have the perfect product for you!</h6>
+								</div> 
+							</div>							
+						</div>
+					</div>					
+					<div class="item">
+						<div class="slieder-caption">
+							<img src="<?php echo $this->getViewFileUrl('Tech9logy_SmartSearch::img/banner3.jpeg'); ?>" alt="bargin-desktop-banner">
+							<div class="caption-row slide-row-three">
+								<div class="caption-text-box">
+									<p>We've got a <strong>whole team</strong> dedicated to <strong>online sales!</strong> with vast <strong>knowledge,</strong></p>
+									<p>Call us <strong>on 0330 124 6527</strong></p>
+									<h6>(Monday to Friday 10am - 6pm & Saturday's 10am to 5pm)</h6>
+								</div>							
+							</div>
+						</div>
+					</div>					
+					<div class="item">
+						<div class="slieder-caption">
+							<img src="<?php echo $this->getViewFileUrl('Tech9logy_SmartSearch::img/banner4.jpeg'); ?>" alt="bargin-desktop-banner">
+							<div class="caption-row slide-row-four">
+						<div class="caption-text-box">
+								<p>We deliver <strong>NATIONWIDE!</strong> With FREE Local same day/next day delivery service in Leicester,</p>
+								<h4>Our prices and service cannot be beaten</h4>
+								<h6>We offer a palletised delivery service nationwide</h6>
+								</div>								
+							</div>							
+						</div>
+					</div>	
+					<div class="item">
+						<div class="slieder-caption">
+							<img src="<?php echo $this->getViewFileUrl('Tech9logy_SmartSearch::img/banner5.jpeg'); ?>" alt="bargin-desktop-banner">
+							<div class="caption-row slide-row-five">
+							<div class="caption-text-box">
+							<p>We Stock over <strong>1000+ appliances</strong> across <strong>all stores</strong></p>
+							<P class="slid-toptext">Our opening times are</P>
+							<h6><strong>Monday to Friday 10am - 6pm Saturday 10am - 5pm</strong></h6>
+							</div>							
+							</div>							
+						</div>
+					</div> -->
+				</div>
+				<div class="control-box">
+				<a class="left carousel-control" href="#myCarousel" data-slide="prev">
+					<span class="glyphicon glyphicon-chevron-left"><i class="fas fa-angle-left"></i></span>
+				</a>
+				<a class="right carousel-control" href="#myCarousel" data-slide="next">
+					<span class="glyphicon glyphicon-chevron-right"><i class="fas fa-angle-right"></i></span>
+				</a>
+				</div>
+		</div>
+	</div>	
+	
+	<script>
+require(['jquery', 'jquery/ui', 'full-width-slider'], function($){
+
+	
+	$( function() {
+    $( "#slider-range" ).slider({
+      range: true,
+      min: 0,
+      max: 0,
+      values: [ 0, 0 ],
+      slide: function( event, ui ) {
+		 $( "#amount" ).val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
+		 $('.price-range-min').remove();
+	  $('.price-range-max').remove();
+		$('.ui-slider-handle:eq(0)').append('<span class="price-range-min value" id="slider-value"><?php echo $currencySymbol; ?>' + ui.values[ 0 ] + '</span>');
+	    $('.ui-slider-handle:eq(1)').append('<span class="price-range-max value" id="slider-value"><?php echo $currencySymbol; ?>' + ui.values[ 1 ] + '</span>');
+      }
+    });
+	
+	 $('.ui-slider-handle:eq(1)').css('left','100%');
+	
+    $( "#amount" ).val($( "#slider-range" ).slider( "values", 0 ) + "-" + $( "#slider-range" ).slider( "values", 1 ) );
+	   $('.ui-slider-handle:eq(0)').append('<span class="price-range-min value" id="slider-value"><?php echo $currencySymbol; ?>' + $('#slider-range').slider('values', 0 ) + '</span>');
+	    $('.ui-slider-handle:eq(1)').append('<span class="price-range-max value" id="slider-value"><?php echo $currencySymbol; ?>' + $( "#slider-range" ).slider( "values", 1 ) + '</span>');
+	  
+  } );
+
+	(function($) {
+    $.fn.countTo = function(options) {
+        // merge the default plugin settings with the custom options
+        options = $.extend({}, $.fn.countTo.defaults, options || {});
+
+        // how many times to update the value, and how much to increment the value on each update
+        var loops = Math.ceil(options.speed / options.refreshInterval),
+            increment = (options.to - options.from) / loops;
+
+        return $(this).each(function() {
+            var _this = this,
+                loopCount = 0,
+                value = options.from,
+                interval = setInterval(updateTimer, options.refreshInterval);
+
+            function updateTimer() {
+                value += increment;
+                loopCount++;
+                $(_this).html(value.toFixed(options.decimals));
+
+                if (typeof(options.onUpdate) == 'function') {
+                    options.onUpdate.call(_this, value);
+                }
+
+                if (loopCount >= loops) {
+                    clearInterval(interval);
+                    value = options.to;
+
+                    if (typeof(options.onComplete) == 'function') {
+                        options.onComplete.call(_this, value);
+                    }
+                }
+            }
+        });
+    };
+
+    $.fn.countTo.defaults = {
+        from: 0,  // the number the element should start at
+        to: 100,  // the number the element should end at
+        speed: 1000,  // how long it should take to count between the target numbers
+        refreshInterval: 100,  // how often the element should be updated
+        decimals: 0,  // the number of decimal places to show
+        onUpdate: null,  // callback method for every time the element is updated,
+        onComplete: null,  // callback method for when the element finishes updating
+    };
+})(jQuery);
+
+jQuery(function($) {
+        $('.numCounter').countTo({
+            from: 0,
+            to: <?php echo $collection->count(); ?>,
+            speed: 1000,
+            refreshInterval: 50,
+            onComplete: function(value) {
+                console.debug(this);
+            }
+        });
+    });
+	
+	
+	
+ $( "#parent-cat button" ).on( "click", function() {
+	 
+ $("#rang-right-bx-child-cat").removeClass('menu-open');
+	 $('#rang-right-bx-manufacturer').removeClass('menu-open');
+  $(this).toggleClass('active');
+    $('#rang-right-bx').toggleClass('menu-open');
+}); 
+
+ $( "#childrenCategories button" ).on( "click", function() {
+	 $("#rang-right-bx").removeClass('menu-open');
+	  $('#rang-right-bx-manufacturer').removeClass('menu-open');
+  $(this).toggleClass('active');
+    $('#rang-right-bx-child-cat').toggleClass('menu-open');
+}); 
+
+$( "#brand button" ).on( "click", function() {
+	 $("#rang-right-bx").removeClass('menu-open');
+	 $("#rang-right-bx-child-cat").removeClass('menu-open');
+  $(this).toggleClass('active');
+    $('#rang-right-bx-manufacturer').toggleClass('menu-open');
+});
+
+ $( ".parent_cat" ).on( "click", function() {
+	 
+	  $("#childrenCategories-txt").html('<i class="fas fa-angle-down"></i>');
+	   $('.sub-cat-dropdown').remove();
+	   
+	    $("#brand-txt").html('<i class="fas fa-angle-down"></i>');
+	   $('.brand-dropdown').remove();
+	 
+	 var cname = $('#parent-cat-txt').attr('data-parent-active',$(this).data('parent-cat-url'));
+	 
+	  var curl = $('#parent-cat-txt').attr('data-parent-id',$(this).data('id'));
+	  
+
+	 var param = 'catId='+$(this).data('id');
+		 $.ajax({
+						 showLoader: true,
+						 url: '<?php echo 'https://www.bargainbuyz.co.uk/smartsearch/category'; ?>',
+						 data: param,
+						 type: "GET",
+						 dataType: 'json'
+		 }).done(function (data) {
+			            $("#rang-right-bx").removeClass('menu-open');
+						 $('#rang-right-bx-child-cat').empty();
+						 $('#rang-right-bx-child-cat').append(data.value);
+						 $('#rang-right-bx-child-cat').toggleClass('menu-open');
+						 if(data.value){
+							 $("#childrenCategories-txt").html('Please Select... <i class="fas fa-angle-down"></i>');
+							// document.getElementById('#childrenCategories-txt').disabled = false;
+							if (data.value) {
+								$('#childrenCategories-txt').removeAttr('disabled'); 
+									
+								} else {
+									$('#childrenCategories-txt').attr('disabled', 'disabled'); 
+								}
+
+						 }
+
+						
+						 
+						 
+					jQuery(function($) {
+						$('.numCounter').countTo({
+							from: 0,
+							to: data.totalProduct,
+							speed: 1000,
+							refreshInterval: 50,
+							onComplete: function(value) {
+								console.debug(this);
+							}
+						});
+					});
+					
+					
+					
+					
+	$( function() {
+    $( "#slider-range" ).slider({
+      range: true,
+      min: data.min,
+      max: data.max,
+      values: [ data.min, data.max ],
+      slide: function( event, ui ) {
+		  
+		  var totalProduct=$(this).data('product-total');
+  $('#brand-txt').attr('data-brand-active',$(this).data('id'));
+  
+  var catId= $('#parent-cat-txt').data('parent-id');
+
+
+
+  var price=ui.values[ 0 ] + "-" + ui.values[ 1 ];
+ 
+ var param = 'catId='+ catId + '&price='+ price+'&priceFilter=true';
+		 $.ajax({
+						 showLoader: true,
+						 url: '<?php echo 'https://www.bargainbuyz.co.uk/smartsearch/products'; ?>',
+						 data: param,
+						 type: "GET",
+						 dataType: 'json'
+		 }).done(function (data) {
+			
+			jQuery(function($) {
+						$('.numCounter').countTo({
+							from: 0,
+							to: data.totalProduct,
+							speed: 1000,
+							refreshInterval: 50,
+							onComplete: function(value) {
+								console.debug(this);
+							}
+						});
+					});			
+			 
+		 });
+		  
+		  
+		  
+		   
+		  
+       if(data.totalProduct > 1){
+		$( "#amount" ).val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
+			} else {
+				
+				$( "#amount" ).val('');
+			}
+		 $('.price-range-min').remove();
+	  $('.price-range-max').remove();
+		$('.ui-slider-handle:eq(0)').append('<span class="price-range-min value" id="slider-value"><?php echo $currencySymbol; ?>' + ui.values[ 0 ] + '</span>');
+	    $('.ui-slider-handle:eq(1)').append('<span class="price-range-max value" id="slider-value"><?php echo $currencySymbol; ?>' + ui.values[ 1 ] + '</span>');
+      }
+    });
+    
+	
+	if(data.totalProduct > 1){
+		$( "#amount" ).val($( "#slider-range" ).slider( "values", 0 ) + "-" + $( "#slider-range" ).slider( "values", 1 ) );
+		} else {
+			
+			$( "#amount" ).val('');
+		}
+	
+	   $('.price-range-min').remove();
+	  $('.price-range-max').remove();
+	   $('.ui-slider-handle:eq(0)').append('<span class="price-range-min value" id="slider-value"><?php echo $currencySymbol; ?>' + $('#slider-range').slider('values', 0 ) + '</span>');
+	    $('.ui-slider-handle:eq(1)').append('<span class="price-range-max value" id="slider-value"><?php echo $currencySymbol; ?>' + $( "#slider-range" ).slider( "values", 1 ) + '</span>');
+		
+		if(data.min==0 && data.max==0){
+  
+  $('.ui-slider-handle:eq(0)').css('left','0%');
+		$('.ui-slider-handle:eq(1)').css('left','100%');
+  }
+	  
+  } );
+						 
+						 
+		 });
+	 
+	 
+	$("#parent-cat-txt").html($(this).text() +'<i class="fas fa-angle-down"></i>');
+	 $("#rang-right-bx").removeClass('menu-open');
+ });
+ 
+ 
+ 
+ $(document).on("click",".child_cat", function() {
+	 
+	   
+	    $("#brand-txt").html('<i class="fas fa-angle-down"></i>');
+	   $('.brand-dropdown').remove();
+	   
+	$('#childrenCategories-txt').attr('data-child-active',$(this).data('child-cat-url'));
+	$('#childrenCategories-txt').attr('data-child-id',$(this).data('id'));
+	 
+	 var param = 'subCatId='+$(this).data('id');
+		 $.ajax({
+						 showLoader: true,
+						 url: '<?php echo 'https://www.bargainbuyz.co.uk/smartsearch/category'; ?>',
+						 data: param,
+						 type: "GET",
+						 dataType: 'json'
+		 }).done(function (data) {
+			            $("#rang-right-bx-child-cat").removeClass('menu-open');
+						if(data.brandHtml){
+
+							if (data.brandHtml) {
+								$('#brand-txt').removeAttr('disabled'); 
+									
+								} else {
+									$('#brand-txt').attr('disabled', 'disabled'); 
+								}
+						
+
+						$("#brand-txt").html('All Brands... <i class="fas fa-angle-down"></i>');
+						}
+						 $('#rang-right-bx-manufacturer').empty();
+						 $('#rang-right-bx-manufacturer').append(data.brandHtml);
+						 $('#rang-right-bx-manufacturer').toggleClass('menu-open');
+						 
+				jQuery(function($) {
+						$('.numCounter').countTo({
+							from: 0,
+							to: data.totalProduct,
+							speed: 1000,
+							refreshInterval: 50,
+							onComplete: function(value) {
+								console.debug(this);
+							}
+						});
+					});
+					
+					
+					$( function() {
+    $( "#slider-range" ).slider({
+      range: true,
+      min: data.min,
+      max: data.max,
+      values: [ data.min, data.max ],
+      slide: function( event, ui ) {
+		 
+		  
+var catId= $('#childrenCategories-txt').data('child-id');
+  var price=ui.values[ 0 ] + "-" + ui.values[ 1 ];
+ 
+ var param = 'catId='+ catId + '&price='+ price+'&priceFilter=true';
+		 $.ajax({
+						 showLoader: true,
+						 url: '<?php echo 'https://www.bargainbuyz.co.uk/smartsearch/products'; ?>',
+						 data: param,
+						 type: "GET",
+						 dataType: 'json'
+		 }).done(function (data) {
+			 
+			jQuery(function($) {
+						$('.numCounter').countTo({
+							from: 0,
+							to: data.totalProduct,
+							speed: 1000,
+							refreshInterval: 50,
+							onComplete: function(value) {
+								console.debug(this);
+							}
+						});
+					}); 
+		 });  
+		  
+		  
+		  
+		  
+		  
+         if(data.totalProduct > 1){
+		$( "#amount" ).val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
+			} else {
+				
+				$( "#amount" ).val('');
+			}
+		 $('.price-range-min').remove();
+	  $('.price-range-max').remove();
+		$('.ui-slider-handle:eq(0)').append('<span class="price-range-min value" id="slider-value"><?php echo $currencySymbol; ?>' + ui.values[ 0 ] + '</span>');
+	    $('.ui-slider-handle:eq(1)').append('<span class="price-range-max value" id="slider-value"><?php echo $currencySymbol; ?>' + ui.values[ 1 ] + '</span>');
+      }
+    });
+    if(data.totalProduct > 1){
+		$( "#amount" ).val($( "#slider-range" ).slider( "values", 0 ) + "-" + $( "#slider-range" ).slider( "values", 1 ) );
+		} else {
+			
+			$( "#amount" ).val('');
+		}
+	   $('.price-range-min').remove();
+	  $('.price-range-max').remove();
+	   $('.ui-slider-handle:eq(0)').append('<span class="price-range-min value" id="slider-value"><?php echo $currencySymbol; ?>' + $('#slider-range').slider('values', 0 ) + '</span>');
+	    $('.ui-slider-handle:eq(1)').append('<span class="price-range-max value" id="slider-value"><?php echo $currencySymbol; ?>' + $( "#slider-range" ).slider( "values", 1 ) + '</span>');
+		
+		if(data.min==0 && data.max==0){
+  
+  $('.ui-slider-handle:eq(0)').css('left','0%');
+		$('.ui-slider-handle:eq(1)').css('left','100%');
+  }
+	  
+  } );
+
+						 
+						 
+		 });
+	 
+	$("#childrenCategories-txt").html($(this).text() +'<i class="fas fa-angle-down"></i>');
+	 $("#rang-right-bx-child-cat").removeClass('menu-open');
+ });
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  $(document).on("click",".manufacturer_id", function() { 
+  var totalProduct=$(this).data('product-total');
+  $('#brand-txt').attr('data-brand-active',$(this).data('id'));
+  
+  var catId= $('#childrenCategories-txt').data('child-id');
+  var brandId= $(this).data('id');
+
+
+
+
+
+
+   
+	 var param = 'catId='+ catId + '&brandId=' + brandId +'&priceFilter=false';
+		 $.ajax({
+						 showLoader: true,
+						 url: '<?php echo 'https://www.bargainbuyz.co.uk/smartsearch/products'; ?>',
+						 data: param,
+						 type: "GET",
+						 dataType: 'json'
+		 }).done(function (data) {
+			 
+		 $( function() {
+		$( "#slider-range" ).slider({
+		range: true,
+		min: data.min,
+		max: data.max,
+		values: [ data.min, data.max ],
+		slide: function( event, ui ) {
+			
+			
+			var catId= $('#childrenCategories-txt').data('child-id');
+var brandId= $('#brand-txt').data('brand-active');
+  var price=ui.values[ 0 ] + "-" + ui.values[ 1 ];
+ 
+ var param = 'catId='+ catId + '&price='+ price+'&brand='+ brandId +'&priceFilter=true';
+		 $.ajax({
+						 showLoader: true,
+						 url: '<?php echo 'https://www.bargainbuyz.co.uk/smartsearch/products'; ?>',
+						 data: param,
+						 type: "GET",
+						 dataType: 'json'
+		 }).done(function (data) {
+			 
+			 jQuery(function($) {
+						$('.numCounter').countTo({
+							from: 0,
+							to: data.totalProduct,
+							speed: 1000,
+							refreshInterval: 50,
+							onComplete: function(value) {
+								console.debug(this);
+							}
+						});
+					}); 
+		 });
+			
+			
+			
+			
+			
+			
+			if(totalProduct > 1){
+		$( "#amount" ).val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
+			} else {
+				
+				$( "#amount" ).val('');
+			}
+		$('.price-range-min').remove();
+		$('.price-range-max').remove();
+		$('.ui-slider-handle:eq(0)').append('<span class="price-range-min value" id="slider-value"><?php echo $currencySymbol; ?>' + ui.values[ 0 ] + '</span>');
+		$('.ui-slider-handle:eq(1)').append('<span class="price-range-max value" id="slider-value"><?php echo $currencySymbol; ?>' + ui.values[ 1 ] + '</span>');
+		}
+		});
+		if(totalProduct > 1){
+		$( "#amount" ).val($( "#slider-range" ).slider( "values", 0 ) + "-" + $( "#slider-range" ).slider( "values", 1 ) );
+		} else {
+			
+			$( "#amount" ).val('');
+		}
+		$('.price-range-min').remove();
+		$('.price-range-max').remove();
+		$('.ui-slider-handle:eq(0)').append('<span class="price-range-min value" id="slider-value"><?php echo $currencySymbol; ?>' + $('#slider-range').slider('values', 0 ) + '</span>');
+		$('.ui-slider-handle:eq(1)').append('<span class="price-range-max value" id="slider-value"><?php echo $currencySymbol; ?>' + $( "#slider-range" ).slider( "values", 1 ) + '</span>');
+
+		} );
+			 
+		 });
+  
+  
+  
+
+	
+	 $('#rang-right-bx-manufacturer').removeClass('menu-open');
+	 $("#brand-txt").html($(this).text() +'<i class="fas fa-angle-down"></i>');
+	 
+	 
+	 					jQuery(function($) {
+						$('.numCounter').countTo({
+							from: 0,
+							to: totalProduct,
+							speed: 1000,
+							refreshInterval: 50,
+							onComplete: function(value) {
+								console.debug(this);
+							}
+						});
+					});
+
+	 
+ });
+ 
+ 
+ $(document).on("click","#search-button", function() {
+	 
+	 var url='';
+	 
+	var parentValue= $('#parent-cat-txt').data('parent-active');
+	var childValue= $('#childrenCategories-txt').data('child-active');
+	var brandValue= $('#brand-txt').data('brand-active');
+	var price= $('#amount').val();
+	
+	if(!parentValue) {
+		alert('Please Choose a product type… ');
+		return false;
+	}
+		
+
+	
+	
+	if(childValue){
+		url	=childValue;
+		
+	} else if(parentValue){
+		url=parentValue;
+	
+	}
+	
+	if(brandValue && price==''){
+	url=url + '?manufacturer='+	brandValue;
+	}
+	
+	if(brandValue=='' && price){
+	url=url + '?price=' + price;
+	}
+	
+	if(brandValue && price){
+	url=url + '?manufacturer='+	brandValue + '&price='+price;
+	}
+	
+	window.location.href = 'https://www.bargainbuyz.co.uk/'+url;
+ });
+ 
+			
+   $(".resetAll").click(function() {
+	   
+	   $('#parent-cat-txt').attr('data-parent-active','');
+		$('#childrenCategories-txt').attr('data-child-active','');
+		$('#brand-txt').attr('data-brand-active','');
+		$('#amount').val('');
+	   
+	   $('#parent-cat-txt').html('Choose a product type…  <i class="fas fa-angle-down"></i>');
+	   $("#rang-right-bx").removeClass('menu-open');
+	   
+	   $("#childrenCategories-txt").html('<i class="fas fa-angle-down"></i>');
+	   $('.sub-cat-dropdown').remove();
+	   
+	    $("#brand-txt").html('<i class="fas fa-angle-down"></i>');
+	   $('.brand-dropdown').remove();
+	   
+	   
+	   jQuery(function($) {
+						$('.numCounter').countTo({
+							from: 0,
+							to: <?php echo $collection->count(); ?>,
+							speed: 1000,
+							refreshInterval: 50,
+							onComplete: function(value) {
+								console.debug(this);
+							}
+						});
+		});
+		
+		
+		
+		
+		 $( function() {
+			
+		$( "#slider-range" ).slider({
+		range: true,
+		min: 0,
+		max: 0,
+		values: [ 0, 0 ],
+		slide: function( event, ui ) {
+		
+		}
+		});
+		$('.price-range-min').remove();
+		$('.price-range-max').remove();
+		$('.ui-slider-handle:eq(0)').append('<span class="price-range-min value" id="slider-value"><?php echo $currencySymbol; ?>' + $('#slider-range').slider('values', 0 ) + '</span>');
+		$('.ui-slider-handle:eq(1)').append('<span class="price-range-max value" id="slider-value"><?php echo $currencySymbol; ?>' + $( "#slider-range" ).slider( "values", 1 ) + '</span>');
+		$('.ui-slider-handle:eq(0)').css('left','0%');
+		$('.ui-slider-handle:eq(1)').css('left','100%');
+
+		} );
+		
+	
+  
+	
+});
+
+
+window.addEventListener('click', function(e){   
+  if (!document.getElementById('parent-cat').contains(e.target)){
+    $("#rang-right-bx").removeClass('menu-open');
+  } 
+  if (!document.getElementById('childrenCategories').contains(e.target)){
+    $("#rang-right-bx-child-cat").removeClass('menu-open');
+	 
+  }
+  if (!document.getElementById('brand').contains(e.target)){
+    $('#rang-right-bx-manufacturer').removeClass('menu-open');
+  }
+});
+ 
+
+});
+</script>

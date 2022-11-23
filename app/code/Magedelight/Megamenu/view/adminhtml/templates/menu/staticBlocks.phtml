@@ -67,7 +67,7 @@ if ($onlyStaticBlocks) {
         </optgroup> 
     <?php } ?>
     <?php
-//print_r($categories);die;
+
     ?>
         <?php if (count($categories) and ! empty($categories) && !$onlyStaticBlocks) { ?>
         <optgroup label="Catgories" data-column-type="category">
@@ -84,7 +84,7 @@ if ($onlyStaticBlocks) {
                     $hyphen = $hyphen . "_ _ _ ";
                     $start = '|';
                 }
-                //$catName = $hyphen .$catName;
+                
                 $categoryName = $start . $hyphen . "(ID:" . $catId . ") " . addslashes($catName);
                 ?>
                 <option <?php

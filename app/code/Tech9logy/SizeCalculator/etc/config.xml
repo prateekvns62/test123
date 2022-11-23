@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Prateek Kumar Singh
+ * @copyright Copyright (c) 2022 Tech9logy (https://www.tech9logy.com/)
+ * @package Tech9logy_GuestToCustomer
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+	<tech9logy_sizeCalculator>
+		<general>
+			<enable>1</enable>
+			<visible_for_all>1</visible_for_all>
+			<enable_wastage>1</enable_wastage>
+			<wastage_percentage>10</wastage_percentage>
+		</general>
+	</tech9logy_sizeCalculator>
+    </default>
+</config>
+

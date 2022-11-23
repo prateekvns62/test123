@@ -1,0 +1,28 @@
+{
+  "name": "tech9logy/magento2-facebook-chat",
+  "description": "Magento 2 Facebook Chat",
+  "require": {
+    "php": "~5.5.0|~5.6.0|~7.0.0|7.0.2|7.0.4|~7.0.6|~7.1.0|~7.2.0|~7.3.0"
+  },
+  "type": "magento2-module",
+  "version": "1.0.3",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "authors": [
+    {
+      "name": "Tech9logy",
+      "email": "support@tech9logy.com",
+      "homepage": "https://store.tech9logy.com"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Tech9logy\\FacebookChat\\": ""
+    }
+  }
+}

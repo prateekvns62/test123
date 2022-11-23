@@ -10,6 +10,12 @@
         <referenceContainer name="content">
             <referenceContainer name="sidebar.main">
                 <container name="homepage.content.list.block" htmlClass="holder-content-list-block" htmlTag="div">
+                    
+                    <!-- <block class="Magento\Cms\Block\Block" name="locationnew">
+                    <arguments>
+                        <argument name="block_id" xsi:type="string">locationnew</argument>
+                    </arguments>
+                    </block> -->
 
                     <block class="Magento\Cms\Block\Block" name="homepage-block-reviews">
                         <arguments>

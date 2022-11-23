@@ -1,0 +1,40 @@
+<?php
+    /*
+     * Below code used to update category of particular products position 
+     */
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+/** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $productCollection */
+$productCollection = $objectManager->create('Magento\Catalog\Model\ResourceModel\Product\Collection');
+/** Apply filters here */
+$collection = $productCollection->addAttributeToSelect('*')
+            ->load();
+echo count($collection);
+foreach ($collection as $product){
+	$id = $product->getId(); 
+    $product = $objectManager->create('Magento\Catalog\Model\Product')->load($id);
+    echo "</br>".$product->getOrderType()."--".$product->getName()."--".$product->getProductViewOrder()."</br>";
+   
+     if($product->getOrderType()== 183){
+		$product->setProductViewOrder(1);
+		 $product->save();
+	  echo "</br>modified: ".$product->getOrderType()."--".$product->getName()."--".$product->getProductViewOrder()."</br>";
+		
+	 }else if($product->getOrderType()== 184){
+		 //$product->setProductViewOrder(2);
+		
+		
+	 }else if($product->getOrderType()== 185){
+		//$product->setProductViewOrder(3);
+		
+		 
+	 }else if($product->getOrderType()== ''){
+		 //$product->setProductViewOrder(4);
+		
+		
+	 }
+	  
+	  //break;
+}  
+
+?>

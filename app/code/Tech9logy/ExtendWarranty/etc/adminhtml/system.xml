@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Prateek Kumar Singh
+ * @copyright Copyright (c) 2022 Tech9logy (https://www.tech9logy.com/)
+ * @package Tech9logy_ExtendWarranty
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="tech9logy" sortOrder="450" translate="label">
+            <label>Tech9logy</label>
+        </tab>
+        <section id="tech9logy_extendWarranty" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="5" translate="label">
+            <label>Add-on Services</label>
+            <tab>tech9logy</tab>
+            <resource>Tech9logy_ExtendWarranty::tech9logy_extendWarranty</resource>
+            <group id="general" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="0" translate="label">
+                <label>General Configuration</label>
+                <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Module Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable/disable Extension.</comment>
+                </field>
+		</group>
+		<group id="warranty" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="0" translate="label">
+                <label>First Add-on service</label>
+                <field id="enable_warranty" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable First Add-on service</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable if you want to allow customer to add First Add-on Services.</comment>
+                </field>
+                <field id="warranty_time" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Years</label>
+                    <comment>Enter value greater than zero.</comment>
+                    <validate>required-entry validate-number</validate>
+		            <depends>
+                        	<field id="*/*/enable_warranty">1</field>
+                    	</depends>
+                </field>
+		    <field id="warranty_charges" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Charges</label>
+                    <comment>Enter value greater than zero.</comment>
+                    <validate>required-entry validate-number</validate>
+		            <depends>
+                        	<field id="*/*/enable_warranty">1</field>
+                    </depends>
+            </field>
+            <field id="warranty_msg" translate="label" type="textarea" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Service Name</label>
+                <validate>required-entry</validate>
+                <depends>
+                        <field id="*/*/enable_warranty">1</field>
+                </depends>
+            </field>
+            <field id="warranty_logo" translate="label" type="image" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Image</label>
+                <backend_model>Magento\Config\Model\Config\Backend\Image</backend_model>
+                <upload_dir config="system/filesystem/media" scope_info="1">logo</upload_dir>
+                <base_url type="media" scope_info="1">logo</base_url>
+                <comment><![CDATA[Allowed file types: jpeg, gif, png.]]></comment>
+                <validate>required-entry</validate>
+                <depends>
+                        <field id="*/*/enable_warranty">1</field>
+                </depends>
+            </field>
+		    <field id="warranty_visible_for_all" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable For All Category</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable if you want to show First Add-on service option for every products.</comment>
+                    <depends>
+					<field id="*/*/enable_warranty">1</field>
+                    </depends>
+                </field>
+                <field id="warranty_selected_category" translate="label" type="multiselect" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Select Categories</label>
+                    <source_model>Tech9logy\ExtendWarranty\Model\Config\Source\Category</source_model>
+                    <comment>First Add-on service will be available for only selected categories.</comment>
+                    <validate>required-entry</validate>
+                    <depends>
+					<field id="*/*/enable_warranty">1</field>
+                        	<field id="*/*/warranty_visible_for_all">0</field>
+                    </depends>
+                </field>
+			<depends>
+			            <field id="*/general/enable">1</field>
+                    </depends>
+		</group>
+		<group id="recycle" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="0" translate="label">
+                <label>Second Add-on services</label>
+                <field id="enable_recycle_option" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Second Add-on services</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable if you want to allow customer to add second add-on services.</comment>
+                </field>
+		    <field id="recycle_charges" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Charges</label>
+                    <comment>Enter value greater than zero.</comment>
+                    <validate>required-entry validate-number</validate>
+		            <depends>
+                        	<field id="*/*/enable_recycle_option">1</field>
+                    	</depends>
+                </field>
+            <field id="recycle_msg" translate="label" type="textarea" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Service Name</label>
+                <validate>required-entry</validate>
+                <depends>
+                        <field id="*/*/enable_recycle_option">1</field>
+                </depends>
+            </field>
+            <field id="recycle_logo" translate="label" type="image" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Image</label>
+                <backend_model>Magento\Config\Model\Config\Backend\Image</backend_model>
+                <upload_dir config="system/filesystem/media" scope_info="1">logo</upload_dir>
+                <base_url type="media" scope_info="1">logo</base_url>
+                <comment><![CDATA[Allowed file types: jpeg, gif, png.]]></comment>
+                <validate>required-entry</validate>
+                <depends>
+                        <field id="*/*/enable_recycle_option">1</field>
+                </depends>
+            </field>
+		    <field id="recycle_visible_for_all" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable For All Category</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable if you want to show Second Add-on service option for every products.</comment>
+                    <depends>
+					<field id="*/*/enable_recycle_option">1</field>
+                    </depends>
+                </field>
+                <field id="recycle_selected_category" translate="label" type="multiselect" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Select Categories</label>
+                    <source_model>Tech9logy\ExtendWarranty\Model\Config\Source\Category</source_model>
+                    <comment>Second Add-on service will be available for only selected categories.</comment>
+                    <validate>required-entry</validate>
+                    <depends>
+					<field id="*/*/enable_recycle_option">1</field>
+                        	<field id="*/*/recycle_visible_for_all">0</field>
+                    </depends>
+                </field>
+			<depends>
+			            <field id="*/general/enable">1</field>
+                    </depends>
+		</group>
+		<group id="unwrap" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="0" translate="label">
+                <label>Third Add-on service</label>
+		    <field id="enable_unwrap_recycle" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Third Add-on service</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable if you want to allow customer to add third add-on services.</comment>
+                </field>
+		    <field id="unwrap_recycle_charges" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+					<label>Charges</label>
+                    <comment>Enter value greater than zero.</comment>
+                    <validate>required-entry validate-number</validate>
+		            <depends>
+                        <field id="*/*/enable_unwrap_recycle">1</field>
+				    </depends>
+                </field>
+            <field id="unwrap_msg" translate="label" type="textarea" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Service Name</label>
+                <validate>required-entry</validate>
+                <depends>
+                    <field id="*/*/enable_unwrap_recycle">1</field>
+                </depends>
+            </field>
+            <field id="unwrap_logo" translate="label" type="image" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Image</label>
+                <backend_model>Magento\Config\Model\Config\Backend\Image</backend_model>
+                <upload_dir config="system/filesystem/media" scope_info="1">logo</upload_dir>
+                <base_url type="media" scope_info="1">logo</base_url>
+                <comment><![CDATA[Allowed file types: jpeg, gif, png.]]></comment>
+                <validate>required-entry</validate>
+                <depends>
+                        <field id="*/*/enable_unwrap_recycle">1</field>
+                </depends>
+            </field>
+            <field id="unwrap_recycle_visible_for_all" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable For All Category</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable if you want to show Third Add-on service option for every products.</comment>
+                    	<depends>
+					<field id="*/*/enable_unwrap_recycle">1</field>
+				</depends>
+                </field>
+                <field id="unwrap_recycle_selected_category" translate="label" type="multiselect" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Select Categories</label>
+                    <source_model>Tech9logy\ExtendWarranty\Model\Config\Source\Category</source_model>
+                    <comment>Third Add-on service will be available for only selected categories.</comment>
+                    <validate>required-entry</validate>
+                    <depends>
+					<field id="*/*/enable_unwrap_recycle">1</field>
+					<field id="*/*/unwrap_recycle_visible_for_all">0</field>
+                    </depends>
+                </field>
+			<depends>
+			            <field id="*/general/enable">1</field>
+                   </depends>
+            </group>
+        </section>
+    </system>
+</config>

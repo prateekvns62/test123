@@ -1,0 +1,63 @@
+<?php 
+ $appliedServices = $block->getServices();
+ //echo '<pre>'; print_r($appliedServices); exit;
+ $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+?>
+
+<?php if(is_array($appliedServices) && count($appliedServices) > 0): ?>
+	<section class="admin__page-section extend_warranty_section">
+		<div class="admin__page-section-title warranty_section">
+		<span class="title">Add-on Services</span>
+	   	</div>
+	   	<div class="admin__table-wrapper">
+		  <table class="data-table admin__table-primary edit-order-table">
+			 <thead>
+				<tr class="headings">
+				   <th class="col-product"><span>Service Name</span></th>
+				   <th class="col-sku"><span>Product SKU</span></th>
+				   <th class="col-quantity"><span>Quantity</span></th>
+				   <th class="col-amount"><span>Amount</span></th>
+				</tr>
+			 </thead>
+			 <tbody class="even">
+				 <?php foreach ($appliedServices as $servicesData) : ?>
+					<?php 
+					$servicesData = json_decode($servicesData); 
+					$product = $objectManager->get('\Magento\Catalog\Api\ProductRepositoryInterface')->getById($servicesData->product_id);
+					?>
+					<tr>
+					   <td class="col-product">
+						  <?php echo $servicesData->name; ?>    
+					   </td>
+					   <td class="col-product">
+						  <?php echo $product->getSku(); ?>    
+					   </td>
+					   <td class="col-product">
+						  <?php echo $servicesData->qty; ?>    
+					   </td>
+					   <td class="col-amount">
+						  <?php echo $block->getFormatedPrice($servicesData->price*$servicesData->qty); ?>      
+					   </td>
+					</tr>
+				<?php endforeach; ?>	
+			 </tbody>
+		  	</table>
+		</div>
+	</section>
+<?php endif; ?>
+
+<style>
+.admin__page-section-title.warranty_section{
+	border-bottom: 1px solid #c6c6c6;
+	margin-bottom: 8px;
+	padding-bottom: 10px;
+}
+.admin__page-section-title.warranty_section span.title {
+	font-size: 2.4rem;
+	font-weight: 400;
+}
+.admin__page-section-title.warranty_section table th {
+	font-size: 1.7rem;
+	font-weight: 600;
+}
+</style>

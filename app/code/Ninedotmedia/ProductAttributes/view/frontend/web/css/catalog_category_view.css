@@ -45,3 +45,16 @@
     padding: 5px;
     background-color: red;
 }
+media="screen and (min-width: 768px)"
+.energyrating-181, .energyrating-180, .energyrating-182 {
+    background: #00855a;
+    width: 60px;
+    line-height: 40px;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 20px;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 18px;
+    position: relative;
+}

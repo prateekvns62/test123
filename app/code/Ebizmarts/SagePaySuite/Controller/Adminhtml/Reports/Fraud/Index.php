@@ -20,7 +20,7 @@ class Index extends \Magento\Backend\App\Action
     /**
      * @var \Psr\Log\LoggerInterface
      */
-    private $_logger;
+    private $logger;
 
     /**
      * @param \Magento\Backend\App\Action\Context $context
@@ -30,7 +30,7 @@ class Index extends \Magento\Backend\App\Action
         \Magento\Backend\App\Action\Context $context,
         \Psr\Log\LoggerInterface $logger
     ) {
-        $this->_logger = $logger;
+        $this->logger = $logger;
         parent::__construct($context);
     }
 
@@ -55,13 +55,13 @@ class Index extends \Magento\Backend\App\Action
             __('Reports'),
             __('Reports')
         )->_addBreadcrumb(
-            __('Sage Pay'),
-            __('Sage Pay')
+            __('Opayo'),
+            __('Opayo')
         )->_addBreadcrumb(
             __('Fraud'),
             __('Fraud')
         );
-        $this->_view->getPage()->getConfig()->getTitle()->prepend(__('Sage Pay Fraud'));
+        $this->_view->getPage()->getConfig()->getTitle()->prepend(__('Opayo Fraud'));
         return $this;
     }
     // @codingStandardsIgnoreEnd
